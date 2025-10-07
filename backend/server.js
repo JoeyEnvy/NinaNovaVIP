@@ -2,6 +2,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import nodemailer from "nodemailer";
 
 dotenv.config();
 const app = express();
@@ -9,9 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 // --- Example in-memory database (temporary) ---
-const DB = {
-  members: []
-};
+const DB = { members: [] };
 
 // --- Helpers ---
 function findByToken(token) {
@@ -22,20 +21,38 @@ function findByToken(token) {
   return null;
 }
 
-// makeToken: temporary stub until real implementation
 function makeToken(email, days) {
   const token = Math.random().toString(36).substring(2);
   const expires = Date.now() + days * 24 * 60 * 60 * 1000;
   return { token, expires };
 }
 
-// sendAccessEmail: temporary stub to prevent runtime error
 async function sendAccessEmail(email, token) {
-  console.log(`(stub) Would send email to ${email} with token ${token}`);
+  const link = `${process.env.SITE_BASE}/members.html?token=${token}`;
+
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST || "smtp.sendgrid.net",
+    port: Number(process.env.SMTP_PORT) || 587,
+    secure: false, // important for port 587
+    auth: {
+      user: process.env.SMTP_USER || "apikey",
+      pass: process.env.SMTP_PASS
+    },
+    connectionTimeout: 10000, // 10s timeout
+    greetingTimeout: 5000
+  });
+
+  await transporter.sendMail({
+    from: process.env.FROM_EMAIL,
+    to: email,
+    subject: "Your NinaNovaVIP Access Link",
+    text: `Here is your private access link:\n${link}\n\nIf you didn’t request this, ignore this email.`,
+  });
+
+  console.log(`Access email sent to ${email}`);
   return true;
 }
 
-// upsertMember: temporary in-memory implementation
 function upsertMember(email) {
   let member = DB.members.find(m => m.email === email);
   if (!member) {
@@ -45,17 +62,13 @@ function upsertMember(email) {
   return member;
 }
 
-// futureDays helper
 function futureDays(days) {
   return Date.now() + days * 24 * 60 * 60 * 1000;
 }
 
 // --- Routes ---
-
-// Health check
 app.get("/", (_, res) => res.json({ ok: true }));
 
-// Verify token
 app.get("/api/verify", (req, res) => {
   const token = String(req.query.token || "");
   const hit = findByToken(token);
@@ -68,13 +81,10 @@ app.get("/api/verify", (req, res) => {
   return res.json({ valid });
 });
 
-// Resend link
 app.post("/api/resend", async (req, res) => {
   const email = String(req.body.email || "").trim();
   if (!email)
-    return res
-      .status(400)
-      .json({ ok: false, message: "Missing email" });
+    return res.status(400).json({ ok: false, message: "Missing email" });
 
   const member = DB.members.find(
     x => x.email.toLowerCase() === email.toLowerCase()
@@ -89,13 +99,10 @@ app.post("/api/resend", async (req, res) => {
     return res.json({ ok: true });
   } catch (e) {
     console.error(e);
-    return res
-      .status(500)
-      .json({ ok: false, message: "Email failed" });
+    return res.status(500).json({ ok: false, message: "Email failed" });
   }
 });
 
-// Payment postback (simulate Epoch/CCBill)
 app.post("/api/postback", (req, res) => {
   const { email, product, action } = req.body || {};
   if (!email) return res.status(400).json({ ok: false });
@@ -122,24 +129,19 @@ app.post("/api/postback", (req, res) => {
   return res.json({ ok: true });
 });
 
-// --- Start server ---
-const port = process.env.PORT || 4000;
-app.listen(port, () =>
-  console.log(`NinaNovaVIP backend on ${port}`)
-);
-
 // --- Test SendGrid email ---
-import nodemailer from "nodemailer";
-
 app.get("/api/test-email", async (req, res) => {
   try {
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
+      host: process.env.SMTP_HOST || "smtp.sendgrid.net",
+      port: Number(process.env.SMTP_PORT) || 587,
+      secure: false,
       auth: {
-        user: process.env.SMTP_USER,
+        user: process.env.SMTP_USER || "apikey",
         pass: process.env.SMTP_PASS
-      }
+      },
+      connectionTimeout: 10000,
+      greetingTimeout: 5000
     });
 
     await transporter.sendMail({
@@ -151,8 +153,11 @@ app.get("/api/test-email", async (req, res) => {
 
     res.json({ ok: true, message: "Email sent successfully." });
   } catch (err) {
-    console.error(err);
+    console.error("Email test failed:", err);
     res.status(500).json({ ok: false, error: err.message });
   }
 });
 
+// --- Start server ---
+const port = process.env.PORT || 4000;
+app.listen(port, () => console.log(`NinaNovaVIP backend on ${port}`));
