@@ -2,6 +2,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import fetch from "node-fetch"; // <-- add this
 import nodemailer from "nodemailer";
 
 dotenv.config();
@@ -33,12 +34,12 @@ async function sendAccessEmail(email, token) {
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || "smtp.sendgrid.net",
     port: Number(process.env.SMTP_PORT) || 587,
-    secure: false, // important for port 587
+    secure: false,
     auth: {
       user: process.env.SMTP_USER || "apikey",
       pass: process.env.SMTP_PASS
     },
-    connectionTimeout: 10000, // 10s timeout
+    connectionTimeout: 10000,
     greetingTimeout: 5000
   });
 
@@ -129,31 +130,34 @@ app.post("/api/postback", (req, res) => {
   return res.json({ ok: true });
 });
 
-// --- Test SendGrid email ---
+// --- Test SendGrid email via HTTPS API ---
 app.get("/api/test-email", async (req, res) => {
   try {
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || "smtp.sendgrid.net",
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: false,
-      auth: {
-        user: process.env.SMTP_USER || "apikey",
-        pass: process.env.SMTP_PASS
+    const apiKey = process.env.SMTP_PASS; // your SendGrid API key
+    const from = process.env.FROM_EMAIL;
+
+    const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
       },
-      connectionTimeout: 10000,
-      greetingTimeout: 5000
+      body: JSON.stringify({
+        personalizations: [{ to: [{ email: from }] }],
+        from: { email: from },
+        subject: "NinaNovaVIP Email Test (API)",
+        content: [{ type: "text/plain", value: "API test success!" }]
+      })
     });
 
-    await transporter.sendMail({
-      from: process.env.FROM_EMAIL,
-      to: process.env.FROM_EMAIL,
-      subject: "NinaNovaVIP Email Test",
-      text: "If you see this, your SendGrid SMTP is working!"
-    });
-
-    res.json({ ok: true, message: "Email sent successfully." });
+    if (response.ok) {
+      res.json({ ok: true, message: "Email sent successfully via API." });
+    } else {
+      const text = await response.text();
+      throw new Error(text);
+    }
   } catch (err) {
-    console.error("Email test failed:", err);
+    console.error("SendGrid API error:", err);
     res.status(500).json({ ok: false, error: err.message });
   }
 });
