@@ -2,7 +2,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import nodemailer from "nodemailer"; // kept in case you upgrade plan later
+import nodemailer from "nodemailer"; // optional for later SMTP use
 
 dotenv.config();
 const app = express();
