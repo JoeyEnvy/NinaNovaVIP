@@ -2,8 +2,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import fetch from "node-fetch"; // <-- add this
-import nodemailer from "nodemailer";
+import nodemailer from "nodemailer"; // kept in case you upgrade plan later
 
 dotenv.config();
 const app = express();
@@ -16,7 +15,7 @@ const DB = { members: [] };
 // --- Helpers ---
 function findByToken(token) {
   for (const m of DB.members) {
-    const t = m.tokens?.find(x => x.token === token);
+    const t = m.tokens?.find((x) => x.token === token);
     if (t) return { member: m, token: t };
   }
   return null;
@@ -28,34 +27,38 @@ function makeToken(email, days) {
   return { token, expires };
 }
 
+// --- SendGrid HTTPS email (works on Render Free Tier) ---
 async function sendAccessEmail(email, token) {
   const link = `${process.env.SITE_BASE}/members.html?token=${token}`;
+  const apiKey = process.env.SMTP_PASS; // SendGrid API key
+  const from = process.env.FROM_EMAIL;
 
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || "smtp.sendgrid.net",
-    port: Number(process.env.SMTP_PORT) || 587,
-    secure: false,
-    auth: {
-      user: process.env.SMTP_USER || "apikey",
-      pass: process.env.SMTP_PASS
+  const res = await fetch("https://api.sendgrid.com/v3/mail/send", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
     },
-    connectionTimeout: 10000,
-    greetingTimeout: 5000
+    body: JSON.stringify({
+      personalizations: [{ to: [{ email }] }],
+      from: { email: from },
+      subject: "Your NinaNovaVIP Access Link",
+      content: [
+        {
+          type: "text/plain",
+          value: `Here is your private access link:\n${link}\n\nIf you didn’t request this, ignore this email.`,
+        },
+      ],
+    }),
   });
 
-  await transporter.sendMail({
-    from: process.env.FROM_EMAIL,
-    to: email,
-    subject: "Your NinaNovaVIP Access Link",
-    text: `Here is your private access link:\n${link}\n\nIf you didn’t request this, ignore this email.`,
-  });
-
+  if (!res.ok) throw new Error(await res.text());
   console.log(`Access email sent to ${email}`);
   return true;
 }
 
 function upsertMember(email) {
-  let member = DB.members.find(m => m.email === email);
+  let member = DB.members.find((m) => m.email === email);
   if (!member) {
     member = { email, status: "inactive", tokens: [], purchases: [] };
     DB.members.push(member);
@@ -88,9 +91,13 @@ app.post("/api/resend", async (req, res) => {
     return res.status(400).json({ ok: false, message: "Missing email" });
 
   const member = DB.members.find(
-    x => x.email.toLowerCase() === email.toLowerCase()
+    (x) => x.email.toLowerCase() === email.toLowerCase()
   );
-  if (!member || member.status !== "active" || (member.expiry || 0) < Date.now()) {
+  if (
+    !member ||
+    member.status !== "active" ||
+    (member.expiry || 0) < Date.now()
+  ) {
     return res.json({ ok: false, message: "No active membership found" });
   }
 
@@ -133,21 +140,21 @@ app.post("/api/postback", (req, res) => {
 // --- Test SendGrid email via HTTPS API ---
 app.get("/api/test-email", async (req, res) => {
   try {
-    const apiKey = process.env.SMTP_PASS; // your SendGrid API key
+    const apiKey = process.env.SMTP_PASS;
     const from = process.env.FROM_EMAIL;
 
     const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         personalizations: [{ to: [{ email: from }] }],
         from: { email: from },
         subject: "NinaNovaVIP Email Test (API)",
-        content: [{ type: "text/plain", value: "API test success!" }]
-      })
+        content: [{ type: "text/plain", value: "API test success!" }],
+      }),
     });
 
     if (response.ok) {
