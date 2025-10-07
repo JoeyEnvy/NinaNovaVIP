@@ -127,3 +127,32 @@ const port = process.env.PORT || 4000;
 app.listen(port, () =>
   console.log(`NinaNovaVIP backend on ${port}`)
 );
+
+// --- Test SendGrid email ---
+import nodemailer from "nodemailer";
+
+app.get("/api/test-email", async (req, res) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
+      }
+    });
+
+    await transporter.sendMail({
+      from: process.env.FROM_EMAIL,
+      to: process.env.FROM_EMAIL,
+      subject: "NinaNovaVIP Email Test",
+      text: "If you see this, your SendGrid SMTP is working!"
+    });
+
+    res.json({ ok: true, message: "Email sent successfully." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
