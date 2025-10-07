@@ -1,0 +1,61 @@
+<!doctype html>
+</div>
+</section>
+</main>
+
+
+<script>
+const API = 'https://ninanovavip-api.onrender.com'; // ← change to your backend URL
+const url = new URL(window.location.href);
+const token = url.searchParams.get('token');
+const tokenCheck = document.getElementById('gate-token-check');
+const gateEmail = document.getElementById('gate-email');
+const content = document.getElementById('content');
+
+
+async function verify() {
+if (!token) {
+tokenCheck.textContent = 'No token found. Use your private link or request a new one.';
+gateEmail.style.display = 'block';
+return;
+}
+try {
+const res = await fetch(`${API}/api/verify?token=${encodeURIComponent(token)}`);
+const data = await res.json();
+if (data.valid) {
+document.getElementById('gate').style.display = 'none';
+content.style.display = 'block';
+} else {
+tokenCheck.textContent = 'Invalid or expired link. Request a new access link below.';
+gateEmail.style.display = 'block';
+}
+} catch (e) {
+tokenCheck.textContent = 'Could not reach server. Try again in a moment.';
+gateEmail.style.display = 'block';
+}
+}
+
+
+verify();
+
+
+document.getElementById('resendForm').addEventListener('submit', async (e) => {
+e.preventDefault();
+const email = document.getElementById('resendEmail').value.trim();
+if (!email) return;
+const btn = e.target.querySelector('button');
+btn.disabled = true; btn.textContent = 'Sending…';
+try {
+const res = await fetch(`${API}/api/resend`, {
+method: 'POST', headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ email })
+});
+const data = await res.json();
+btn.textContent = data.ok ? 'Check your email' : (data.message || 'Error');
+} catch (err) {
+btn.textContent = 'Network error';
+} finally { btn.disabled = false; }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Resend Access • NinaNovaVIP</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-dark">
+<header class="nav"><div class="nav-inner"><a href="/" class="brand">Nina<span>Nova</span><em>VIP</em></a></div></header>
+<main class="narrow">
+<h1 class="center">Get Back In</h1>
+<p class="center muted">Enter your email and we’ll send a fresh access link if your subscription or purchases are active.</p>
+
+
+<div class="card glass pad-xl center">
+<form id="resendForm" class="stack">
+<label>Email address
+<input id="resendEmail" type="email" placeholder="you@example.com" required />
+</label>
+<button class="btn btn-primary" type="submit">Send me a new access link</button>
+</form>
+</div>
+</main>
+<script>
+const API = 'https://ninanovavip-api.onrender.com';
+document.getElementById('resendForm').addEventListener('submit', async (e) => {
+e.preventDefault();
+const email = document.getElementById('resendEmail').value.trim();
+if (!email) return;
+const btn = e.target.querySelector('button');
+btn.disabled = true; btn.textContent = 'Sending…';
+try {
+const res = await fetch(`${API}/api/resend`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
+const data = await res.json();
+btn.textContent = data.ok ? 'Check your email' : (data.message || 'Error');
+} catch (err) { btn.textContent = 'Network error'; }
+finally { btn.disabled = false; }
+});
+</script>
+</body>
+</html>
