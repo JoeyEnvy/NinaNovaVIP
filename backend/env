@@ -1,8 +1,0 @@
-PORT=4000
-ORIGIN=https://ninanovavip.onrender.com
-SMTP_HOST=smtp.sendgrid.net
-SMTP_PORT=587
-SMTP_USER=apikey
-SMTP_PASS=YOUR_SENDGRID_KEY
-FROM_EMAIL=access@ninanovavip.com
-SITE_BASE=https://ninanovavip.onrender.com
