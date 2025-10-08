@@ -2,7 +2,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import nodemailer from "nodemailer"; // optional for later SMTP use
+import nodemailer from "nodemailer"; // optional for future SMTP use
 
 dotenv.config();
 const app = express();
@@ -27,28 +27,18 @@ function makeToken(email, days) {
   return { token, expires };
 }
 
-// --- SendGrid HTTPS email (works on Render Free Tier) ---
+// --- Google Apps Script Email Sender (free) ---
 async function sendAccessEmail(email, token) {
   const link = `${process.env.SITE_BASE}/members.html?token=${token}`;
-  const apiKey = process.env.SMTP_PASS; // SendGrid API key
-  const from = process.env.FROM_EMAIL;
+  const body = `Here is your private access link:\n${link}\n\nIf you didn’t request this, ignore this email.`;
 
-  const res = await fetch("https://api.sendgrid.com/v3/mail/send", {
+  const res = await fetch(process.env.GSCRIPT_WEBAPP_URL, {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      personalizations: [{ to: [{ email }] }],
-      from: { email: from },
+      email,
       subject: "Your NinaNovaVIP Access Link",
-      content: [
-        {
-          type: "text/plain",
-          value: `Here is your private access link:\n${link}\n\nIf you didn’t request this, ignore this email.`,
-        },
-      ],
+      body,
     }),
   });
 
@@ -137,34 +127,28 @@ app.post("/api/postback", (req, res) => {
   return res.json({ ok: true });
 });
 
-// --- Test SendGrid email via HTTPS API ---
+// --- Test Email Endpoint (uses Google Script) ---
 app.get("/api/test-email", async (req, res) => {
   try {
-    const apiKey = process.env.SMTP_PASS;
-    const from = process.env.FROM_EMAIL;
-
-    const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
+    const from = process.env.FROM_EMAIL || "test@ninanovavip.com";
+    const response = await fetch(process.env.GSCRIPT_WEBAPP_URL, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        personalizations: [{ to: [{ email: from }] }],
-        from: { email: from },
-        subject: "NinaNovaVIP Email Test (API)",
-        content: [{ type: "text/plain", value: "API test success!" }],
+        email: from,
+        subject: "NinaNovaVIP Email Test (Google Script)",
+        body: "API test success! Your Google Script email integration is working.",
       }),
     });
 
     if (response.ok) {
-      res.json({ ok: true, message: "Email sent successfully via API." });
+      res.json({ ok: true, message: "Email sent successfully via Google Script." });
     } else {
       const text = await response.text();
       throw new Error(text);
     }
   } catch (err) {
-    console.error("SendGrid API error:", err);
+    console.error("Google Script API error:", err);
     res.status(500).json({ ok: false, error: err.message });
   }
 });
