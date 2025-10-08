@@ -14,6 +14,9 @@
 </header>
 
 <main class="narrow">
+
+<section class="features section-inner center">
+
   <h1 class="center">Commission a Custom Video</h1>
   <p class="center muted">
     Describe what you want. We’ll confirm the quote and send a secure payment link.
@@ -32,7 +35,21 @@
     </form>
     <p id="customMsg" class="center muted small pad-sm"></p>
   </div>
+
+</section>
 </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>© <span id="yy"></span> NinaNovaVIP • All rights reserved</div>
+      <div class="legal">
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+      </div>
+    </div>
+  </footer>
+
+
 
 <script>
 const API = 'https://ninanovavip-backend.onrender.com';
@@ -85,5 +102,10 @@ document.getElementById('customForm').addEventListener('submit', async (e) => {
   }
 });
 </script>
+
+
+ <script src="/js/ui.js"></script>
+
+
 </body>
 </html>

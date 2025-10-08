@@ -1,73 +1,82 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>NinaNovaVIP — Home</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NinaNovaVIP — Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body class="bg-dark">
-<header class="nav">
-<div class="nav-inner">
-<div class="brand">Nina<span>Nova</span><em>VIP</em></div>
-<nav>
-<a href="/join.html" class="btn btn-primary">Join VIP</a>
-<a href="https://web.telegram.org/k/#@NinaUnfilteredNova" target="_blank" class="btn btn-ghost">Free Telegram</a>
-</nav>
-</div>
-</header>
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="brand">Nina<span>Nova</span><em>VIP</em></div>
+      <nav>
+        <a href="join.html" class="btn btn-primary">Join VIP</a>
+        <a href="https://web.telegram.org/k/#@NinaUnfilteredNova" target="_blank" class="btn btn-ghost">Free Telegram</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+<section class="features section-inner center">
 
 
-<main>
-<section class="hero glass">
-<div class="hero-copy">
-<h1>Exclusive • Dark • Unfiltered</h1>
-<p>Premium AI‑powered content by <strong>Nina Nova</strong> — curated drops, private gallery access, and a members‑only VIP Telegram channel. All hosted securely under one roof.</p>
-<div class="cta-row">
-<a class="btn btn-primary btn-xl" href="/join.html">Unlock VIP Access</a>
-<a class="btn btn-ghost" href="https://web.telegram.org/k/#@NinaUnfilteredNova" target="_blank">Browse Free Channel</a>
-</div>
-</div>
-<div class="hero-media">
-<!-- Replace with your teaser image/video -->
-<div class="poster shimmer"></div>
-</div>
-</section>
+    <section class="hero glass">
+      <div class="hero-copy">
+        <h1>Exclusive • Dark • Unfiltered</h1>
+        <p>Premium AI-powered content by <strong>Nina Nova</strong> — curated drops, private gallery access, and a members-only VIP Telegram channel. All hosted securely under one roof.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary btn-xl" href="join.html">Unlock VIP Access</a>
+          <a class="btn btn-ghost" href="https://web.telegram.org/k/#@NinaUnfilteredNova" target="_blank">Browse Free Channel</a>
+        </div>
+      </div>
+      <div class="hero-media">
+        <!-- Replace with your teaser image/video -->
+        <div class="poster shimmer"></div>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="grid-3">
+        <article class="card glass">
+          <h3>Members Area</h3>
+          <p>View all paid content directly on this domain in a private, token-protected gallery.</p>
+        </article>
+        <article class="card glass">
+          <h3>VIP Telegram</h3>
+          <p>Optional companion channel for instant drops & updates — shown to verified members.</p>
+        </article>
+        <article class="card glass">
+          <h3>Custom Videos</h3>
+          <p>Commission high-end custom content and keep access via your private link.</p>
+        </article>
+      </div>
+    </section>
+
+</section> 
 
 
-<section class="features">
-<div class="grid-3">
-<article class="card glass">
-<h3>Members Area</h3>
-<p>View all paid content directly on this domain in a private, token‑protected gallery.</p>
-</article>
-<article class="card glass">
-<h3>VIP Telegram</h3>
-<p>Optional companion channel for instant drops & updates — shown to verified members.</p>
-</article>
-<article class="card glass">
-<h3>Custom Videos</h3>
-<p>Commission high‑end custom content and keep access via your private link.</p>
-</article>
-</div>
-</section>
-</main>
+  </main>
 
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>© <span id="yy"></span> NinaNovaVIP • All rights reserved</div>
+      <div class="legal">
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+      </div>
+    </div>
+  </footer>
 
-<footer class="footer">
-<div class="footer-inner">
-<div>© <span id="yy"></span> NinaNovaVIP • All rights reserved</div>
-<div class="legal">
-<a href="#">Terms</a>
-<a href="#">Privacy</a>
-</div>
-</div>
-</footer>
-<script>
-document.getElementById('yy').textContent = new Date().getFullYear();
-</script>
+  <script>
+    document.getElementById('yy').textContent = new Date().getFullYear();
+  </script>
+
+  <script src="js/ui.js"></script>
 </body>
 </html>
