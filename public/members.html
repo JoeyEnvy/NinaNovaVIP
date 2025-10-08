@@ -1,61 +1,138 @@
 <!doctype html>
-</div>
-</section>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Members • NinaNovaVIP</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-dark">
+<header class="nav">
+  <div class="nav-inner">
+    <a href="/" class="brand">Nina<span>Nova</span><em>VIP</em></a>
+  </div>
+</header>
+
+<main class="narrow">
+  <h1 class="center">Members Area</h1>
+  <p class="center muted">Access is granted via a private link or by requesting a new email link below.</p>
+
+  <div id="gate" class="card glass pad-xl center">
+    <div id="gate-token-check" class="muted">Checking access…</div>
+    <div id="gate-email" style="display:none">
+      <form id="resendForm" class="stack">
+        <p id="resendMsg" class="small muted center"></p>
+        <label>Email address
+          <input id="resendEmail" type="email" placeholder="you@example.com" required />
+        </label>
+        <button class="btn btn-primary" type="submit">Send me a new access link</button>
+      </form>
+      <p class="muted small">If your subscription is active, you’ll get a fresh link within a minute.</p>
+    </div>
+  </div>
+
+  <section id="content" style="display:none">
+    <div class="telegram-links center">
+      <a href="https://t.me/+ytVFtwhgr180MmYx" target="_blank" class="btn btn-primary">Join VIP Telegram</a>
+      <a href="https://web.telegram.org/k/#@NinaUnfilteredNova" target="_blank" class="btn btn-ghost">Free Telegram</a>
+    </div>
+
+    <h2 class="pad-md">Latest Drops</h2>
+    <div class="grid-3">
+      <!-- Replace with real thumbnails/videos later -->
+      <article class="card glass media">
+        <div class="poster shimmer"></div>
+        <div class="meta"><h3>Tease Set 01</h3><p class="muted small">HD gallery</p></div>
+      </article>
+      <article class="card glass media">
+        <div class="poster shimmer"></div>
+        <div class="meta"><h3>Video Clip 4K</h3><p class="muted small">2:31</p></div>
+      </article>
+      <article class="card glass media">
+        <div class="poster shimmer"></div>
+        <div class="meta"><h3>Behind the Scenes</h3><p class="muted small">shorts</p></div>
+      </article>
+    </div>
+  </section>
 </main>
 
-
 <script>
-const API = 'https://ninanovavip-api.onrender.com'; // ← change to your backend URL
+const API = 'https://ninanovavip-backend.onrender.com';
 const url = new URL(window.location.href);
 const token = url.searchParams.get('token');
 const tokenCheck = document.getElementById('gate-token-check');
 const gateEmail = document.getElementById('gate-email');
 const content = document.getElementById('content');
 
-
+// Verify token & show content
 async function verify() {
-if (!token) {
-tokenCheck.textContent = 'No token found. Use your private link or request a new one.';
-gateEmail.style.display = 'block';
-return;
-}
-try {
-const res = await fetch(`${API}/api/verify?token=${encodeURIComponent(token)}`);
-const data = await res.json();
-if (data.valid) {
-document.getElementById('gate').style.display = 'none';
-content.style.display = 'block';
-} else {
-tokenCheck.textContent = 'Invalid or expired link. Request a new access link below.';
-gateEmail.style.display = 'block';
-}
-} catch (e) {
-tokenCheck.textContent = 'Could not reach server. Try again in a moment.';
-gateEmail.style.display = 'block';
-}
+  if (!token) {
+    tokenCheck.textContent = 'No token found. Use your private link or request a new one.';
+    gateEmail.style.display = 'block';
+    return;
+  }
+
+  tokenCheck.textContent = 'Checking your access...';
+
+  try {
+    const res = await fetch(`${API}/api/verify?token=${encodeURIComponent(token)}`);
+    const data = await res.json();
+
+    if (data.valid) {
+      document.getElementById('gate').style.display = 'none';
+      content.style.display = 'block';
+      console.log('Access verified for token:', token);
+    } else {
+      tokenCheck.textContent = 'Invalid or expired link. Request a new access link below.';
+      gateEmail.style.display = 'block';
+      console.warn('Invalid or expired token:', token);
+    }
+  } catch (e) {
+    tokenCheck.textContent = 'Could not reach server. Try again in a moment.';
+    console.error('Verification error:', e);
+    gateEmail.style.display = 'block';
+  } finally {
+    tokenCheck.style.opacity = 1;
+  }
 }
 
-
-verify();
-
-
+// Handle resend form (works even if verification fails)
 document.getElementById('resendForm').addEventListener('submit', async (e) => {
-e.preventDefault();
-const email = document.getElementById('resendEmail').value.trim();
-if (!email) return;
-const btn = e.target.querySelector('button');
-btn.disabled = true; btn.textContent = 'Sending…';
-try {
-const res = await fetch(`${API}/api/resend`, {
-method: 'POST', headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ email })
+  e.preventDefault();
+  const email = document.getElementById('resendEmail').value.trim();
+  const msg = document.getElementById('resendMsg');
+  const btn = e.target.querySelector('button');
+
+  if (!email) return;
+  btn.disabled = true;
+  msg.textContent = 'Sending…';
+  msg.style.color = '#ccc';
+
+  try {
+    const res = await fetch(`${API}/api/resend`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+
+    if (data.ok) {
+      msg.textContent = '✅ Check your inbox for your new link.';
+      msg.style.color = '#7fff9f';
+    } else {
+      msg.textContent = '❌ ' + (data.message || 'No active membership found.');
+      msg.style.color = '#ff8888';
+    }
+  } catch (err) {
+    msg.textContent = '⚠️ Network error. Please try again.';
+    msg.style.color = '#ff8888';
+  } finally {
+    btn.disabled = false;
+  }
 });
-const data = await res.json();
-btn.textContent = data.ok ? 'Check your email' : (data.message || 'Error');
-} catch (err) {
-btn.textContent = 'Network error';
-} finally { btn.disabled = false; }
-});
+
+// Auto-run verification on page load
+verify();
 </script>
 </body>
 </html>

@@ -7,34 +7,75 @@
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="bg-dark">
-<header class="nav"><div class="nav-inner"><a href="/" class="brand">Nina<span>Nova</span><em>VIP</em></a></div></header>
+<header class="nav">
+  <div class="nav-inner">
+    <a href="/" class="brand">Nina<span>Nova</span><em>VIP</em></a>
+  </div>
+</header>
+
 <main class="narrow">
-<h1 class="center">Join VIP</h1>
-<p class="center muted">Secure checkout is handled by our payment processor. After payment you’ll receive a private access link by email.</p>
+  <h1 class="center">Join VIP</h1>
+  <p class="center muted">
+    Secure checkout is handled by our payment processor. After payment, you’ll receive your private access link by email.
+  </p>
 
+  <div class="card glass pad-xl">
+    <form id="joinForm" class="stack">
+      <h3>Join NinaNovaVIP</h3>
+      <label>Email
+        <input id="joinEmail" type="email" placeholder="you@example.com" required />
+      </label>
+      <label>Plan
+        <select id="joinPlan">
+          <option value="monthly">Monthly VIP</option>
+          <option value="custom">One-time Video</option>
+        </select>
+      </label>
+      <button class="btn btn-primary btn-xl" type="submit">Proceed to Secure Payment</button>
+    </form>
+    <p id="joinMsg" class="center muted small"></p>
+  </div>
 
-<div class="card glass pad-xl">
-<!-- ↓ Replace this block with your Epoch/CCBill hosted form embed -->
-<form class="fake-gateway">
-<h3>Example — Replace with CCBill/Epoch Form</h3>
-<label>Email
-<input type="email" placeholder="you@example.com" required>
-</label>
-<label>Plan
-<select>
-<option>Monthly VIP</option>
-<option>One‑time Video</option>
-</select>
-</label>
-<button class="btn btn-primary btn-xl" type="button">Proceed to Secure Payment</button>
-</form>
-<!-- ↑ End replace area -->
-</div>
-
-
-<div class="center pad-md">
-<a class="btn btn-ghost" href="https://web.telegram.org/k/#@NinaUnfilteredNova" target="_blank">Prefer the Free Channel?</a>
-</div>
+  <div class="center pad-md">
+    <a class="btn btn-ghost" href="https://web.telegram.org/k/#@NinaUnfilteredNova" target="_blank">Prefer the Free Channel?</a>
+  </div>
 </main>
+
+<script>
+const API = 'https://ninanovavip-backend.onrender.com';
+
+document.getElementById('joinForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('joinEmail').value.trim();
+  const plan = document.getElementById('joinPlan').value;
+  const msg = document.getElementById('joinMsg');
+  msg.textContent = '⏳ Processing...';
+  msg.style.color = '#ccc';
+
+  try {
+    const res = await fetch(`${API}/api/postback`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        product: plan,
+        action: 'signup'
+      })
+    });
+
+    const data = await res.json();
+    if (data.ok) {
+      msg.textContent = '✅ Access link sent! Check your inbox.';
+      msg.style.color = '#90EE90';
+    } else {
+      msg.textContent = '❌ Error sending email: ' + (data.message || 'unknown');
+      msg.style.color = '#ff8888';
+    }
+  } catch (err) {
+    msg.textContent = '⚠️ Network error, please try again.';
+    msg.style.color = '#ff8888';
+  }
+});
+</script>
 </body>
 </html>

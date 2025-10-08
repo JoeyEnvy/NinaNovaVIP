@@ -1,8 +1,8 @@
-// backend/server.js
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import nodemailer from "nodemailer"; // optional for future SMTP use
+import fetch from "node-fetch"; // required for Google Script calls
 
 dotenv.config();
 const app = express();
@@ -127,6 +127,47 @@ app.post("/api/postback", (req, res) => {
   return res.json({ ok: true });
 });
 
+// --- Custom Video Requests ---
+app.post("/api/custom-request", async (req, res) => {
+  try {
+    const { email, notes } = req.body || {};
+    if (!email || !notes) {
+      return res
+        .status(400)
+        .json({ ok: false, message: "Missing email or description" });
+    }
+
+    // Store temporarily (can move to DB later)
+    DB.members.push({
+      type: "custom-request",
+      email,
+      notes,
+      date: new Date().toISOString(),
+    });
+
+    // Send confirmation email via Google Script
+    const response = await fetch(process.env.GSCRIPT_WEBAPP_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        subject: "Your NinaNovaVIP Custom Request",
+        body: `We received your custom video request:\n\n"${notes}"\n\nWe'll get back to you soon with pricing and timeline.\n\n— NinaNovaVIP`,
+      }),
+    });
+
+    if (!response.ok) throw new Error(await response.text());
+
+    console.log(`Custom request received from ${email}`);
+    return res.json({ ok: true, message: "Custom request received." });
+  } catch (err) {
+    console.error("Custom request error:", err);
+    return res
+      .status(500)
+      .json({ ok: false, message: "Failed to send custom request." });
+  }
+});
+
 // --- Test Email Endpoint (uses Google Script) ---
 app.get("/api/test-email", async (req, res) => {
   try {
@@ -142,7 +183,10 @@ app.get("/api/test-email", async (req, res) => {
     });
 
     if (response.ok) {
-      res.json({ ok: true, message: "Email sent successfully via Google Script." });
+      res.json({
+        ok: true,
+        message: "Email sent successfully via Google Script.",
+      });
     } else {
       const text = await response.text();
       throw new Error(text);
