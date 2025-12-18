@@ -5,6 +5,22 @@ import fs from "fs";
 const app = express();
 app.use(express.json());
 
+/* =========================
+   BASIC CORS (REQUIRED)
+   ========================= */
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
+
 const GROK_KEY = process.env.GROK_KEY;
 const STORE_FILE = "./messages.json";
 
