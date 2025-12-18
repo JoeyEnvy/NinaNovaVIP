@@ -168,6 +168,12 @@ Never mention AI, bots, automation, or being a character.`
   }
 }
 
+
+app.get("/healthz", (req, res) => {
+  res.status(200).send("ok");
+});
+
+
 /* =========================
    START SERVER
    ========================= */
