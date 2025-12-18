@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Leave Nina a message 🤍</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- SEO (soft, non-sales) -->
+  <meta name="description" content="A quiet, private place to leave Nina a message. No pressure. No rush.">
+  <link rel="canonical" href="https://ninanovatv.com/chat.html">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Leave Nina a message">
+  <meta property="og:description" content="A quieter place to talk. Nina reads messages when she can.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ninanovatv.com/chat.html">
+
+  <!-- Favicon -->
+  <link rel="icon" href="images/download.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="images/download.svg">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="has-bg">
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="/" class="brand">Nina<span>Nova</span><em>TV</em></a>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero contact-hero">
+    <div style="max-width:720px;margin:0 auto;">
+
+      <h1>Leave me a message 🤍</h1>
+
+      <p>
+        I don’t really like loud inboxes or public comment sections.
+        This is just a quieter place to leave me a note.
+      </p>
+
+      <p>
+        I can’t promise instant replies —
+        sometimes I’m out, distracted, or just taking a break —
+        but I do read everything here.
+      </p>
+
+      <p style="font-size:.95rem;opacity:.8;">
+        If you’re looking for something quick or public,
+        Telegram might be easier.
+        If you’re happy to leave a message and wait a bit,
+        you’re in the right place.
+      </p>
+
+      <!-- PRIVATE MESSAGE BOX -->
+      <div class="chat-box" style="margin-top:30px;">
+        <div class="chat-header">
+          <span>Nina</span>
+          <small>private messages</small>
+        </div>
+
+        <div id="chat-messages">
+          <div class="msg nina">
+            hey 🤍 you can leave me a message here
+          </div>
+        </div>
+
+        <div class="chat-input">
+          <input
+            id="chat-input"
+            type="text"
+            placeholder="Write your message…"
+            autocomplete="off"
+          />
+          <button id="chat-send">Send</button>
+        </div>
+      </div>
+
+      <p style="margin-top:14px;font-size:.8rem;opacity:.6;font-style:italic;">
+        Replies aren’t instant. That’s kind of the point.
+      </p>
+
+      <!-- OPTIONAL EXIT LINKS -->
+      <div class="links" style="margin-top:36px;">
+        <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener">
+          ☕ Telegram
+          <small>If you prefer quicker replies</small>
+        </a>
+
+        <a href="/">
+          ← Back to the quiet corner
+          <small>Take your time</small>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p>
+    Thanks for being patient 🤍
+    <br>
+    <small>Some things are nicer unhurried</small>
+  </p>
+</footer>
+
+<script>
+  const API_URL = "https://nina-grok-manychat.onrender.com/grok";
+
+  const chatBox = document.getElementById("chat-messages");
+  const input = document.getElementById("chat-input");
+  const sendBtn = document.getElementById("chat-send");
+
+  // Soft session identity (no accounts)
+  let sessionId = localStorage.getItem("nina_session");
+  if (!sessionId) {
+    sessionId = crypto.randomUUID();
+    localStorage.setItem("nina_session", sessionId);
+  }
+
+  function addMessage(text, who){
+    const div = document.createElement("div");
+    div.className = `msg ${who}`;
+    div.textContent = text;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function addTyping(){
+    const div = document.createElement("div");
+    div.className = "msg nina";
+    div.id = "typing";
+    div.textContent = "…";
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function removeTyping(){
+    const t = document.getElementById("typing");
+    if (t) t.remove();
+  }
+
+  async function sendMessage(){
+    const text = input.value.trim();
+    if (!text) return;
+
+    addMessage(text, "user");
+    input.value = "";
+
+    addTyping();
+
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text,
+          source: "site",
+          sessionId
+        })
+      });
+
+      const data = await res.json();
+
+      // Human delay (not instant, not predictable)
+      setTimeout(() => {
+        removeTyping();
+        addMessage(
+          data.grok_reply || "i saw this 🤍 i’ll reply properly soon",
+          "nina"
+        );
+      }, 18000 + Math.random() * 25000);
+
+    } catch {
+      removeTyping();
+      addMessage("sorry — i missed that. try again later 🤍", "nina");
+    }
+  }
+
+  sendBtn.onclick = sendMessage;
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter") sendMessage();
+  });
+</script>
+
+</body>
+</html>

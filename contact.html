@@ -2,25 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Nina Nova — Contact</title>
+  <title>Nina Nova — say hi</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="A friendly way to reach Nina Nova.">
+
+  <!-- SEO (soft, non-commercial) -->
+  <meta name="description" content="A quiet, friendly way to reach Nina. No pressure, no rush.">
+  <link rel="canonical" href="https://ninanovatv.com/contact.html">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Say hi">
+  <meta property="og:description" content="A calm place to reach out. Nina reads messages when she can.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ninanovatv.com/contact.html">
+
+  <!-- Favicon -->
+  <link rel="icon" href="images/download.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="images/download.svg">
+
+  <!-- Styles -->
   <link rel="stylesheet" href="styles.css">
-
-<!-- Favicon -->
-<link rel="icon" href="images/download.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="images/download.svg">
-
-
-
 </head>
 
-<body>
+<body class="has-bg">
 
 <header class="nav">
   <div class="nav-inner">
-    <div class="brand">Nina<span>Nova</span><em>VIP</em></div>
-    <a href="index.html" class="btn ghost">Back</a>
+    <div class="brand">Nina<span>Nova</span></div>
+    <a href="/" class="btn ghost">Back</a>
   </div>
 </header>
 
@@ -31,26 +39,29 @@
     <h1>Come say hi 🤍</h1>
 
     <p>
-      I wanted a space that feels calm and respectful.
-      Somewhere conversations don’t get lost.
+      I wanted a space that feels calm and respectful —
+      somewhere conversations don’t get buried or rushed.
     </p>
 
     <p>
       If you’re curious,
       want to ask something,
-      or just feel like reaching out —
+      or just feel like reaching out,
       this is the right place.
     </p>
 
     <p>
-      I don’t rush replies,
+      I don’t rush replies
       and I don’t copy-paste answers.
+      I read messages properly, when I can.
     </p>
 
+    <!-- PRIMARY CONTACT -->
     <div class="cta">
       <a
         href="https://t.me/NinaNovaAdmin"
         target="_blank"
+        rel="noopener"
         class="btn"
         style="font-size:1.05rem;padding:16px 36px"
       >
@@ -58,17 +69,31 @@
       </a>
     </div>
 
+    <!-- SECONDARY CONTACT (EMAIL) -->
+    <p style="margin-top:18px;font-size:.95rem;opacity:.85;">
+      If you’d rather email, that’s okay too:
+      <br>
+      <a
+        href="mailto:nina@ninanovatv.com"
+        style="font-weight:700;text-decoration:underline;"
+      >
+        nina@ninanovatv.com
+      </a>
+    </p>
+
     <p class="contact-note">
       Please be kind and patient.<br>
       I read everything myself.
     </p>
   </div>
 
+  <!-- IMAGE -->
   <div class="hero-image-wrap">
     <img
       src="images/5.png"
       alt="Nina Nova"
       class="hero-portrait"
+      loading="lazy"
     >
   </div>
 </section>
@@ -76,7 +101,11 @@
 </main>
 
 <footer class="footer">
-  Friendly vibes only ✨
+  <p>
+    Friendly vibes only 🤍
+    <br>
+    <small>No pressure • no expectations</small>
+  </p>
 </footer>
 
 </body>
