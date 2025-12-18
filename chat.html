@@ -27,7 +27,6 @@
 
 <header class="nav">
   <div class="nav-inner">
-    <!-- FIXED: local-safe link -->
     <a href="index.html" class="brand">Nina<span>Nova</span><em>TV</em></a>
   </div>
 </header>
@@ -92,7 +91,6 @@
           <small>If you prefer quicker replies</small>
         </a>
 
-        <!-- FIXED: local-safe link -->
         <a href="index.html">
           ← Back to the quiet corner
           <small>Take your time</small>
@@ -113,7 +111,8 @@
 </footer>
 
 <script>
-  const API_URL = "https://nina-grok-manychat.onrender.com/grok";
+  // ✅ CORRECT LIVE BACKEND
+  const API_URL = "https://ninanovavip-backend.onrender.com/grok";
 
   const chatBox = document.getElementById("chat-messages");
   const input = document.getElementById("chat-input");
@@ -126,7 +125,7 @@
     localStorage.setItem("nina_session", sessionId);
   }
 
-  function addMessage(text, who){
+  function addMessage(text, who) {
     const div = document.createElement("div");
     div.className = `msg ${who}`;
     div.textContent = text;
@@ -134,7 +133,7 @@
     chatBox.scrollTop = chatBox.scrollHeight;
   }
 
-  function addTyping(){
+  function addTyping() {
     const div = document.createElement("div");
     div.className = "msg nina";
     div.id = "typing";
@@ -143,12 +142,12 @@
     chatBox.scrollTop = chatBox.scrollHeight;
   }
 
-  function removeTyping(){
+  function removeTyping() {
     const t = document.getElementById("typing");
     if (t) t.remove();
   }
 
-  async function sendMessage(){
+  async function sendMessage() {
     const text = input.value.trim();
     if (!text) return;
 
@@ -163,8 +162,8 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           text,
-          source: "site",
-          sessionId
+          sessionId,
+          source: "site"
         })
       });
 
@@ -176,15 +175,15 @@
           data.grok_reply || "i saw this 🤍 i’ll reply properly soon",
           "nina"
         );
-      }, 18000 + Math.random() * 25000);
+      }, 1200 + Math.random() * 2200);
 
-    } catch {
+    } catch (err) {
       removeTyping();
       addMessage("sorry — i missed that. try again later 🤍", "nina");
     }
   }
 
-  sendBtn.onclick = sendMessage;
+  sendBtn.addEventListener("click", sendMessage);
   input.addEventListener("keydown", e => {
     if (e.key === "Enter") sendMessage();
   });

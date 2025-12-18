@@ -1,5 +1,5 @@
 /* ==========================================
-   NINA NOVA VIP — ENIGMATIC CREATOR THEME
+   NINA NOVA TV — ENIGMATIC CREATOR THEME
    Warm • Intimate • Calm • Mobile-first
    ========================================== */
 
@@ -50,17 +50,14 @@ a{color:inherit;text-decoration:none}
 strong{font-weight:800}
 
 /* ==========================================
-   FULL PAGE BACKGROUND (IMAGE + OVERLAY)
+   FULL PAGE BACKGROUND
    ========================================== */
 body.has-bg{
   background:
-    linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,.5)),
+    linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.55)),
     url("images/4.png") center / cover no-repeat fixed;
 }
 
-/* ==========================================
-   SOFT AMBIENT GLOW (SUBTLE)
-   ========================================== */
 body::before{
   content:"";
   position:fixed;
@@ -89,7 +86,7 @@ body::before{
   padding:14px 20px;
   display:flex;
   align-items:center;
-  justify-content:space-between;
+  gap:14px;
 }
 
 .brand{
@@ -103,6 +100,14 @@ body::before{
 
 .brand span{color:var(--pink)}
 .brand em{font-style:normal;color:var(--orange);font-size:.9em}
+
+.location{
+  margin-left:auto;
+  font-size:.85rem;
+  color:var(--text-muted);
+  opacity:.85;
+  white-space:nowrap;
+}
 
 /* ==========================================
    BUTTONS
@@ -131,16 +136,39 @@ body::before{
   box-shadow:none;
 }
 
+.btn.platform{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  font-size:1.05rem;
+}
+
+.btn.platform.onlyfans{
+  border-color:#00aff0;
+  color:#00aff0;
+}
+
+.btn.platform.onlyfans:hover{
+  background:#00aff0;
+  color:#fff;
+}
+
+.btn.platform.fanvue{
+  background:linear-gradient(135deg,#ff4fa0,#ff8c32);
+}
+
 /* ==========================================
-   HERO CARD
+   HERO LAYOUT (FIXED)
    ========================================== */
 .hero{
   max-width:1100px;
   margin:48px auto;
   padding:72px 28px;
   display:grid;
-  grid-template-columns:1.1fr 1fr;
+  grid-template-columns:1.15fr .85fr;
   gap:42px;
+  align-items:start;
   background:rgba(18,18,26,.7);
   backdrop-filter:var(--blur);
   border-radius:var(--radius-lg);
@@ -167,31 +195,34 @@ body::before{
 }
 
 /* ==========================================
-   CTA AREA (CHAT PROMOTION IMPROVED)
+   CTA
    ========================================== */
 .hero .cta{
-  margin-top:30px;
+  margin-top:28px;
   display:flex;
   gap:16px;
   flex-wrap:wrap;
 }
 
-.hero .cta::after{
-  content:"I like real conversations • no pressure";
-  display:block;
-  margin-top:14px;
+.hero .cta.monetisation{
+  margin-top:32px;
+}
+
+.cta-subtle{
+  margin-top:10px;
   font-size:.9rem;
-  color:rgba(255,255,255,.65);
+  color:rgba(255,255,255,.7);
   font-style:italic;
 }
 
 /* ==========================================
-   HERO IMAGE
+   HERO IMAGES (STACKED RIGHT)
    ========================================== */
 .hero-image-wrap{
   display:flex;
+  flex-direction:column;
   align-items:center;
-  justify-content:center;
+  gap:26px;
 }
 
 .hero-portrait{
@@ -213,7 +244,7 @@ body::before{
 }
 
 /* ==========================================
-   LINK HUB (INSIDE HERO)
+   LINKS
    ========================================== */
 .links{
   margin-top:34px;
@@ -248,18 +279,7 @@ body::before{
 }
 
 /* ==========================================
-   CONTACT HERO VARIANT
-   ========================================== */
-.contact-hero{
-  background:
-    linear-gradient(180deg,
-      rgba(255,79,160,.14),
-      rgba(14,14,22,.85)
-    );
-}
-
-/* ==========================================
-   FOOTER (UPGRADED)
+   FOOTER
    ========================================== */
 .footer{
   margin-top:70px;
@@ -278,146 +298,8 @@ body::before{
 }
 
 /* ==========================================
-   MOBILE OPTIMISATION
+   CHAT PREVIEW
    ========================================== */
-@media(max-width:900px){
-  .hero{
-    grid-template-columns:1fr;
-    padding:56px 22px;
-  }
-  .hero-portrait{max-width:280px}
-}
-
-@media(max-width:600px){
-  .hero h1{font-size:2rem}
-  .hero p{font-size:1rem}
-
-  .btn{
-    width:100%;
-    text-align:center;
-  }
-
-  .hero .cta{
-    flex-direction:column;
-  }
-
-  .links a{
-    padding:22px 18px;
-    font-size:1.05rem;
-  }
-}
-
-@media(max-width:380px){
-  .hero{padding:46px 16px}
-  .brand{font-size:1.6rem}
-}
-
-
-/* ==========================================
-   PRIVATE CHAT — SOFT & HUMAN
-   ========================================== */
-
-.chat-box{
-  margin-top:28px;
-  background:rgba(14,14,20,.75);
-  border:1px solid rgba(255,255,255,.06);
-  border-radius:var(--radius-md);
-  overflow:hidden;
-  animation:fadeUp .8s ease both;
-}
-
-.chat-header{
-  padding:12px 16px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-weight:700;
-  font-size:.95rem;
-  border-bottom:1px solid rgba(255,255,255,.06);
-}
-
-.chat-header small{
-  font-size:.75rem;
-  opacity:.65;
-  font-weight:500;
-}
-
-#chat-messages{
-  padding:14px;
-  height:240px;
-  overflow-y:auto;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.msg{
-  max-width:78%;
-  padding:10px 14px;
-  border-radius:14px;
-  font-size:.92rem;
-  line-height:1.45;
-}
-
-.msg.user{
-  align-self:flex-end;
-  background:linear-gradient(135deg,var(--purple),var(--pink));
-  color:#fff;
-}
-
-.msg.nina{
-  align-self:flex-start;
-  background:#1a1a24;
-  border:1px solid rgba(255,255,255,.05);
-}
-
-.chat-input{
-  display:flex;
-  gap:8px;
-  padding:10px;
-  border-top:1px solid rgba(255,255,255,.06);
-}
-
-.chat-input input{
-  flex:1;
-  padding:11px 14px;
-  border-radius:999px;
-  border:none;
-  background:#0e0e16;
-  color:#fff;
-  font-size:.9rem;
-}
-
-.chat-input button{
-  padding:11px 16px;
-  border-radius:999px;
-  border:none;
-  font-weight:700;
-  background:linear-gradient(135deg,var(--pink),var(--purple));
-  color:#fff;
-  cursor:pointer;
-}
-
-/* subtle hint she's not always instant */
-.chat-box::after{
-  content:"I reply when I can 🤍";
-  display:block;
-  padding:8px 14px;
-  font-size:.75rem;
-  opacity:.55;
-  font-style:italic;
-}
-
-/* Mobile tightening */
-@media(max-width:600px){
-  #chat-messages{height:200px}
-}
-
-/* ==========================================
-   CHAT PREVIEW — HOME PAGE TEASER
-   (visual only, links to chat.html)
-   ========================================== */
-
 .chat-preview{
   display:block;
   margin-top:26px;
@@ -425,7 +307,6 @@ body::before{
   border:1px solid rgba(255,255,255,.08);
   border-radius:var(--radius-md);
   overflow:hidden;
-  cursor:pointer;
   transition:var(--transition);
 }
 
@@ -443,12 +324,6 @@ body::before{
   border-bottom:1px solid rgba(255,255,255,.06);
 }
 
-.chat-preview-header small{
-  font-size:.7rem;
-  opacity:.65;
-  font-weight:500;
-}
-
 .chat-preview-body{
   padding:14px 16px;
   display:flex;
@@ -456,16 +331,65 @@ body::before{
   gap:10px;
 }
 
-.chat-preview-body .msg{
-  max-width:70%;
-  font-size:.85rem;
-  opacity:.9;
-}
-
 .chat-preview-footer{
   padding:10px 16px;
   border-top:1px solid rgba(255,255,255,.06);
   font-size:.8rem;
   opacity:.6;
+  font-style:italic;
+}
+
+/* ==========================================
+   MOBILE
+   ========================================== */
+@media(max-width:900px){
+  .hero{
+    grid-template-columns:1fr;
+    gap:34px;
+    padding:56px 22px;
+  }
+  .hero-image-wrap{
+    order:2;
+  }
+  .hero-portrait{max-width:280px}
+}
+
+@media(max-width:600px){
+  .btn{width:100%}
+  .hero .cta{flex-direction:column}
+  .links a{padding:22px 18px}
+}
+
+@media(max-width:380px){
+  .brand{font-size:1.6rem}
+}
+
+/* ==========================================
+   PRIMARY LINK EMPHASIS
+   ========================================== */
+.primary-link{
+  background:
+    linear-gradient(135deg,
+      rgba(255,79,160,.25),
+      rgba(161,43,255,.25)
+    );
+  border:1px solid rgba(255,79,160,.35);
+  box-shadow:0 0 22px rgba(255,79,160,.25);
+}
+
+.primary-link:hover{
+  transform:translateY(-4px);
+  box-shadow:0 0 36px rgba(255,79,160,.45);
+}
+
+/* ==========================================
+   OPTIONAL HUMAN DELAY HINT (CHAT)
+   ========================================== */
+.chat-box::after{
+  content:"I reply when I can 🤍";
+  display:block;
+  padding:8px 14px;
+  font-size:.75rem;
+  opacity:.55;
   font-style:italic;
 }
