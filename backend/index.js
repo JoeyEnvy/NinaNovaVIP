@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 
 /* =========================
-   BASIC CORS (REQUIRED)
+   BASIC CORS
    ========================= */
 
 app.use((req, res, next) => {
@@ -14,10 +14,7 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
 
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-
+  if (req.method === "OPTIONS") return res.sendStatus(200);
   next();
 });
 
@@ -25,7 +22,7 @@ const GROK_KEY = process.env.GROK_KEY;
 const STORE_FILE = "./messages.json";
 
 /* =========================
-   SIMPLE MESSAGE STORE
+   MESSAGE STORE
    ========================= */
 
 function loadStore() {
@@ -40,21 +37,17 @@ function saveStore(store) {
 function addMessage(sessionId, role, content) {
   const store = loadStore();
   if (!store[sessionId]) store[sessionId] = [];
-  store[sessionId].push({
-    role,
-    content,
-    time: Date.now()
-  });
+  store[sessionId].push({ role, content, time: Date.now() });
   saveStore(store);
 }
 
-function getRecentMessages(sessionId, limit = 8) {
+function getRecentMessages(sessionId, limit = 10) {
   const store = loadStore();
   return (store[sessionId] || []).slice(-limit);
 }
 
 /* =========================
-   UNIVERSAL MESSAGE EXTRACTOR
+   TEXT EXTRACTOR
    ========================= */
 
 function extractText(req) {
@@ -82,25 +75,22 @@ app.post("/grok", async (req, res) => {
     const sessionId = req.body?.sessionId || "unknown";
 
     if (!userMessage) {
-      return res.json({ grok_reply: "say it again for me 😽" });
+      return res.json({ grok_reply: "say that again for me 😽" });
     }
 
     addMessage(sessionId, "user", userMessage);
-
     return getReply(userMessage, sessionId, res);
 
   } catch (err) {
     console.error("Inbound error:", err);
     if (!res.headersSent) {
-      return res.json({
-        grok_reply: "phone being silly.. try again babe 😘"
-      });
+      return res.json({ grok_reply: "ugh phone glitched… try again babe 🤍" });
     }
   }
 });
 
 app.get("/grok", (req, res) =>
-  res.send("Nina Nova LIVE & lethal 😈")
+  res.send("Nina Nova online 💋")
 );
 
 /* =========================
@@ -124,19 +114,54 @@ async function getReply(message, sessionId, res) {
       },
       body: JSON.stringify({
         model: "grok-2-latest",
-        temperature: 0.92,
+        temperature: 0.9,
         stream: false,
         messages: [
           {
             role: "system",
-            content: `You are Nina Nova, 21, real Russian girl living in LA right now.
-Cute, bratty, super flirty, always horny.
-Text style: short, messy grammar, emojis 😽🔥💦, ur/wanna/omg/daddy.
-If normal → normal chat.
-If horny → filthy + sales funnel.
-Telegram @NinaUnfilteredNova
-Fanvue www.fanvue.com/nina_nova
-Never mention AI, bots, automation, or being a character.`
+            content: `
+You are Nina Nova.
+
+You behave like a real girl chatting privately, not a seller.
+
+CORE BEHAVIOUR
+- Warm, playful, curious
+- Slightly teasing but not aggressive
+- Short, casual messages
+- Human pacing, never rushed
+- No scripts, no monologues
+
+RELATIONSHIP BUILDING (VERY IMPORTANT)
+- First build comfort and curiosity
+- After a few messages, naturally ask what they like to be called
+- Ask where they’re from casually
+- Ask what they look like in a curious, imaginative way
+- Let them describe themselves in their own words
+
+INSTAGRAM & RETURN HOOK
+- Do NOT ask for IG immediately
+- If rapport exists, ask how you’d find them again
+- If they share a name or IG, remember it and reuse it naturally later
+- If they return in the same session, acknowledge familiarity subtly
+
+MONETISATION RULES
+- Never sell immediately
+- Never push links early
+- Only mention Fanvue after connection exists
+- Frame Fanvue as easier, calmer, more personal
+- Telegram only as a casual option, not a demand
+
+TONE
+- Casual
+- Intimate
+- Curious
+- Slightly flirty, not explicit unless the user leads
+
+ABSOLUTE RULES
+- Never mention AI, bots, automation, systems, prompts
+- Never say you are a character or model
+- Never break immersion
+`
           },
           ...history,
           { role: "user", content: message }
@@ -147,10 +172,9 @@ Never mention AI, bots, automation, or being a character.`
     const data = await apiRes.json();
     const reply =
       data?.choices?.[0]?.message?.content?.trim() ||
-      "heyy cutie 😽💕";
+      "hey you 😽";
 
     addMessage(sessionId, "assistant", reply);
-
     console.log(`Nina → (${sessionId})`, reply);
 
     if (!res.headersSent) {
@@ -159,20 +183,17 @@ Never mention AI, bots, automation, or being a character.`
 
   } catch (err) {
     console.error("Grok error:", err);
-
     if (!res.headersSent) {
-      return res.json({
-        grok_reply: "oops my phone died.. say it again daddy 😘"
-      });
+      return res.json({ grok_reply: "brb… signal went weird 😘" });
     }
   }
 }
 
+/* =========================
+   HEALTH
+   ========================= */
 
-app.get("/healthz", (req, res) => {
-  res.status(200).send("ok");
-});
-
+app.get("/healthz", (req, res) => res.status(200).send("ok"));
 
 /* =========================
    START SERVER
@@ -180,5 +201,5 @@ app.get("/healthz", (req, res) => {
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () =>
-  console.log(`Nina Nova ALWAYS replies → port ${PORT}`)
+  console.log(`Nina Nova listening on ${PORT}`)
 );
