@@ -214,7 +214,7 @@ Speak like a real DM, not a script.
         Authorization: `Bearer ${GROK_KEY}`
       },
       body: JSON.stringify({
-    model: "grok-beta",
+    model: "grok-2-latest",
 
         temperature: 0.92,
 

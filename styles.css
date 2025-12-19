@@ -124,7 +124,7 @@ body::before{
 
 
 /* ==========================================
-   HAMBURGER + MOBILE MENU (HIDDEN ON DESKTOP)
+   HAMBURGER + MOBILE MENU
    ========================================== */
 .hamburger{
   display:none;
@@ -149,6 +149,8 @@ body::before{
   border-top:1px solid rgba(255,255,255,.08);
 }
 
+.mobile-menu.open{display:flex}
+
 .mobile-menu a{
   padding:18px 22px;
   border-bottom:1px solid rgba(255,255,255,.08);
@@ -157,7 +159,7 @@ body::before{
 
 
 /* ==========================================
-   BUTTONS (DESKTOP)
+   BUTTONS
    ========================================== */
 .btn{
   padding:14px 34px;
@@ -184,7 +186,7 @@ body::before{
 
 
 /* ==========================================
-   CTA BLOCKS (DESKTOP – OWN SPACING)
+   CTA BLOCKS
    ========================================== */
 .cta{
   display:flex;
@@ -206,7 +208,7 @@ body::before{
 
 
 /* ==========================================
-   HERO (DESKTOP)
+   HERO
    ========================================== */
 .hero{
   max-width:1100px;
@@ -240,7 +242,7 @@ body::before{
 
 
 /* ==========================================
-   HERO IMAGES (DESKTOP)
+   HERO IMAGES
    ========================================== */
 .hero-image-wrap{
   display:flex;
@@ -257,19 +259,119 @@ body::before{
 
 
 /* ==========================================
-   CHAT PREVIEW (DESKTOP)
+   CHAT PREVIEW (HOMEPAGE)
    ========================================== */
 .chat-preview{
   margin-top:34px;
-  background:rgba(14,14,20,.7);
+  background:rgba(14,14,20,.75);
   border-radius:var(--radius-md);
   border:1px solid rgba(255,255,255,.08);
   overflow:hidden;
 }
 
+.chat-preview-header,
+.chat-preview-footer{
+  padding:12px 16px;
+  font-size:.85rem;
+  opacity:.8;
+}
+
+.chat-preview-body{
+  padding:14px 16px;
+}
+
+.msg.nina{
+  background:rgba(255,255,255,.06);
+  padding:10px 14px;
+  border-radius:14px;
+  margin-bottom:8px;
+  width:fit-content;
+}
+
 
 /* ==========================================
-   LINKS (DESKTOP)
+   CHAT PAGE — RESTORED AESTHETIC
+   ========================================== */
+.contact-hero{
+  max-width:1100px;
+  margin:46px auto;
+  padding:70px 28px;
+  background:rgba(18,18,26,.72);
+  backdrop-filter:var(--blur);
+  border-radius:var(--radius-lg);
+}
+
+.contact-hero h1{
+  font-family:'Anton',sans-serif;
+  font-size:clamp(2.1rem,4vw,3.4rem);
+  background:linear-gradient(90deg,var(--purple),var(--pink));
+  -webkit-background-clip:text;
+  color:transparent;
+}
+
+.contact-hero p{
+  margin-top:16px;
+  color:var(--text-muted);
+  font-size:1.05rem;
+}
+
+.chat-box{
+  margin-top:36px;
+  background:rgba(14,14,20,.75);
+  border-radius:var(--radius-md);
+  border:1px solid rgba(255,255,255,.1);
+  overflow:hidden;
+}
+
+.chat-header{
+  padding:14px 16px;
+  font-weight:800;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+#chat-messages{
+  padding:16px;
+  max-height:360px;
+  overflow-y:auto;
+}
+
+.msg.user{
+  margin-left:auto;
+  background:linear-gradient(135deg,var(--pink),var(--purple));
+  color:#fff;
+  padding:10px 14px;
+  border-radius:14px;
+  max-width:75%;
+}
+
+.chat-input{
+  display:flex;
+  gap:10px;
+  padding:14px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+
+.chat-input input{
+  flex:1;
+  background:rgba(255,255,255,.06);
+  border:none;
+  border-radius:999px;
+  padding:12px 16px;
+  color:#fff;
+}
+
+.chat-input button{
+  border-radius:999px;
+  padding:12px 20px;
+  background:linear-gradient(135deg,var(--pink),var(--purple));
+  border:none;
+  color:#fff;
+  font-weight:800;
+}
+
+
+/* ==========================================
+   LINKS
    ========================================== */
 .links{
   margin-top:44px;
@@ -288,7 +390,7 @@ body::before{
 
 
 /* ==========================================
-   FOOTER (DESKTOP)
+   FOOTER
    ========================================== */
 .footer{
   margin-top:72px;
@@ -300,37 +402,28 @@ body::before{
 
 
 /* ======================================================================
-   ======================================================================
    =====================  MOBILE OVERRIDES START  ========================
-   ======================================================================
    ====================================================================== */
 
 
-/* ==========================================
-   ≤1024px (TABLET / SMALL LAPTOP)
-   ========================================== */
+/* ≤1024px */
 @media (max-width:1024px){
   .hamburger{display:block}
   .nav-cta{display:none}
 }
 
 
-/* ==========================================
-   ≤768px (PHONE — PRIMARY MOBILE)
-   ========================================== */
+/* ≤768px */
 @media (max-width:768px){
 
   .location-strong{display:none}
 
-  .nav-inner{
-    padding:12px 14px;
-  }
+  .nav-inner{padding:12px 14px}
 
-  .brand{
-    font-size:1.55rem;
-  }
+  .brand{font-size:1.55rem}
 
-  .hero{
+  .hero,
+  .contact-hero{
     margin:18px 12px;
     padding:36px 18px;
     grid-template-columns:1fr;
@@ -338,17 +431,18 @@ body::before{
     border-radius:20px;
   }
 
-  .hero h1{
+  .hero h1,
+  .contact-hero h1{
     font-size:2.4rem;
     line-height:1.15;
   }
 
-  .hero p{
+  .hero p,
+  .contact-hero p{
     font-size:1rem;
     margin-top:12px;
   }
 
-  /* CTA STACK — MOBILE */
   .cta{
     flex-direction:column;
     align-items:stretch;
@@ -362,13 +456,9 @@ body::before{
     font-size:1rem;
   }
 
-  .hero-image-wrap{
-    gap:16px;
-  }
+  .hero-image-wrap{gap:16px}
 
-  .hero-portrait{
-    max-width:260px;
-  }
+  .hero-portrait{max-width:260px}
 
   .links{
     margin-top:32px;
@@ -389,9 +479,177 @@ body::before{
 
 
 /* ==========================================
+   ≤380px (SMALL PHONES – MODERN)
+   ========================================== */
+@media (max-width:380px){
+
+  .nav-inner{
+    padding:11px 13px;
+  }
+
+  .brand{
+    font-size:1.5rem;
+  }
+
+  .hero,
+  .contact-hero{
+    margin:16px 11px;
+    padding:34px 16px;
+  }
+
+  .hero h1,
+  .contact-hero h1{
+    font-size:2.25rem;
+    line-height:1.14;
+  }
+
+  .hero p,
+  .contact-hero p{
+    font-size:1rem;
+  }
+
+  .btn{
+    padding:15px;
+    font-size:.98rem;
+  }
+
+  .hero-portrait{
+    max-width:250px;
+  }
+}
+
+
+/* ==========================================
    ≤360px (SMALL PHONES)
    ========================================== */
 @media (max-width:360px){
-  .hero h1{font-size:2.1rem}
-  .brand{font-size:1.45rem}
+
+  .nav-inner{
+    padding:10px 12px;
+  }
+
+  .brand{
+    font-size:1.45rem;
+  }
+
+  .hero,
+  .contact-hero{
+    margin:15px 10px;
+    padding:32px 15px;
+  }
+
+  .hero h1,
+  .contact-hero h1{
+    font-size:2.1rem;
+    line-height:1.13;
+  }
+
+  .hero p,
+  .contact-hero p{
+    font-size:.97rem;
+  }
+
+  .btn{
+    padding:14px;
+    font-size:.96rem;
+  }
+
+  .hero-portrait{
+    max-width:240px;
+  }
+
+  .links a{
+    padding:15px;
+    font-size:.92rem;
+  }
+}
+
+
+/* ==========================================
+   ≤340px (COMPACT MODERN PHONES)
+   ========================================== */
+@media (max-width:340px){
+
+  .nav-inner{
+    padding:10px 12px;
+  }
+
+  .brand{
+    font-size:1.38rem;
+  }
+
+  .hero,
+  .contact-hero{
+    margin:15px 10px;
+    padding:30px 14px;
+  }
+
+  .hero h1,
+  .contact-hero h1{
+    font-size:2rem;
+    line-height:1.13;
+  }
+
+  .hero p,
+  .contact-hero p{
+    font-size:.96rem;
+  }
+
+  .btn{
+    padding:14px;
+    font-size:.95rem;
+  }
+
+  .hero-portrait{
+    max-width:235px;
+  }
+
+  .links a{
+    padding:15px;
+    font-size:.92rem;
+  }
+}
+/* ==========================================
+   ≤320px (VERY SMALL / OLDER PHONES)
+   ========================================== */
+@media (max-width:320px){
+
+  .nav-inner{
+    padding:10px 12px;
+  }
+
+  .brand{
+    font-size:1.34rem;
+  }
+
+  .hero,
+  .contact-hero{
+    margin:15px 10px;
+    padding:30px 14px;
+  }
+
+  .hero h1,
+  .contact-hero h1{
+    font-size:1.9rem;
+    line-height:1.14;
+  }
+
+  .hero p,
+  .contact-hero p{
+    font-size:.95rem;
+  }
+
+  .btn{
+    padding:14px;
+    font-size:.94rem;
+  }
+
+  .hero-portrait{
+    max-width:230px;
+  }
+
+  .links a{
+    padding:15px;
+    font-size:.9rem;
+  }
 }
