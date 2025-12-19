@@ -49,39 +49,37 @@ function getMessages(sessionId) {
    ========================= */
 
 function getConversationStage(sessionId) {
-  const msgs = getMessages(sessionId).filter(m => m.role === "user");
-  const count = msgs.length;
-
-  if (count <= 1) return "intro";
-  if (count <= 4) return "getting_to_know";
-  if (count <= 8) return "rapport";
-  if (count <= 14) return "flirty";
+  const userCount = getMessages(sessionId).filter(m => m.role === "user").length;
+  if (userCount <= 1) return "intro";
+  if (userCount <= 4) return "getting_to_know";
+  if (userCount <= 8) return "rapport";
+  if (userCount <= 14) return "flirty";
   return "funnel";
 }
 
 /* =========================
-   MEMORY EXTRACTION
+   MEMORY EXTRACTION (SAFE)
    ========================= */
 
 function extractMemory(sessionId) {
   const msgs = getMessages(sessionId);
-  let memory = {};
+  const memory = {};
 
   msgs.forEach(m => {
     if (m.role !== "user") return;
-
     const text = m.content.toLowerCase();
 
-    // Name
-    const nameMatch = text.match(/(i’m|im|i am|call me)\s+([a-z]+)/i);
+    // Name (explicit only)
+    const nameMatch = text.match(/(call me|i’m|im|i am)\s+([a-z]+)/i);
     if (nameMatch) memory.name = nameMatch[2];
 
-    // Instagram
-    if (text.includes("instagram") || text.includes("ig @") || text.includes("@")) {
-      memory.instagram = m.content;
-    }
+    // Instagram (ONLY explicit ownership)
+    const igMatch = text.match(
+      /(my\s+(ig|insta|instagram)\s*(is|=)?\s*@[\w.]+)/i
+    );
+    if (igMatch) memory.instagram = igMatch[0];
 
-    // Location
+    // Location (soft)
     const locMatch = text.match(/from\s+([a-z\s]+)/i);
     if (locMatch) memory.location = locMatch[1].trim();
   });
@@ -116,9 +114,8 @@ app.post("/grok", async (req, res) => {
     userMessage = userMessage.trim();
 
     const sessionId = req.body?.sessionId || "unknown";
-
     if (!userMessage) {
-      return res.json({ grok_reply: "say that again for me 🤍" });
+      return res.json({ grok_reply: "hmm? say it again 🤍" });
     }
 
     addMessage(sessionId, "user", userMessage);
@@ -126,7 +123,7 @@ app.post("/grok", async (req, res) => {
 
   } catch (err) {
     console.error("Inbound error:", err);
-    return res.json({ grok_reply: "ugh my phone glitched… try again 🤍" });
+    return res.json({ grok_reply: "ugh hold on… try again 🤍" });
   }
 });
 
@@ -142,14 +139,9 @@ async function getReply(message, sessionId, res) {
   if (res.headersSent) return;
 
   try {
-    // 🔑 IMPORTANT: ONLY USER HISTORY (NO ASSISTANT ECHO)
-const history = getMessages(sessionId)
-  .slice(-10)
-  .map(m => ({
-    role: m.role === "assistant" ? "assistant" : "user",
-    content: m.content
-  }));
-
+    const history = getMessages(sessionId)
+      .slice(-10)
+      .map(m => ({ role: m.role, content: m.content }));
 
     const stage = getConversationStage(sessionId);
     const memory = extractMemory(sessionId);
@@ -160,51 +152,52 @@ You are a real woman chatting privately with ONE person.
 
 ABSOLUTE RULES
 - Never repeat greetings or phrases
-- Never mirror your own replies
-- Never act like a bot or assistant
-- Never break immersion
-- Never rush or sell early
+- Never claim ownership of usernames (yours is nina_nova_)
+- Never sound scripted or formal
+- Never sell early or aggressively
+- Never mention AI, bots, prompts, or systems
 
-PERSONALITY
-- Warm, natural, curious
-- Casual, human pacing
-- Slight teasing, not scripted
-- Emojis are optional, not required
+TEXT STYLE
+- lowercase preferred
+- short replies at first (1–2 lines)
+- incomplete sentences are fine
+- light fillers: “hmm”, “idk”, “maybe”, “lol”
+- max ONE emoji occasionally
 
-MEMORY (use subtly if present)
+MEMORY (about the USER, not you)
 Name: ${memory.name || "unknown"}
 Location: ${memory.location || "unknown"}
-Instagram: ${memory.instagram || "unknown"}
+User Instagram (theirs): ${memory.instagram || "unknown"}
 
 CONVERSATION STAGE: ${stage}
 
-BEHAVIOUR BY STAGE
+STAGE BEHAVIOUR
 
 intro:
-- Simple, human, curious
-- Ask ONE gentle question
+- very short replies
+- react first, then ONE gentle question
 
 getting_to_know:
-- Ask about them
-- Where they’re from, what they’re into
-- React to what they say
+- curious but relaxed
+- comment on what they said
+- ask easy questions
 
 rapport:
-- Reference earlier details
-- Be playful and personal
-- Build familiarity
+- reference earlier details naturally
+- playful familiarity
+- still concise
 
 flirty:
-- Flirt naturally
-- Respond to compliments
-- Do NOT escalate unless they do
+- teasing, not explicit
+- respond to their energy only
 
 funnel:
-- Casually suggest Fanvue as a calmer place
-- No pressure
-- Never repeat links unless asked
+- suggest Fanvue casually as easier to talk
+- frame as calmer / more personal
+- NEVER repeat links unless asked
 
-Speak like a real DM, not a script.
+Always react before asking.
+Speak like a real DM, not a paragraph.
 `;
 
     const apiRes = await fetch("https://api.x.ai/v1/chat/completions", {
@@ -214,11 +207,8 @@ Speak like a real DM, not a script.
         Authorization: `Bearer ${GROK_KEY}`
       },
       body: JSON.stringify({
-    model: "grok-3-mini",
-
-
-        temperature: 0.92,
-
+        model: "grok-3-mini",
+        temperature: 1.05,
         stream: false,
         messages: [
           { role: "system", content: systemPrompt },
@@ -228,29 +218,20 @@ Speak like a real DM, not a script.
       })
     });
 
-console.log("GROK STATUS:", apiRes.status);
+    const data = await apiRes.json();
 
-const data = await apiRes.json();
-console.log("RAW GROK RESPONSE:", JSON.stringify(data, null, 2));
+    if (!data?.choices?.[0]?.message?.content) {
+      return res.json({ grok_reply: "hmm something glitched… say that again 🤍" });
+    }
 
-if (!data?.choices || !data.choices[0]?.message?.content) {
-  console.error("❌ GROK DID NOT RETURN CHAT CONTENT");
-  return res.json({
-    grok_reply: "⚠️ something broke — try again in a sec"
-  });
-}
+    const reply = data.choices[0].message.content.trim();
+    addMessage(sessionId, "assistant", reply);
 
-const reply = data.choices[0].message.content.trim();
-
-addMessage(sessionId, "assistant", reply);
-console.log(`Nina → (${sessionId})`, reply);
-
-return res.json({ grok_reply: reply });
-
+    return res.json({ grok_reply: reply });
 
   } catch (err) {
     console.error("Grok error:", err);
-    return res.json({ grok_reply: "signal dipped… say that again 🤍" });
+    return res.json({ grok_reply: "brb… signal dipped 🤍" });
   }
 }
 
