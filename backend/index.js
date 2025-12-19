@@ -143,10 +143,13 @@ async function getReply(message, sessionId, res) {
 
   try {
     // 🔑 IMPORTANT: ONLY USER HISTORY (NO ASSISTANT ECHO)
-    const history = getMessages(sessionId)
-      .filter(m => m.role === "user")
-      .slice(-8)
-      .map(m => ({ role: "user", content: m.content }));
+const history = getMessages(sessionId)
+  .slice(-10)
+  .map(m => ({
+    role: m.role === "assistant" ? "assistant" : "user",
+    content: m.content
+  }));
+
 
     const stage = getConversationStage(sessionId);
     const memory = extractMemory(sessionId);
@@ -211,8 +214,10 @@ Speak like a real DM, not a script.
         Authorization: `Bearer ${GROK_KEY}`
       },
       body: JSON.stringify({
-        model: "grok-2-latest",
-        temperature: 0.78,
+    model: "grok-beta",
+
+        temperature: 0.92,
+
         stream: false,
         messages: [
           { role: "system", content: systemPrompt },
@@ -222,15 +227,25 @@ Speak like a real DM, not a script.
       })
     });
 
-    const data = await apiRes.json();
-    const reply =
-      data?.choices?.[0]?.message?.content?.trim() ||
-      "hey… tell me more 🤍";
+console.log("GROK STATUS:", apiRes.status);
 
-    addMessage(sessionId, "assistant", reply);
-    console.log(`Nina → (${sessionId})`, reply);
+const data = await apiRes.json();
+console.log("RAW GROK RESPONSE:", JSON.stringify(data, null, 2));
 
-    return res.json({ grok_reply: reply });
+if (!data?.choices || !data.choices[0]?.message?.content) {
+  console.error("❌ GROK DID NOT RETURN CHAT CONTENT");
+  return res.json({
+    grok_reply: "⚠️ something broke — try again in a sec"
+  });
+}
+
+const reply = data.choices[0].message.content.trim();
+
+addMessage(sessionId, "assistant", reply);
+console.log(`Nina → (${sessionId})`, reply);
+
+return res.json({ grok_reply: reply });
+
 
   } catch (err) {
     console.error("Grok error:", err);

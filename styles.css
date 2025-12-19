@@ -1,13 +1,15 @@
 /* ==========================================
    NINA NOVA TV — ENIGMATIC CREATOR THEME
    Warm • Intimate • Calm
-   DESKTOP FIRST + MOBILE OVERRIDES AT BOTTOM
+   DESKTOP FIRST
    ========================================== */
+
 
 /* ==========================================
    FONTS
    ========================================== */
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter+Tight:wght@400;600;700;800&display=swap');
+
 
 /* ==========================================
    ROOT VARIABLES
@@ -33,10 +35,15 @@
   --transition:.35s cubic-bezier(.4,0,.2,1);
 }
 
+
 /* ==========================================
    RESET / BASE
    ========================================== */
-*{box-sizing:border-box;margin:0;padding:0}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
 html,body{
   min-height:100%;
@@ -50,6 +57,7 @@ html,body{
 
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
+
 
 /* ==========================================
    BACKGROUND
@@ -70,8 +78,9 @@ body::before{
   z-index:-1;
 }
 
+
 /* ==========================================
-   NAVBAR
+   NAVBAR (DESKTOP)
    ========================================== */
 .nav{
   position:sticky;
@@ -111,11 +120,11 @@ body::before{
   border-radius:999px;
   background:rgba(255,255,255,.06);
   border:1px solid rgba(255,255,255,.12);
-  box-shadow:inset 0 0 18px rgba(255,255,255,.04);
 }
 
+
 /* ==========================================
-   HAMBURGER + MOBILE MENU
+   HAMBURGER + MOBILE MENU (HIDDEN ON DESKTOP)
    ========================================== */
 .hamburger{
   display:none;
@@ -140,19 +149,18 @@ body::before{
   border-top:1px solid rgba(255,255,255,.08);
 }
 
-.mobile-menu.open{display:flex}
-
 .mobile-menu a{
   padding:18px 22px;
   border-bottom:1px solid rgba(255,255,255,.08);
   font-weight:700;
 }
 
+
 /* ==========================================
-   BUTTONS
+   BUTTONS (DESKTOP)
    ========================================== */
 .btn{
-  padding:14px 32px;
+  padding:14px 34px;
   border-radius:999px;
   font-weight:800;
   cursor:pointer;
@@ -163,6 +171,10 @@ body::before{
   transition:var(--transition);
 }
 
+.btn:hover{
+  transform:translateY(-2px);
+}
+
 .btn.ghost{
   background:transparent;
   border:2px solid var(--purple);
@@ -170,8 +182,31 @@ body::before{
   box-shadow:none;
 }
 
+
 /* ==========================================
-   HERO
+   CTA BLOCKS (DESKTOP – OWN SPACING)
+   ========================================== */
+.cta{
+  display:flex;
+  gap:16px;
+  margin-top:32px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.cta.monetisation{
+  margin-top:36px;
+}
+
+.cta-subtle{
+  margin-top:14px;
+  font-size:.95rem;
+  color:var(--text-muted);
+}
+
+
+/* ==========================================
+   HERO (DESKTOP)
    ========================================== */
 .hero{
   max-width:1100px;
@@ -199,8 +234,13 @@ body::before{
   font-size:1.08rem;
 }
 
+.hero p + p{
+  margin-top:12px;
+}
+
+
 /* ==========================================
-   HERO IMAGES
+   HERO IMAGES (DESKTOP)
    ========================================== */
 .hero-image-wrap{
   display:flex;
@@ -215,47 +255,30 @@ body::before{
   box-shadow:0 0 48px rgba(255,79,160,.25);
 }
 
+
 /* ==========================================
-   CHAT PREVIEW
+   CHAT PREVIEW (DESKTOP)
    ========================================== */
 .chat-preview{
-  margin-top:28px;
+  margin-top:34px;
   background:rgba(14,14,20,.7);
   border-radius:var(--radius-md);
   border:1px solid rgba(255,255,255,.08);
   overflow:hidden;
 }
 
-.chat-preview-header,
-.chat-preview-footer{
-  padding:12px 16px;
-  font-size:.85rem;
-  opacity:.8;
-}
-
-.chat-preview-body{
-  padding:14px 16px;
-}
-
-.msg.nina{
-  background:rgba(255,255,255,.06);
-  padding:10px 14px;
-  border-radius:14px;
-  margin-bottom:8px;
-  width:fit-content;
-}
 
 /* ==========================================
-   LINKS
+   LINKS (DESKTOP)
    ========================================== */
 .links{
-  margin-top:34px;
+  margin-top:44px;
   display:grid;
-  gap:14px;
+  gap:18px;
 }
 
 .links a{
-  padding:18px 20px;
+  padding:20px 22px;
   border-radius:var(--radius-md);
   background:var(--bg-panel);
   border:1px solid rgba(255,255,255,.08);
@@ -263,83 +286,38 @@ body::before{
   font-weight:800;
 }
 
+
 /* ==========================================
-   FOOTER
+   FOOTER (DESKTOP)
    ========================================== */
 .footer{
-  margin-top:60px;
-  padding:42px 18px;
+  margin-top:72px;
+  padding:46px 18px;
   text-align:center;
   color:var(--text-muted);
   background:rgba(10,10,14,.65);
 }
 
+
+/* ======================================================================
+   ======================================================================
+   =====================  MOBILE OVERRIDES START  ========================
+   ======================================================================
+   ====================================================================== */
+
+
 /* ==========================================
-   CHAT PAGE
+   ≤1024px (TABLET / SMALL LAPTOP)
    ========================================== */
-.chat-box{
-  background:rgba(14,14,20,.75);
-  border-radius:var(--radius-md);
-  border:1px solid rgba(255,255,255,.1);
-}
-
-.chat-header{
-  padding:14px 16px;
-  font-weight:800;
-  border-bottom:1px solid rgba(255,255,255,.08);
-}
-
-#chat-messages{
-  padding:16px;
-  max-height:360px;
-  overflow-y:auto;
-}
-
-.msg.user{
-  margin-left:auto;
-  background:linear-gradient(135deg,var(--pink),var(--purple));
-  color:#fff;
-  padding:10px 14px;
-  border-radius:14px;
-  max-width:75%;
-}
-
-.chat-input{
-  display:flex;
-  gap:10px;
-  padding:14px;
-  border-top:1px solid rgba(255,255,255,.08);
-}
-
-.chat-input input{
-  flex:1;
-  background:rgba(255,255,255,.06);
-  border:none;
-  border-radius:999px;
-  padding:12px 16px;
-  color:#fff;
-}
-
-.chat-input button{
-  border-radius:999px;
-  padding:12px 20px;
-  background:linear-gradient(135deg,var(--pink),var(--purple));
-  border:none;
-  color:#fff;
-  font-weight:800;
-}
-
-/* ==========================================================
-   MOBILE OVERRIDES — CLEAR, INTENTIONAL, FINAL
-   ========================================================== */
-
-/* ≤1024px */
 @media (max-width:1024px){
   .hamburger{display:block}
   .nav-cta{display:none}
 }
 
-/* ≤768px — REAL MOBILE FIX */
+
+/* ==========================================
+   ≤768px (PHONE — PRIMARY MOBILE)
+   ========================================== */
 @media (max-width:768px){
 
   .location-strong{display:none}
@@ -370,13 +348,18 @@ body::before{
     margin-top:12px;
   }
 
-  .hero > div > * + *{
-    margin-top:18px;
+  /* CTA STACK — MOBILE */
+  .cta{
+    flex-direction:column;
+    align-items:stretch;
+    gap:12px;
+    margin-top:26px;
   }
 
   .btn{
     width:100%;
     padding:16px;
+    font-size:1rem;
   }
 
   .hero-image-wrap{
@@ -388,7 +371,7 @@ body::before{
   }
 
   .links{
-    margin-top:26px;
+    margin-top:32px;
     gap:12px;
   }
 
@@ -398,12 +381,16 @@ body::before{
   }
 
   .footer{
+    margin-top:40px;
     padding:32px 16px;
     font-size:.9rem;
   }
 }
 
-/* ≤360px */
+
+/* ==========================================
+   ≤360px (SMALL PHONES)
+   ========================================== */
 @media (max-width:360px){
   .hero h1{font-size:2.1rem}
   .brand{font-size:1.45rem}

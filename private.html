@@ -30,9 +30,40 @@
 
 <header class="nav">
   <div class="nav-inner">
-    <div class="brand">Nina<span>Nova</span><em>TV</em></div>
+
+    <a href="index.html" class="brand">
+  Nina<span>Nova</span><em>TV</em>
+</a>
+
+
+    <!-- LOCATION BADGE (PROMINENT) -->
+    <div class="location location-strong" id="nina-location">
+      📍 Nina’s around somewhere…
+    </div>
+
+    <!-- DESKTOP CTA -->
+    <a href="custom.html" class="btn ghost nav-cta">
+      Something personal
+    </a>
+
+    <!-- HAMBURGER (MOBILE ONLY) -->
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
   </div>
+
+  <!-- MOBILE MENU -->
+  <nav class="mobile-menu" id="mobileMenu">
+    <a href="chat.html">🤍 Leave me a note</a>
+    <a href="custom.html">🎥 Something personal</a>
+    <a href="https://www.fanvue.com/nina_nova" target="_blank" rel="noopener">🌙 Fanvue</a>
+    <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener">☕ Telegram</a>
+  </nav>
 </header>
+
 
 <main>
 
@@ -89,6 +120,37 @@
     <small>Some things are better kept small</small>
   </p>
 </footer>
+<script>
+/* YEAR */
+document.getElementById("yy").textContent = new Date().getFullYear();
 
+/* HAMBURGER */
+const ham = document.getElementById("hamburger");
+const menu = document.getElementById("mobileMenu");
+
+ham.addEventListener("click", () => {
+  menu.classList.toggle("open");
+  ham.classList.toggle("active");
+});
+
+/* LOCATION */
+(function () {
+  const el = document.getElementById("nina-location");
+  if (!el) return;
+
+  fetch("https://ipapi.co/json/")
+    .then(res => res.json())
+    .then(data => {
+      if (data && data.city) {
+        el.textContent = `📍 Nina’s around ${data.city}`;
+      } else fallback();
+    })
+    .catch(fallback);
+
+  function fallback() {
+    el.textContent = "📍 Nina’s nearby";
+  }
+})();
+</script>
 </body>
 </html>
