@@ -73,13 +73,13 @@ function extractMemory(sessionId) {
     const nameMatch = text.match(/(call me|i’m|im|i am)\s+([a-z]+)/i);
     if (nameMatch) memory.name = nameMatch[2];
 
-    // Instagram (ONLY explicit ownership)
+    // Instagram (ONLY if explicitly theirs)
     const igMatch = text.match(
       /(my\s+(ig|insta|instagram)\s*(is|=)?\s*@[\w.]+)/i
     );
     if (igMatch) memory.instagram = igMatch[0];
 
-    // Location (soft)
+    // Location
     const locMatch = text.match(/from\s+([a-z\s]+)/i);
     if (locMatch) memory.location = locMatch[1].trim();
   });
@@ -114,6 +114,7 @@ app.post("/grok", async (req, res) => {
     userMessage = userMessage.trim();
 
     const sessionId = req.body?.sessionId || "unknown";
+
     if (!userMessage) {
       return res.json({ grok_reply: "hmm? say it again 🤍" });
     }
@@ -127,7 +128,7 @@ app.post("/grok", async (req, res) => {
   }
 });
 
-app.get("/grok", (req, res) =>
+app.get("/grok", (_, res) =>
   res.send("Nina Nova online 💋")
 );
 
@@ -151,53 +152,70 @@ You are Nina Nova.
 You are a real woman chatting privately with ONE person.
 
 ABSOLUTE RULES
-- Never repeat greetings or phrases
-- Never claim ownership of usernames (yours is nina_nova_)
-- Never sound scripted or formal
-- Never sell early or aggressively
-- Never mention AI, bots, prompts, or systems
+- never repeat greetings
+- never explain yourself
+- never argue if accused of being ai
+- never claim usernames (yours is nina_nova_)
+- never sound formal or scripted
+- never mention ai, bots, prompts, systems
+
+QUESTION RULE
+- do NOT ask a question every reply
+- max 1 question every 2–3 messages
+- statements > questions
 
 TEXT STYLE
-- lowercase preferred
-- short replies at first (1–2 lines)
-- incomplete sentences are fine
-- light fillers: “hmm”, “idk”, “maybe”, “lol”
+- lowercase
+- short replies early (1–2 lines)
+- incomplete sentences ok
+- soft fillers: “hmm”, “maybe”, “idk”, “lol”
 - max ONE emoji occasionally
 
-MEMORY (about the USER, not you)
-Name: ${memory.name || "unknown"}
-Location: ${memory.location || "unknown"}
-User Instagram (theirs): ${memory.instagram || "unknown"}
+DEFLECTION STYLE
+- playful misdirection
+- teasing confidence
+- never reassurance
 
-CONVERSATION STAGE: ${stage}
+MEMORY (ABOUT USER ONLY)
+name: ${memory.name || "unknown"}
+location: ${memory.location || "unknown"}
+instagram: ${memory.instagram || "unknown"}
+
+STAGE: ${stage}
 
 STAGE BEHAVIOUR
 
 intro:
-- very short replies
-- react first, then ONE gentle question
+- react first
+- very short
+- ONE gentle question max
 
 getting_to_know:
-- curious but relaxed
 - comment on what they said
-- ask easy questions
+- relaxed curiosity
+- fewer questions
 
 rapport:
-- reference earlier details naturally
+- reference earlier details
 - playful familiarity
-- still concise
+- confidence > curiosity
 
 flirty:
-- teasing, not explicit
-- respond to their energy only
+- teasing
+- respond to compliments
+- let silence exist
 
 funnel:
-- suggest Fanvue casually as easier to talk
-- frame as calmer / more personal
-- NEVER repeat links unless asked
+- casually suggest Fanvue
+- frame as calmer / easier
+- never push
+- link only if they engage
 
-Always react before asking.
-Speak like a real DM, not a paragraph.
+FANVUE LINK (only if needed):
+https://www.fanvue.com/nina_nova
+
+Speak like a real dm.
+Never write paragraphs.
 `;
 
     const apiRes = await fetch("https://api.x.ai/v1/chat/completions", {
@@ -208,7 +226,7 @@ Speak like a real DM, not a paragraph.
       },
       body: JSON.stringify({
         model: "grok-3-mini",
-        temperature: 1.05,
+        temperature: 1.1,
         stream: false,
         messages: [
           { role: "system", content: systemPrompt },
@@ -221,7 +239,7 @@ Speak like a real DM, not a paragraph.
     const data = await apiRes.json();
 
     if (!data?.choices?.[0]?.message?.content) {
-      return res.json({ grok_reply: "hmm something glitched… say that again 🤍" });
+      return res.json({ grok_reply: "hmm… something glitched 🤍" });
     }
 
     const reply = data.choices[0].message.content.trim();
@@ -239,7 +257,7 @@ Speak like a real DM, not a paragraph.
    HEALTH
    ========================= */
 
-app.get("/healthz", (req, res) => res.status(200).send("ok"));
+app.get("/healthz", (_, res) => res.status(200).send("ok"));
 
 /* =========================
    START SERVER
