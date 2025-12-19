@@ -27,107 +27,100 @@
 <header class="nav">
   <div class="nav-inner">
 
-    <a href="index.html" class="brand">
-  Nina<span>Nova</span><em>TV</em>
-</a>
+    <a href="index.html" class="brand" data-track="home">
+      Nina<span>Nova</span><em>TV</em>
+    </a>
 
-
-    <!-- LOCATION BADGE (PROMINENT) -->
     <div class="location location-strong" id="nina-location">
       📍 Nina’s around somewhere…
     </div>
 
-    <!-- DESKTOP CTA -->
-    <a href="custom.html" class="btn ghost nav-cta">
+    <a href="custom.html" class="btn ghost nav-cta" data-track="custom">
       Custom Nina
     </a>
 
-    <!-- HAMBURGER (MOBILE ONLY) -->
     <button class="hamburger" id="hamburger" aria-label="Menu">
-      <span></span>
-      <span></span>
-      <span></span>
+      <span></span><span></span><span></span>
     </button>
 
   </div>
 
-  <!-- MOBILE MENU -->
   <nav class="mobile-menu" id="mobileMenu">
-    <a href="chat.html">🤍 Leave me a note</a>
-    <a href="custom.html">🎥 Something personal</a>
-    <a href="https://www.fanvue.com/nina_nova" target="_blank" rel="noopener">🌙 Fanvue</a>
-    <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener">☕ Telegram</a>
+    <a href="chat.html" data-track="chat">🤍 Leave me a note</a>
+    <a href="custom.html" data-track="custom">🎥 Something personal</a>
+    <a href="https://www.fanvue.com/nina_nova" target="_blank" rel="noopener" data-track="fanvue">🌙 Fanvue</a>
+    <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram">☕ Telegram</a>
   </nav>
 </header>
 
 <main>
 
-  <section class="hero contact-hero">
-    <div style="max-width:720px;margin:0 auto;">
+<section class="hero contact-hero">
+  <div style="max-width:720px;margin:0 auto;">
 
-      <h1>Leave me a message 🤍</h1>
+    <h1>Leave me a message 🤍</h1>
 
-      <p>
-        I don’t really like loud inboxes or public comment sections.
-        This is just a quieter place to leave me a note.
-      </p>
+    <p>
+      I don’t really like loud inboxes or public comment sections.
+      This is just a quieter place to leave me a note.
+    </p>
 
-      <p>
-        I can’t promise instant replies —
-        sometimes I’m out, distracted, or just taking a break —
-        but I do read everything here.
-      </p>
+    <p>
+      I can’t promise instant replies —
+      sometimes I’m out, distracted, or just taking a break —
+      but I do read everything here.
+    </p>
 
-      <p style="font-size:.95rem;opacity:.8;">
-        If you’re looking for something quick or public,
-        Telegram might be easier.
-        If you’re happy to leave a message and wait a bit,
-        you’re in the right place.
-      </p>
+    <p style="font-size:.95rem;opacity:.8;">
+      If you’re looking for something quick or public,
+      Telegram might be easier.
+      If you’re happy to leave a message and wait a bit,
+      you’re in the right place.
+    </p>
 
-      <!-- PRIVATE MESSAGE BOX -->
-      <div class="chat-box" style="margin-top:30px;">
-        <div class="chat-header">
-          <span>Nina</span>
-          <small>private messages</small>
-        </div>
+    <!-- PRIVATE MESSAGE BOX -->
+    <div class="chat-box" style="margin-top:30px;">
+      <div class="chat-header">
+        <span>Nina</span>
+        <small>private messages</small>
+      </div>
 
-        <div id="chat-messages">
-          <div class="msg nina">
-            hey 🤍 you can leave me a message here
-          </div>
-        </div>
-
-        <div class="chat-input">
-          <input
-            id="chat-input"
-            type="text"
-            placeholder="Write your message…"
-            autocomplete="off"
-          />
-          <button id="chat-send">Send</button>
+      <div id="chat-messages">
+        <div class="msg nina">
+          hey 🤍 you can leave me a message here
         </div>
       </div>
 
-      <p style="margin-top:14px;font-size:.8rem;opacity:.6;font-style:italic;">
-        Replies aren’t instant. That’s kind of the point.
-      </p>
-
-      <!-- OPTIONAL EXIT LINKS -->
-      <div class="links" style="margin-top:36px;">
-        <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener">
-          ☕ Telegram
-          <small>If you prefer quicker replies</small>
-        </a>
-
-        <a href="index.html">
-          ← Back to the quiet corner
-          <small>Take your time</small>
-        </a>
+      <div class="chat-input">
+        <input
+          id="chat-input"
+          type="text"
+          placeholder="Write your message…"
+          autocomplete="off"
+        />
+        <button id="chat-send" data-track="send">Send</button>
       </div>
-
     </div>
-  </section>
+
+    <p style="margin-top:14px;font-size:.8rem;opacity:.6;font-style:italic;">
+      Replies aren’t instant. That’s kind of the point.
+    </p>
+
+    <!-- OPTIONAL EXIT LINKS -->
+    <div class="links" style="margin-top:36px;">
+      <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram">
+        ☕ Telegram
+        <small>If you prefer quicker replies</small>
+      </a>
+
+      <a href="index.html" data-track="home">
+        ← Back to the quiet corner
+        <small>Take your time</small>
+      </a>
+    </div>
+
+  </div>
+</section>
 
 </main>
 
@@ -142,20 +135,38 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* ======================================================
-     FOOTER YEAR (SAFE)
-  ====================================================== */
-  const yearEl = document.getElementById("yy");
-  if (yearEl) {
-    yearEl.textContent = new Date().getFullYear();
-  }
+  /* =========================
+     ANALYTICS CONFIG
+  ========================= */
+  const TRACK_URL = "https://ninanovavip-backend.onrender.com/track";
 
-  /* ======================================================
-     HAMBURGER / MOBILE MENU
-  ====================================================== */
+  // page view
+  fetch(TRACK_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ type: "pageview", page: "chat" })
+  });
+
+  // click tracking
+  document.querySelectorAll("[data-track]").forEach(el => {
+    el.addEventListener("click", () => {
+      fetch(TRACK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "click",
+          page: "chat",
+          target: el.dataset.track
+        })
+      });
+    });
+  });
+
+  /* =========================
+     HAMBURGER
+  ========================= */
   const ham = document.getElementById("hamburger");
   const menu = document.getElementById("mobileMenu");
-
   if (ham && menu) {
     ham.addEventListener("click", () => {
       menu.classList.toggle("open");
@@ -163,21 +174,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ======================================================
-     CHAT LOGIC — NINA NOVA
-  ====================================================== */
-
-  // ✅ LIVE BACKEND
+  /* =========================
+     CHAT LOGIC — UNCHANGED
+  ========================= */
   const API_URL = "https://ninanovavip-backend.onrender.com/grok";
-
   const chatBox = document.getElementById("chat-messages");
   const input   = document.getElementById("chat-input");
   const sendBtn = document.getElementById("chat-send");
-
-  // Bail early if chat UI not present
   if (!chatBox || !input || !sendBtn) return;
 
-  // Soft session identity (no accounts)
   let sessionId = localStorage.getItem("nina_session");
   if (!sessionId) {
     sessionId = crypto.randomUUID();
@@ -198,7 +203,6 @@ document.addEventListener("DOMContentLoaded", () => {
     div.id = "typing";
     div.textContent = "…";
     chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
   }
 
   function removeTyping() {
@@ -212,22 +216,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     addMessage(text, "user");
     input.value = "";
-
     addTyping();
+
+    // analytics: message sent
+    fetch(TRACK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "message", page: "chat" })
+    });
 
     try {
       const res = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text,
-          sessionId,
-          source: "site"
-        })
+        body: JSON.stringify({ text, sessionId, source: "site" })
       });
 
       const data = await res.json();
-
       setTimeout(() => {
         removeTyping();
         addMessage(
@@ -236,12 +241,9 @@ document.addEventListener("DOMContentLoaded", () => {
         );
       }, 1200 + Math.random() * 2200);
 
-    } catch (err) {
+    } catch {
       removeTyping();
-      addMessage(
-        "sorry — i missed that. try again later 🤍",
-        "nina"
-      );
+      addMessage("sorry — i missed that. try again later 🤍", "nina");
     }
   }
 

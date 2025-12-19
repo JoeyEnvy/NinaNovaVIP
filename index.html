@@ -30,162 +30,132 @@
   <div class="nav-inner">
 
     <a href="index.html" class="brand">
-  Nina<span>Nova</span><em>TV</em>
-</a>
+      Nina<span>Nova</span><em>TV</em>
+    </a>
 
-
-    <!-- LOCATION BADGE (PROMINENT) -->
     <div class="location location-strong" id="nina-location">
       📍 Nina’s around somewhere…
     </div>
 
-    <!-- DESKTOP CTA -->
-    <a href="custom.html" class="btn ghost nav-cta">
+    <a href="custom.html" class="btn ghost nav-cta" data-track="custom">
       Custom Nina
     </a>
 
-    <!-- HAMBURGER (MOBILE ONLY) -->
     <button class="hamburger" id="hamburger" aria-label="Menu">
-      <span></span>
-      <span></span>
-      <span></span>
+      <span></span><span></span><span></span>
     </button>
 
   </div>
 
-  <!-- MOBILE MENU -->
   <nav class="mobile-menu" id="mobileMenu">
-    <a href="chat.html">🤍 Leave me a note</a>
-    <a href="custom.html">🎥 Something personal</a>
-    <a href="https://www.fanvue.com/nina_nova" target="_blank" rel="noopener">🌙 Fanvue</a>
-    <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener">☕ Telegram</a>
+    <a href="chat.html" data-track="chat">🤍 Leave me a note</a>
+    <a href="custom.html" data-track="custom">🎥 Something personal</a>
+    <a href="https://www.fanvue.com/nina_nova" target="_blank" rel="noopener" data-track="fanvue">🌙 Fanvue</a>
+    <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram">☕ Telegram</a>
   </nav>
 </header>
 
 <main>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div>
-      <h1>Hey… I’m Nina 🤍</h1>
+<section class="hero">
+  <div>
+    <h1>Hey… I’m Nina 🤍</h1>
 
-      <p>
-        This is my quieter corner.
-        Less noise. More real.
-      </p>
+    <p>This is my quieter corner. Less noise. More real.</p>
 
-      <p>
-        I like slow chats, random thoughts,
-        and not pretending to be “on” all the time.
-      </p>
+    <p>
+      I like slow chats, random thoughts,
+      and not pretending to be “on” all the time.
+    </p>
 
-      <p>
-        If that sounds like you,
-        you’ll probably feel comfy here.
-      </p>
+    <p>If that sounds like you, you’ll probably feel comfy here.</p>
 
-      <!-- PRIMARY MONETISATION CTA -->
-      <div class="cta monetisation">
-        <a
-          href="https://www.fanvue.com/nina_nova"
-          target="_blank"
-          rel="noopener"
-          class="btn platform fanvue"
-        >
-          🌙 Fanvue
-        </a>
-
-        <a
-          href="https://www.fanvue.com/nina_nova"
-          target="_blank"
-          rel="noopener"
-          class="btn platform onlyfans ghost"
-        >
-          🔥 OnlyFans
-        </a>
-      </div>
-
-      <p class="cta-subtle">
-        Come hang out with me — little moments, no pressure 🤍
-      </p>
-
-      <!-- CHAT PREVIEW -->
-      <a href="chat.html" class="chat-preview" aria-label="Leave Nina a message">
-        <div class="chat-preview-header">
-          <span>Nina</span>
-          <small>private notes</small>
-        </div>
-
-        <div class="chat-preview-body">
-          <div class="msg nina">hey 🤍</div>
-          <div class="msg nina">you can leave me a message here</div>
-        </div>
-
-        <div class="chat-preview-footer">
-          <span>Leave a message…</span>
-        </div>
+    <div class="cta monetisation">
+      <a href="https://www.fanvue.com/nina_nova"
+         target="_blank"
+         rel="noopener"
+         class="btn platform fanvue"
+         data-track="fanvue">
+        🌙 Fanvue
       </a>
 
-      <!-- SECONDARY CTA -->
-      <div class="cta">
-        <a href="chat.html" class="btn ghost">
-          Leave me a note
-        </a>
-      </div>
-
-      <p style="margin-top:16px;font-size:.95rem;color:var(--text-muted)">
-        I’m usually around here the most.
-      </p>
-
-      <!-- LINKS -->
-      <div class="links" style="margin-top:28px">
-        <a
-          href="https://www.fanvue.com/nina_nova"
-          target="_blank"
-          rel="noopener"
-          class="primary-link"
-        >
-          🌙 My main space
-          <small>Photos, thoughts, little moments</small>
-        </a>
-
-        <a href="chat.html">
-          🤍 Leave me a note
-          <small>A quieter place to talk</small>
-        </a>
-
-        <a href="custom.html">
-          🎥 Something personal
-          <small>Only if it feels right</small>
-        </a>
-
-        <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener">
-          ☕ Telegram
-          <small>Casual updates</small>
-        </a>
-      </div>
+      <a href="https://www.fanvue.com/nina_nova"
+         target="_blank"
+         rel="noopener"
+         class="btn platform onlyfans ghost"
+         data-track="onlyfans">
+        🔥 OnlyFans
+      </a>
     </div>
 
-    <!-- IMAGES (STACKED) -->
-    <div class="hero-image-wrap">
-      <img src="images/6.png" alt="Nina Nova" class="hero-portrait" loading="eager">
-      <img src="images/1.png" alt="Nina Nova portrait" class="hero-portrait" loading="lazy">
+    <p class="cta-subtle">
+      Come hang out with me — little moments, no pressure 🤍
+    </p>
+
+    <a href="chat.html" class="chat-preview" aria-label="Leave Nina a message" data-track="chat">
+      <div class="chat-preview-header">
+        <span>Nina</span>
+        <small>private notes</small>
+      </div>
+
+      <div class="chat-preview-body">
+        <div class="msg nina">hey 🤍</div>
+        <div class="msg nina">you can leave me a message here</div>
+      </div>
+
+      <div class="chat-preview-footer">
+        <span>Leave a message…</span>
+      </div>
+    </a>
+
+    <div class="cta">
+      <a href="chat.html" class="btn ghost" data-track="chat">
+        Leave me a note
+      </a>
     </div>
 
-  </section>
+    <p style="margin-top:16px;font-size:.95rem;color:var(--text-muted)">
+      I’m usually around here the most.
+    </p>
+
+    <div class="links" style="margin-top:28px">
+      <a href="https://www.fanvue.com/nina_nova" target="_blank" rel="noopener" class="primary-link" data-track="fanvue">
+        🌙 My main space
+        <small>Photos, thoughts, little moments</small>
+      </a>
+
+      <a href="chat.html" data-track="chat">
+        🤍 Leave me a note
+        <small>A quieter place to talk</small>
+      </a>
+
+      <a href="custom.html" data-track="custom">
+        🎥 Something personal
+        <small>Only if it feels right</small>
+      </a>
+
+      <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram">
+        ☕ Telegram
+        <small>Casual updates</small>
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-image-wrap">
+    <img src="images/6.png" alt="Nina Nova" class="hero-portrait" loading="eager">
+    <img src="images/1.png" alt="Nina Nova portrait" class="hero-portrait" loading="lazy">
+  </div>
+
+</section>
 
 </main>
 
 <footer class="footer">
   <div style="max-width:1100px;margin:0 auto;">
     <p>
-      Thanks for stopping by 🤍
-      <br>
-      <small style="opacity:.85">
-        No rush • No expectations • Just take your time
-      </small>
+      Thanks for stopping by 🤍<br>
+      <small style="opacity:.85">No rush • No expectations • Just take your time</small>
     </p>
-
     <p style="margin-top:10px;font-size:.85rem;opacity:.75">
       © <span id="yy"></span> Nina Nova TV • ninanovatv.com
     </p>
@@ -199,7 +169,6 @@ document.getElementById("yy").textContent = new Date().getFullYear();
 /* HAMBURGER */
 const ham = document.getElementById("hamburger");
 const menu = document.getElementById("mobileMenu");
-
 ham.addEventListener("click", () => {
   menu.classList.toggle("open");
   ham.classList.toggle("active");
@@ -209,20 +178,39 @@ ham.addEventListener("click", () => {
 (function () {
   const el = document.getElementById("nina-location");
   if (!el) return;
-
   fetch("https://ipapi.co/json/")
     .then(res => res.json())
     .then(data => {
-      if (data && data.city) {
-        el.textContent = `📍 Nina’s around ${data.city}`;
-      } else fallback();
+      if (data?.city) el.textContent = `📍 Nina’s around ${data.city}`;
+      else el.textContent = "📍 Nina’s nearby";
     })
-    .catch(fallback);
-
-  function fallback() {
-    el.textContent = "📍 Nina’s nearby";
-  }
+    .catch(() => el.textContent = "📍 Nina’s nearby");
 })();
+
+/* ANALYTICS */
+const TRACK_URL = "https://ninanovavip-backend.onrender.com/track";
+
+// page view
+fetch(TRACK_URL, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ type: "pageview", page: "index" })
+});
+
+// click tracking
+document.querySelectorAll("[data-track]").forEach(el => {
+  el.addEventListener("click", () => {
+    fetch(TRACK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "click",
+        page: "index",
+        target: el.dataset.track
+      })
+    });
+  });
+});
 </script>
 
 </body>

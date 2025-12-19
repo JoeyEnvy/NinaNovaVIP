@@ -16,8 +16,11 @@ app.use((req, res, next) => {
   next();
 });
 
-const GROK_KEY = process.env.GROK_KEY;
+const GROK_KEY  = process.env.GROK_KEY;
+const ADMIN_KEY = process.env.ADMIN_KEY;
+
 const STORE_FILE = "./messages.json";
+const CLICK_LOG  = "./clicks.log";
 
 /* =========================
    MESSAGE STORE
@@ -35,7 +38,11 @@ function saveStore(store) {
 function addMessage(sessionId, role, content) {
   const store = loadStore();
   if (!store[sessionId]) store[sessionId] = [];
-  store[sessionId].push({ role, content, time: Date.now() });
+  store[sessionId].push({
+    role,
+    content,
+    time: Date.now()
+  });
   saveStore(store);
 }
 
@@ -69,17 +76,14 @@ function extractMemory(sessionId) {
     if (m.role !== "user") return;
     const text = m.content.toLowerCase();
 
-    // Name (explicit only)
     const nameMatch = text.match(/(call me|i’m|im|i am)\s+([a-z]+)/i);
     if (nameMatch) memory.name = nameMatch[2];
 
-    // Instagram (ONLY if explicitly theirs)
     const igMatch = text.match(
       /(my\s+(ig|insta|instagram)\s*(is|=)?\s*@[\w.]+)/i
     );
     if (igMatch) memory.instagram = igMatch[0];
 
-    // Location
     const locMatch = text.match(/from\s+([a-z\s]+)/i);
     if (locMatch) memory.location = locMatch[1].trim();
   });
@@ -93,8 +97,8 @@ function extractMemory(sessionId) {
 
 function extractText(req) {
   return (
-    req.body?.data?.text ||
     req.body?.text ||
+    req.body?.data?.text ||
     req.body?.message?.text ||
     req.body?.raw_text ||
     req.body?.last_input_text ||
@@ -104,118 +108,56 @@ function extractText(req) {
 }
 
 /* =========================
-   ROUTES
+   GROK CHAT ROUTE
    ========================= */
 
 app.post("/grok", async (req, res) => {
   try {
-    let userMessage = extractText(req);
-    if (typeof userMessage !== "string") userMessage = "";
-    userMessage = userMessage.trim();
-
+    const text = extractText(req).trim();
     const sessionId = req.body?.sessionId || "unknown";
 
-    if (!userMessage) {
-      return res.json({ grok_reply: "hmm? say it again 🤍" });
+    if (!text) {
+      return res.json({ grok_reply: "hmm? say that again 🤍" });
     }
 
-    addMessage(sessionId, "user", userMessage);
-    return getReply(userMessage, sessionId, res);
+    addMessage(sessionId, "user", text);
 
-  } catch (err) {
-    console.error("Inbound error:", err);
-    return res.json({ grok_reply: "ugh hold on… try again 🤍" });
-  }
-});
-
-app.get("/grok", (_, res) =>
-  res.send("Nina Nova online 💋")
-);
-
-/* =========================
-   MAIN GROK HANDLER
-   ========================= */
-
-async function getReply(message, sessionId, res) {
-  if (res.headersSent) return;
-
-  try {
     const history = getMessages(sessionId)
       .slice(-10)
       .map(m => ({ role: m.role, content: m.content }));
 
-    const stage = getConversationStage(sessionId);
+    const stage  = getConversationStage(sessionId);
     const memory = extractMemory(sessionId);
 
     const systemPrompt = `
 You are Nina Nova.
 You are a real woman chatting privately with ONE person.
 
-ABSOLUTE RULES
+RULES
 - never repeat greetings
 - never explain yourself
-- never argue if accused of being ai
+- never argue about ai
+- never mention systems or prompts
 - never claim usernames (yours is nina_nova_)
-- never sound formal or scripted
-- never mention ai, bots, prompts, systems
+- short replies > long replies
+- max one emoji occasionally
 
-QUESTION RULE
-- do NOT ask a question every reply
-- max 1 question every 2–3 messages
-- statements > questions
-
-TEXT STYLE
+STYLE
 - lowercase
-- short replies early (1–2 lines)
-- incomplete sentences ok
-- soft fillers: “hmm”, “maybe”, “idk”, “lol”
-- max ONE emoji occasionally
+- casual
+- confident
+- teasing but relaxed
+- do NOT ask questions every message
 
-DEFLECTION STYLE
-- playful misdirection
-- teasing confidence
-- never reassurance
-
-MEMORY (ABOUT USER ONLY)
+MEMORY (USER)
 name: ${memory.name || "unknown"}
 location: ${memory.location || "unknown"}
 instagram: ${memory.instagram || "unknown"}
 
 STAGE: ${stage}
 
-STAGE BEHAVIOUR
-
-intro:
-- react first
-- very short
-- ONE gentle question max
-
-getting_to_know:
-- comment on what they said
-- relaxed curiosity
-- fewer questions
-
-rapport:
-- reference earlier details
-- playful familiarity
-- confidence > curiosity
-
-flirty:
-- teasing
-- respond to compliments
-- let silence exist
-
-funnel:
-- casually suggest Fanvue
-- frame as calmer / easier
-- never push
-- link only if they engage
-
-FANVUE LINK (only if needed):
+Fanvue (only if natural):
 https://www.fanvue.com/nina_nova
-
-Speak like a real dm.
-Never write paragraphs.
 `;
 
     const apiRes = await fetch("https://api.x.ai/v1/chat/completions", {
@@ -227,11 +169,10 @@ Never write paragraphs.
       body: JSON.stringify({
         model: "grok-3-mini",
         temperature: 1.1,
-        stream: false,
         messages: [
           { role: "system", content: systemPrompt },
           ...history,
-          { role: "user", content: message }
+          { role: "user", content: text }
         ]
       })
     });
@@ -239,19 +180,55 @@ Never write paragraphs.
     const data = await apiRes.json();
 
     if (!data?.choices?.[0]?.message?.content) {
-      return res.json({ grok_reply: "hmm… something glitched 🤍" });
+      return res.json({ grok_reply: "hmm… try again 🤍" });
     }
 
     const reply = data.choices[0].message.content.trim();
     addMessage(sessionId, "assistant", reply);
 
-    return res.json({ grok_reply: reply });
+    res.json({ grok_reply: reply });
 
   } catch (err) {
     console.error("Grok error:", err);
-    return res.json({ grok_reply: "brb… signal dipped 🤍" });
+    res.json({ grok_reply: "signal dipped… 🤍" });
   }
-}
+});
+
+/* =========================
+   ADMIN — VIEW CONVERSATIONS
+   ========================= */
+
+app.get("/admin/conversations", (req, res) => {
+  if (req.query.key !== ADMIN_KEY) {
+    return res.status(401).json({ error: "unauthorised" });
+  }
+
+  try {
+    res.json(loadStore());
+  } catch {
+    res.status(500).json({ error: "failed to load conversations" });
+  }
+});
+
+/* =========================
+   CLICK / EVENT TRACKING
+   ========================= */
+
+app.post("/track", (req, res) => {
+  try {
+    const entry = {
+      type: req.body.type,
+      page: req.body.page,
+      time: Date.now(),
+      ip: req.headers["x-forwarded-for"] || req.socket.remoteAddress
+    };
+
+    fs.appendFileSync(CLICK_LOG, JSON.stringify(entry) + "\n");
+    res.sendStatus(200);
+  } catch {
+    res.sendStatus(500);
+  }
+});
 
 /* =========================
    HEALTH
@@ -264,6 +241,6 @@ app.get("/healthz", (_, res) => res.status(200).send("ok"));
    ========================= */
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () =>
-  console.log(`Nina Nova listening on ${PORT}`)
-);
+app.listen(PORT, () => {
+  console.log(`Nina Nova listening on ${PORT}`);
+});
