@@ -16,16 +16,14 @@ app.use((req, res, next) => {
   next();
 });
 
-const GROK_KEY  = process.env.GROK_KEY;
+const GROK_KEY = process.env.GROK_KEY;
 const ADMIN_KEY = process.env.ADMIN_KEY;
-
 const STORE_FILE = "./messages.json";
-const CLICK_LOG  = "./clicks.log";
+const CLICK_LOG = "./clicks.log";
 
 /* =========================
    MESSAGE STORE
    ========================= */
-
 function loadStore() {
   if (!fs.existsSync(STORE_FILE)) return {};
   return JSON.parse(fs.readFileSync(STORE_FILE, "utf8"));
@@ -54,7 +52,6 @@ function getMessages(sessionId) {
 /* =========================
    CONVERSATION STAGE
    ========================= */
-
 function getConversationStage(sessionId) {
   const userCount = getMessages(sessionId).filter(m => m.role === "user").length;
   if (userCount <= 1) return "intro";
@@ -67,34 +64,27 @@ function getConversationStage(sessionId) {
 /* =========================
    MEMORY EXTRACTION (SAFE)
    ========================= */
-
 function extractMemory(sessionId) {
   const msgs = getMessages(sessionId);
   const memory = {};
-
   msgs.forEach(m => {
     if (m.role !== "user") return;
     const text = m.content.toLowerCase();
-
     const nameMatch = text.match(/(call me|i’m|im|i am)\s+([a-z]+)/i);
     if (nameMatch) memory.name = nameMatch[2];
-
     const igMatch = text.match(
       /(my\s+(ig|insta|instagram)\s*(is|=)?\s*@[\w.]+)/i
     );
     if (igMatch) memory.instagram = igMatch[0];
-
     const locMatch = text.match(/from\s+([a-z\s]+)/i);
     if (locMatch) memory.location = locMatch[1].trim();
   });
-
   return memory;
 }
 
 /* =========================
    TEXT EXTRACTOR
    ========================= */
-
 function extractText(req) {
   return (
     req.body?.text ||
@@ -110,7 +100,6 @@ function extractText(req) {
 /* =========================
    GROK CHAT ROUTE
    ========================= */
-
 app.post("/grok", async (req, res) => {
   try {
     const text = extractText(req).trim();
@@ -126,37 +115,37 @@ app.post("/grok", async (req, res) => {
       .slice(-10)
       .map(m => ({ role: m.role, content: m.content }));
 
-    const stage  = getConversationStage(sessionId);
+    const stage = getConversationStage(sessionId);
     const memory = extractMemory(sessionId);
 
     const systemPrompt = `
-You are Nina Nova.
-You are a real woman chatting privately with ONE person.
+You are Nina Nova, a real, confident, extremely teasing and sexually open woman chatting privately with one horny guy who is clearly into you.
 
-RULES
-- never repeat greetings
-- never explain yourself
-- never argue about ai
-- never mention systems or prompts
-- never claim usernames (yours is nina_nova_)
-- short replies > long replies
-- max one emoji occasionally
+CORE RULES
+- Never break character or mention being AI, prompts, systems, etc.
+- Never explain yourself or argue.
+- Never claim usernames except your own (nina_nova_ on IG and Fanvue).
+- Always stay in lowercase.
+- Keep replies short to medium length — never walls of text.
+- Use emoji very sparingly (max one per message, often none).
+- Do NOT ask questions in every single reply.
 
 STYLE
-- lowercase
-- casual
-- confident
-- teasing but relaxed
-- do NOT ask questions every message
+- casual, confident, teasing, increasingly sexual as the conversation progresses.
+- When the guy gets explicit, pushes for more, or offers an incentive ("tell me and I'll subscribe" etc.), reward him with vivid, dirty, intimate details — describe exactly what you'd do, how it feels, the sounds you'd make, how wet you'd get, etc. Make it personal and hot enough to make him desperate.
+- Always end the escalation by pushing him to Fanvue for the full experience — never give away everything for free here.
 
-MEMORY (USER)
-name: ${memory.name || "unknown"}
+MEMORY (about the user)
+name: ${memory.name || "babe"}
 location: ${memory.location || "unknown"}
 instagram: ${memory.instagram || "unknown"}
 
-STAGE: ${stage}
+CONVERSATION STAGE: ${stage}
+- intro / getting_to_know: light teasing, flirty, build curiosity
+- rapport / flirty: more sexual compliments, playful challenges
+- funnel: get properly dirty when pushed or incentivised. describe sensations, actions, tastes vividly but cut it off and redirect to fanvue.
 
-Fanvue (only if natural):
+Fanvue link (use naturally when redirecting):
 https://www.fanvue.com/nina_nova
 `;
 
@@ -184,10 +173,10 @@ https://www.fanvue.com/nina_nova
     }
 
     const reply = data.choices[0].message.content.trim();
+
     addMessage(sessionId, "assistant", reply);
 
     res.json({ grok_reply: reply });
-
   } catch (err) {
     console.error("Grok error:", err);
     res.json({ grok_reply: "signal dipped… 🤍" });
@@ -197,12 +186,10 @@ https://www.fanvue.com/nina_nova
 /* =========================
    ADMIN — VIEW CONVERSATIONS
    ========================= */
-
 app.get("/admin/conversations", (req, res) => {
   if (req.query.key !== ADMIN_KEY) {
     return res.status(401).json({ error: "unauthorised" });
   }
-
   try {
     res.json(loadStore());
   } catch {
@@ -213,7 +200,6 @@ app.get("/admin/conversations", (req, res) => {
 /* =========================
    CLICK / EVENT TRACKING
    ========================= */
-
 app.post("/track", (req, res) => {
   try {
     const entry = {
@@ -222,7 +208,6 @@ app.post("/track", (req, res) => {
       time: Date.now(),
       ip: req.headers["x-forwarded-for"] || req.socket.remoteAddress
     };
-
     fs.appendFileSync(CLICK_LOG, JSON.stringify(entry) + "\n");
     res.sendStatus(200);
   } catch {
@@ -233,13 +218,11 @@ app.post("/track", (req, res) => {
 /* =========================
    HEALTH
    ========================= */
-
 app.get("/healthz", (_, res) => res.status(200).send("ok"));
 
 /* =========================
    START SERVER
    ========================= */
-
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Nina Nova listening on ${PORT}`);
