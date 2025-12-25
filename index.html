@@ -29,7 +29,7 @@
 <header class="nav">
   <div class="nav-inner">
 
-    <a href="index.html" class="brand">
+    <a href="index.html" class="brand" data-track="brand_home">
       Nina<span>Nova</span><em>TV</em>
     </a>
 
@@ -37,7 +37,7 @@
       📍 Nina’s around somewhere…
     </div>
 
-    <a href="custom.html" class="btn ghost nav-cta" data-track="custom">
+    <a href="custom.html" class="btn ghost nav-cta" data-track="custom_nav">
       Custom Nina
     </a>
 
@@ -48,10 +48,10 @@
   </div>
 
   <nav class="mobile-menu" id="mobileMenu">
-    <a href="chat.html" data-track="chat">🤍 Leave me a note</a>
-    <a href="custom.html" data-track="custom">🎥 Something personal</a>
-    <a href="https://www.fanvue.com/nina_nova" target="_blank" rel="noopener" data-track="fanvue">🌙 Fanvue</a>
-    <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram">☕ Telegram</a>
+    <a href="chat.html" data-track="chat_menu">🤍 Leave me a note</a>
+    <a href="custom.html" data-track="custom_menu">🎥 Something personal</a>
+    <a href="https://www.fanvue.com/nina_nova" target="_blank" rel="noopener" data-track="fanvue_menu">🌙 Fanvue</a>
+    <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram_menu">☕ Telegram</a>
   </nav>
 </header>
 
@@ -71,19 +71,23 @@
     <p>If that sounds like you, you’ll probably feel comfy here.</p>
 
     <div class="cta monetisation">
-      <a href="https://www.fanvue.com/nina_nova"
-         target="_blank"
-         rel="noopener"
-         class="btn platform fanvue"
-         data-track="fanvue">
+      <a
+        href="https://www.fanvue.com/nina_nova"
+        target="_blank"
+        rel="noopener"
+        class="btn platform fanvue"
+        data-track="fanvue_primary"
+      >
         🌙 Fanvue
       </a>
 
-      <a href="https://www.fanvue.com/nina_nova"
-         target="_blank"
-         rel="noopener"
-         class="btn platform onlyfans ghost"
-         data-track="onlyfans">
+      <a
+        href="https://www.fanvue.com/nina_nova"
+        target="_blank"
+        rel="noopener"
+        class="btn platform onlyfans ghost"
+        data-track="onlyfans_primary"
+      >
         🔥 OnlyFans
       </a>
     </div>
@@ -92,7 +96,7 @@
       Come hang out with me — little moments, no pressure 🤍
     </p>
 
-    <a href="chat.html" class="chat-preview" aria-label="Leave Nina a message" data-track="chat">
+    <a href="chat.html" class="chat-preview" aria-label="Leave Nina a message" data-track="chat_preview">
       <div class="chat-preview-header">
         <span>Nina</span>
         <small>private notes</small>
@@ -109,7 +113,7 @@
     </a>
 
     <div class="cta">
-      <a href="chat.html" class="btn ghost" data-track="chat">
+      <a href="chat.html" class="btn ghost" data-track="chat_button">
         Leave me a note
       </a>
     </div>
@@ -119,22 +123,22 @@
     </p>
 
     <div class="links" style="margin-top:28px">
-      <a href="https://www.fanvue.com/nina_nova" target="_blank" rel="noopener" class="primary-link" data-track="fanvue">
+      <a href="https://www.fanvue.com/nina_nova" target="_blank" rel="noopener" class="primary-link" data-track="fanvue_footer">
         🌙 My main space
         <small>Photos, thoughts, little moments</small>
       </a>
 
-      <a href="chat.html" data-track="chat">
+      <a href="chat.html" data-track="chat_footer">
         🤍 Leave me a note
         <small>A quieter place to talk</small>
       </a>
 
-      <a href="custom.html" data-track="custom">
+      <a href="custom.html" data-track="custom_footer">
         🎥 Something personal
         <small>Only if it feels right</small>
       </a>
 
-      <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram">
+      <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram_footer">
         ☕ Telegram
         <small>Casual updates</small>
       </a>
@@ -145,7 +149,6 @@
     <img src="images/6.png" alt="Nina Nova" class="hero-portrait" loading="eager">
     <img src="images/1.png" alt="Nina Nova portrait" class="hero-portrait" loading="lazy">
   </div>
-
 </section>
 
 </main>
@@ -175,15 +178,12 @@ ham.addEventListener("click", () => {
 });
 
 /* LOCATION */
-(function () {
+(() => {
   const el = document.getElementById("nina-location");
   if (!el) return;
   fetch("https://ipapi.co/json/")
-    .then(res => res.json())
-    .then(data => {
-      if (data?.city) el.textContent = `📍 Nina’s around ${data.city}`;
-      else el.textContent = "📍 Nina’s nearby";
-    })
+    .then(r => r.json())
+    .then(d => el.textContent = d?.city ? `📍 Nina’s around ${d.city}` : "📍 Nina’s nearby")
     .catch(() => el.textContent = "📍 Nina’s nearby");
 })();
 
@@ -195,7 +195,7 @@ fetch(TRACK_URL, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ type: "pageview", page: "index" })
-});
+}).catch(() => {});
 
 // click tracking
 document.querySelectorAll("[data-track]").forEach(el => {
@@ -208,7 +208,7 @@ document.querySelectorAll("[data-track]").forEach(el => {
         page: "index",
         target: el.dataset.track
       })
-    });
+    }).catch(() => {});
   });
 });
 </script>
