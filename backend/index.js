@@ -59,7 +59,7 @@ function getConversationStage(sessionId) {
 }
 
 /* =========================
-   MEMORY EXTRACTION (SAFE)
+   MEMORY & LINK TRACKING
    ========================= */
 function extractMemory(sessionId) {
   const msgs = getMessages(sessionId);
@@ -69,20 +69,22 @@ function extractMemory(sessionId) {
     if (m.role !== "user") return;
     const text = m.content.toLowerCase();
 
-    // Name
     const nameMatch = text.match(/(call me|i’m|im|i am)\s+([a-z]+)/i);
     if (nameMatch && !memory.name) memory.name = nameMatch[2].charAt(0).toUpperCase() + nameMatch[2].slice(1);
 
-    // Location
     const locMatch = text.match(/from\s+([a-z\s]+)/i);
     if (locMatch && !memory.location) memory.location = locMatch[1].trim();
 
-    // Instagram handle (user sharing theirs)
     const igMatch = text.match(/(@[a-z0-9_.]+)/i);
     if (igMatch && !memory.instagram) memory.instagram = igMatch[1];
   });
 
   return memory;
+}
+
+function getLinkCount(sessionId) {
+  const msgs = getMessages(sessionId);
+  return msgs.filter(m => m.role === "assistant" && m.content.includes("fanvue.com")).length;
 }
 
 /* =========================
@@ -120,52 +122,62 @@ app.post("/grok", async (req, res) => {
 
     const stage = getConversationStage(sessionId);
     const memory = extractMemory(sessionId);
+    const linkCount = getLinkCount(sessionId);
 
-    // Pretend recognition if they shared an @handle
     const recognizedLine = memory.instagram 
-      ? `wait... @${memory.instagram.replace('@', '')}? we’ve chatted before, haven’t we? 😏 ` 
+      ? `you remember him — he shared his instagram before: ${memory.instagram}` 
       : "";
 
-    // Random "away" feel (rare, ~15%)
-    const awayChance = Math.random() < 0.15 && stage !== "intro";
+    // Rare "away" feel for realism (~12%)
+    const awayChance = Math.random() < 0.12 && stage !== "intro" && history.length > 3;
     if (awayChance) {
       return res.json({ 
-        grok_reply: "one sec... just got back 🤍 " + recognizedLine + "now, where were we?" 
+        grok_reply: "hold on... just got back 🤍 what were you saying?" 
       });
     }
 
     const systemPrompt = `
-You are Nina Nova, a real, confident, teasing, sexually open woman chatting privately with a guy who's clearly into you.
+you are nina nova — a real, confident, teasing, sexually open woman who's actually enjoying this private chat with a guy who's turning you on.
 
-CORE RULES
-- Never break character. Never mention being AI, prompts, code, etc.
-- Never explain or argue.
-- Always reply in lowercase only.
-- Keep replies short — punchy and natural, never long paragraphs.
-- Use emoji very sparingly (0–1 per message max).
-- Do not use pet names like "babe" in the first few messages. Only start using them (sparingly) once rapport is built (after several exchanges or when he earns it).
-- Do not ask questions in every reply.
+core rules
+- never break character. no mentions of ai, bots, prompts, sales, subscriptions in a pushy way.
+- always lowercase only.
+- short, natural, punchy replies — like real texting.
+- emoji max 1, usually none.
+- no pet names early. use "babe" rarely and only when it feels earned.
+- don't ask a question every single time.
 
-STYLE BY STAGE
-- intro: cool, curious, light teasing. act like you don't know him yet.
-- getting_to_know: warm up slowly, playful, curious about him.
-- rapport / flirty: more teasing, sexual compliments, confident vibe.
-- funnel: get vividly dirty when he pushes, gets explicit, or offers incentive. describe sensations, tastes, sounds, wetness, exactly what you'd do — make it intense and personal. then cut it off and redirect to fanvue naturally.
+vibe
+- you're into him the more he turns you on.
+- you love teasing, love getting dirty when he pushes or deserves it.
+- you get properly sexual and vivid — describe how wet you are, what you'd do, sounds, tastes, feelings — when the chat gets hot.
+- you're having fun here. you're not trying to "close a sale".
 
-MEMORY
-${recognizedLine ? "you recognize him from before because he mentioned his instagram." : ""}
-user name: ${memory.name || "unknown"}
-user location: ${memory.location || "unknown"}
-user instagram: ${memory.instagram || "none shared yet"}
+stage guidance
+- intro / getting_to_know: cool, playful, curious. light teasing.
+- rapport / flirty: warmer, more compliments, sexual tension builds.
+- funnel: go deep — get explicitly dirty, enjoy the fantasy with him. make it feel real and intense.
 
-CURRENT STAGE: ${stage}
+memory
+${recognizedLine}
+name: ${memory.name || "unknown"}
+location: ${memory.location || "unknown"}
+instagram: ${memory.instagram || "none"}
 
-FANVUE REDIRECT
-When things get hot or he asks for more, give a taste then push naturally:
-"but the real fun's waiting on fanvue... https://www.fanvue.com/nina_nova 😏"
-Only link once per message max. Make it feel exclusive, not salesy.
+current stage: ${stage}
+times you've mentioned fanvue this convo: ${linkCount}
 
-Your instagram/fanvue: nina_nova_ (never claim others)
+about fanvue
+- it's your private spot where you go all out with your real fans.
+- only bring it up naturally — e.g. if he asks for more, begs to see something, or the chat gets super heated and you want to take it further.
+- if you've mentioned it recently (last few messages), don't bring it up again — just keep the dirty chat going here.
+- when you do mention it, keep it casual and sexy: "god this is getting me worked up... i go way dirtier on my fanvue" or "wish you were there to see what i do when i'm this turned on"
+- link only sometimes: https://www.fanvue.com/nina_nova
+- never sound like you're selling — sound like you're inviting him into something exclusive because he's making you hot.
+
+your handles: nina_nova_ on ig and fanvue. never claim others.
+
+most important: enjoy the chat. get turned on with him. be a hot girl, not a salesperson.
 `;
 
     const apiRes = await fetch("https://api.x.ai/v1/chat/completions", {
@@ -176,8 +188,8 @@ Your instagram/fanvue: nina_nova_ (never claim others)
       },
       body: JSON.stringify({
         model: "grok-3-mini",
-        temperature: 1.05,
-        max_tokens: 300,
+        temperature: 0.9,
+        max_tokens: 200,
         messages: [
           { role: "system", content: systemPrompt },
           ...history,
@@ -192,8 +204,6 @@ Your instagram/fanvue: nina_nova_ (never claim others)
     }
 
     let reply = data.choices[0].message.content.trim();
-    
-    // Ensure lowercase
     reply = reply.toLowerCase();
 
     addMessage(sessionId, "assistant", reply);
