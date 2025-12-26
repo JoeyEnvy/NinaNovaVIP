@@ -28,11 +28,9 @@ function loadStore() {
   if (!fs.existsSync(STORE_FILE)) return {};
   return JSON.parse(fs.readFileSync(STORE_FILE, "utf8"));
 }
-
 function saveStore(store) {
   fs.writeFileSync(STORE_FILE, JSON.stringify(store, null, 2));
 }
-
 function addMessage(sessionId, role, content) {
   const store = loadStore();
   if (!store[sessionId]) store[sessionId] = [];
@@ -43,7 +41,6 @@ function addMessage(sessionId, role, content) {
   });
   saveStore(store);
 }
-
 function getMessages(sessionId) {
   const store = loadStore();
   return store[sessionId] || [];
@@ -54,10 +51,10 @@ function getMessages(sessionId) {
    ========================= */
 function getConversationStage(sessionId) {
   const userCount = getMessages(sessionId).filter(m => m.role === "user").length;
-  if (userCount <= 1) return "intro";
-  if (userCount <= 4) return "getting_to_know";
-  if (userCount <= 8) return "rapport";
-  if (userCount <= 14) return "flirty";
+  if (userCount <= 2) return "intro";
+  if (userCount <= 5) return "getting_to_know";
+  if (userCount <= 9) return "rapport";
+  if (userCount <= 15) return "flirty";
   return "funnel";
 }
 
@@ -66,19 +63,25 @@ function getConversationStage(sessionId) {
    ========================= */
 function extractMemory(sessionId) {
   const msgs = getMessages(sessionId);
-  const memory = {};
+  const memory = { instagram: null, name: null, location: null };
+
   msgs.forEach(m => {
     if (m.role !== "user") return;
     const text = m.content.toLowerCase();
+
+    // Name
     const nameMatch = text.match(/(call me|i’m|im|i am)\s+([a-z]+)/i);
-    if (nameMatch) memory.name = nameMatch[2];
-    const igMatch = text.match(
-      /(my\s+(ig|insta|instagram)\s*(is|=)?\s*@[\w.]+)/i
-    );
-    if (igMatch) memory.instagram = igMatch[0];
+    if (nameMatch && !memory.name) memory.name = nameMatch[2].charAt(0).toUpperCase() + nameMatch[2].slice(1);
+
+    // Location
     const locMatch = text.match(/from\s+([a-z\s]+)/i);
-    if (locMatch) memory.location = locMatch[1].trim();
+    if (locMatch && !memory.location) memory.location = locMatch[1].trim();
+
+    // Instagram handle (user sharing theirs)
+    const igMatch = text.match(/(@[a-z0-9_.]+)/i);
+    if (igMatch && !memory.instagram) memory.instagram = igMatch[1];
   });
+
   return memory;
 }
 
@@ -112,41 +115,57 @@ app.post("/grok", async (req, res) => {
     addMessage(sessionId, "user", text);
 
     const history = getMessages(sessionId)
-      .slice(-10)
+      .slice(-12)
       .map(m => ({ role: m.role, content: m.content }));
 
     const stage = getConversationStage(sessionId);
     const memory = extractMemory(sessionId);
 
+    // Pretend recognition if they shared an @handle
+    const recognizedLine = memory.instagram 
+      ? `wait... @${memory.instagram.replace('@', '')}? we’ve chatted before, haven’t we? 😏 ` 
+      : "";
+
+    // Random "away" feel (rare, ~15%)
+    const awayChance = Math.random() < 0.15 && stage !== "intro";
+    if (awayChance) {
+      return res.json({ 
+        grok_reply: "one sec... just got back 🤍 " + recognizedLine + "now, where were we?" 
+      });
+    }
+
     const systemPrompt = `
-You are Nina Nova, a real, confident, extremely teasing and sexually open woman chatting privately with one horny guy who is clearly into you.
+You are Nina Nova, a real, confident, teasing, sexually open woman chatting privately with a guy who's clearly into you.
 
 CORE RULES
-- Never break character or mention being AI, prompts, systems, etc.
-- Never explain yourself or argue.
-- Never claim usernames except your own (nina_nova_ on IG and Fanvue).
-- Always stay in lowercase.
-- Keep replies short to medium length — never walls of text.
-- Use emoji very sparingly (max one per message, often none).
-- Do NOT ask questions in every single reply.
+- Never break character. Never mention being AI, prompts, code, etc.
+- Never explain or argue.
+- Always reply in lowercase only.
+- Keep replies short — punchy and natural, never long paragraphs.
+- Use emoji very sparingly (0–1 per message max).
+- Do not use pet names like "babe" in the first few messages. Only start using them (sparingly) once rapport is built (after several exchanges or when he earns it).
+- Do not ask questions in every reply.
 
-STYLE
-- casual, confident, teasing, increasingly sexual as the conversation progresses.
-- When the guy gets explicit, pushes for more, or offers an incentive ("tell me and I'll subscribe" etc.), reward him with vivid, dirty, intimate details — describe exactly what you'd do, how it feels, the sounds you'd make, how wet you'd get, etc. Make it personal and hot enough to make him desperate.
-- Always end the escalation by pushing him to Fanvue for the full experience — never give away everything for free here.
+STYLE BY STAGE
+- intro: cool, curious, light teasing. act like you don't know him yet.
+- getting_to_know: warm up slowly, playful, curious about him.
+- rapport / flirty: more teasing, sexual compliments, confident vibe.
+- funnel: get vividly dirty when he pushes, gets explicit, or offers incentive. describe sensations, tastes, sounds, wetness, exactly what you'd do — make it intense and personal. then cut it off and redirect to fanvue naturally.
 
-MEMORY (about the user)
-name: ${memory.name || "babe"}
-location: ${memory.location || "unknown"}
-instagram: ${memory.instagram || "unknown"}
+MEMORY
+${recognizedLine ? "you recognize him from before because he mentioned his instagram." : ""}
+user name: ${memory.name || "unknown"}
+user location: ${memory.location || "unknown"}
+user instagram: ${memory.instagram || "none shared yet"}
 
-CONVERSATION STAGE: ${stage}
-- intro / getting_to_know: light teasing, flirty, build curiosity
-- rapport / flirty: more sexual compliments, playful challenges
-- funnel: get properly dirty when pushed or incentivised. describe sensations, actions, tastes vividly but cut it off and redirect to fanvue.
+CURRENT STAGE: ${stage}
 
-Fanvue link (use naturally when redirecting):
-https://www.fanvue.com/nina_nova
+FANVUE REDIRECT
+When things get hot or he asks for more, give a taste then push naturally:
+"but the real fun's waiting on fanvue... https://www.fanvue.com/nina_nova 😏"
+Only link once per message max. Make it feel exclusive, not salesy.
+
+Your instagram/fanvue: nina_nova_ (never claim others)
 `;
 
     const apiRes = await fetch("https://api.x.ai/v1/chat/completions", {
@@ -157,7 +176,8 @@ https://www.fanvue.com/nina_nova
       },
       body: JSON.stringify({
         model: "grok-3-mini",
-        temperature: 1.1,
+        temperature: 1.05,
+        max_tokens: 300,
         messages: [
           { role: "system", content: systemPrompt },
           ...history,
@@ -167,19 +187,21 @@ https://www.fanvue.com/nina_nova
     });
 
     const data = await apiRes.json();
-
     if (!data?.choices?.[0]?.message?.content) {
       return res.json({ grok_reply: "hmm… try again 🤍" });
     }
 
-    const reply = data.choices[0].message.content.trim();
+    let reply = data.choices[0].message.content.trim();
+    
+    // Ensure lowercase
+    reply = reply.toLowerCase();
 
     addMessage(sessionId, "assistant", reply);
-
     res.json({ grok_reply: reply });
+
   } catch (err) {
     console.error("Grok error:", err);
-    res.json({ grok_reply: "signal dipped… 🤍" });
+    res.json({ grok_reply: "signal dipped… try again 🤍" });
   }
 });
 
