@@ -301,6 +301,20 @@ body::before{
   border-radius:var(--radius-lg);
 }
 
+
+/* CHAT INPUT: FORCE VISIBLE TEXT + CARET */
+#chat-input{
+  color:#fff !important;
+  caret-color:#fff !important;
+  -webkit-text-fill-color:#fff !important; /* fixes iOS/Safari “typing but invisible” */
+  opacity:1 !important;
+  background:rgba(255,255,255,.06) !important;
+}
+#chat-input::placeholder{
+  color:rgba(255,255,255,.55) !important;
+  -webkit-text-fill-color:rgba(255,255,255,.55) !important;
+}
+
 .contact-hero h1{
   font-family:'Anton',sans-serif;
   font-size:clamp(2.1rem,4vw,3.4rem);
