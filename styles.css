@@ -1,6 +1,6 @@
 /* ==========================================
    NINA NOVA TV — ENIGMATIC CREATOR THEME
-   Warm • Intimate • Calm • Alive
+   Warm • Intimate • Calm • Alive (but quiet)
    DESKTOP FIRST
    ========================================== */
 
@@ -60,15 +60,16 @@ a{color:inherit;text-decoration:none}
 
 
 /* ==========================================
-   PAGE FADE-IN (GLOBAL)
+   PAGE FADE-IN (GLOBAL — SUBTLE)
+   (won’t shift layout, just opacity)
    ========================================== */
 body{
-  animation:fadeIn .9s ease both;
+  animation:fadeIn .55s ease both;
 }
 
 @keyframes fadeIn{
-  from{opacity:0;transform:translateY(8px)}
-  to{opacity:1;transform:none}
+  from{opacity:0}
+  to{opacity:1}
 }
 
 
@@ -93,7 +94,7 @@ body::before{
 
 
 /* ==========================================
-   NAVBAR
+   NAVBAR (DESKTOP)
    ========================================== */
 .nav{
   position:sticky;
@@ -120,9 +121,10 @@ body::before{
   display:flex;
   align-items:baseline;
   gap:4px;
-  transition:opacity .3s ease;
+  transition:opacity .25s ease;
 }
-.brand:hover{opacity:.85}
+
+.brand:hover{opacity:.88}
 
 .brand span{color:var(--pink)}
 .brand em{font-style:normal;color:var(--orange);font-size:.9em}
@@ -168,11 +170,11 @@ body::before{
   flex-direction:column;
   background:rgba(12,12,18,.96);
   border-top:1px solid rgba(255,255,255,.08);
-  animation:slideDown .35s ease both;
+  animation:slideDown .28s ease both;
 }
 
 @keyframes slideDown{
-  from{opacity:0;transform:translateY(-10px)}
+  from{opacity:0;transform:translateY(-8px)}
   to{opacity:1;transform:none}
 }
 
@@ -201,8 +203,8 @@ body::before{
 }
 
 .btn:hover{
-  transform:translateY(-3px);
-  box-shadow:0 0 44px rgba(255,79,160,.55);
+  transform:translateY(-2px);
+  box-shadow:0 0 44px rgba(255,79,160,.50);
 }
 
 .btn:active{transform:translateY(-1px)}
@@ -230,6 +232,10 @@ body::before{
   flex-wrap:wrap;
 }
 
+.cta.monetisation{
+  margin-top:36px;
+}
+
 .cta-subtle{
   margin-top:14px;
   font-size:.95rem;
@@ -250,11 +256,11 @@ body::before{
   background:rgba(18,18,26,.7);
   backdrop-filter:var(--blur);
   border-radius:var(--radius-lg);
-  animation:liftIn .8s ease both;
+  animation:liftIn .45s ease both;
 }
 
 @keyframes liftIn{
-  from{opacity:0;transform:translateY(14px)}
+  from{opacity:0;transform:translateY(10px)}
   to{opacity:1;transform:none}
 }
 
@@ -270,6 +276,10 @@ body::before{
   margin-top:16px;
   color:var(--text-muted);
   font-size:1.08rem;
+}
+
+.hero p + p{
+  margin-top:12px;
 }
 
 
@@ -291,12 +301,12 @@ body::before{
 }
 
 .hero-portrait:hover{
-  transform:scale(1.015);
+  transform:scale(1.012);
 }
 
 
 /* ==========================================
-   CHAT PREVIEW
+   CHAT PREVIEW (HOMEPAGE)
    ========================================== */
 .chat-preview{
   margin-top:34px;
@@ -308,8 +318,8 @@ body::before{
 }
 
 .chat-preview:hover{
-  transform:translateY(-3px);
-  border-color:rgba(255,79,160,.35);
+  transform:translateY(-2px);
+  border-color:rgba(255,79,160,.30);
 }
 
 .chat-preview-header,
@@ -333,7 +343,7 @@ body::before{
 
 
 /* ==========================================
-   CHAT PAGE
+   CHAT PAGE — RESTORED AESTHETIC (KEEP)
    ========================================== */
 .contact-hero{
   max-width:1100px;
@@ -344,15 +354,86 @@ body::before{
   border-radius:var(--radius-lg);
 }
 
+
+/* CHAT INPUT: FORCE VISIBLE TEXT + CARET */
 #chat-input{
   color:#fff !important;
   caret-color:#fff !important;
-  -webkit-text-fill-color:#fff !important;
+  -webkit-text-fill-color:#fff !important; /* fixes iOS/Safari “typing but invisible” */
+  opacity:1 !important;
   background:rgba(255,255,255,.06) !important;
 }
-
 #chat-input::placeholder{
   color:rgba(255,255,255,.55) !important;
+  -webkit-text-fill-color:rgba(255,255,255,.55) !important;
+}
+
+.contact-hero h1{
+  font-family:'Anton',sans-serif;
+  font-size:clamp(2.1rem,4vw,3.4rem);
+  background:linear-gradient(90deg,var(--purple),var(--pink));
+  -webkit-background-clip:text;
+  color:transparent;
+}
+
+.contact-hero p{
+  margin-top:16px;
+  color:var(--text-muted);
+  font-size:1.05rem;
+}
+
+.chat-box{
+  margin-top:36px;
+  background:rgba(14,14,20,.75);
+  border-radius:var(--radius-md);
+  border:1px solid rgba(255,255,255,.1);
+  overflow:hidden;
+}
+
+.chat-header{
+  padding:14px 16px;
+  font-weight:800;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+#chat-messages{
+  padding:16px;
+  max-height:360px;
+  overflow-y:auto;
+}
+
+.msg.user{
+  margin-left:auto;
+  background:linear-gradient(135deg,var(--pink),var(--purple));
+  color:#fff;
+  padding:10px 14px;
+  border-radius:14px;
+  max-width:75%;
+}
+
+.chat-input{
+  display:flex;
+  gap:10px;
+  padding:14px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+
+.chat-input input{
+  flex:1;
+  background:rgba(255,255,255,.06);
+  border:none;
+  border-radius:999px;
+  padding:12px 16px;
+  color:#fff;
+}
+
+.chat-input button{
+  border-radius:999px;
+  padding:12px 20px;
+  background:linear-gradient(135deg,var(--pink),var(--purple));
+  border:none;
+  color:#fff;
+  font-weight:800;
 }
 
 
@@ -376,8 +457,8 @@ body::before{
 }
 
 .links a:hover{
-  transform:translateY(-3px);
-  border-color:rgba(255,79,160,.35);
+  transform:translateY(-2px);
+  border-color:rgba(255,79,160,.30);
 }
 
 
@@ -394,19 +475,296 @@ body::before{
 
 
 /* ==========================================
-   MOBILE OVERRIDES
+   CHAT — MICRO ENHANCEMENTS (SAFE)
+   (adds life without changing layout)
    ========================================== */
+.msg{
+  animation:msgFade .22s ease both;
+}
+
+@keyframes msgFade{
+  from{opacity:0}
+  to{opacity:1}
+}
+
+#typing{
+  opacity:.6;
+  font-style:italic;
+}
+
+.chat-input button:hover{
+  filter:brightness(1.08);
+}
+
+.chat-input button:active{
+  transform:scale(.98);
+}
+
+#chat-messages{
+  scrollbar-width:thin;
+  scrollbar-color:rgba(255,79,160,.35) transparent;
+}
+
+#chat-messages::-webkit-scrollbar{
+  width:6px;
+}
+#chat-messages::-webkit-scrollbar-thumb{
+  background:rgba(255,79,160,.35);
+  border-radius:10px;
+}
+
+
+/* ======================================================================
+   =====================  MOBILE OVERRIDES START  ========================
+   ====================================================================== */
+
+
+/* ≤1024px */
 @media (max-width:1024px){
   .hamburger{display:block}
   .nav-cta{display:none}
 }
 
+
+/* ≤768px */
 @media (max-width:768px){
+
   .location-strong{display:none}
-  .hero,.contact-hero{
+
+  .nav-inner{padding:12px 14px}
+
+  .brand{font-size:1.55rem}
+
+  .hero,
+  .contact-hero{
     margin:18px 12px;
     padding:36px 18px;
     grid-template-columns:1fr;
+    gap:26px;
+    border-radius:20px;
   }
+
+  .hero h1,
+  .contact-hero h1{
+    font-size:2.4rem;
+    line-height:1.15;
+  }
+
+  .hero p,
+  .contact-hero p{
+    font-size:1rem;
+    margin-top:12px;
+  }
+
+  .cta{
+    flex-direction:column;
+    align-items:stretch;
+    gap:12px;
+    margin-top:26px;
+  }
+
+  .btn{
+    width:100%;
+    padding:16px;
+    font-size:1rem;
+  }
+
+  .hero-image-wrap{gap:16px}
+
   .hero-portrait{max-width:260px}
+
+  .links{
+    margin-top:32px;
+    gap:12px;
+  }
+
+  .links a{
+    padding:16px;
+    font-size:.95rem;
+  }
+
+  .footer{
+    margin-top:40px;
+    padding:32px 16px;
+    font-size:.9rem;
+  }
+}
+
+
+/* ==========================================
+   ≤380px (SMALL PHONES – MODERN)
+   ========================================== */
+@media (max-width:380px){
+
+  .nav-inner{
+    padding:11px 13px;
+  }
+
+  .brand{
+    font-size:1.5rem;
+  }
+
+  .hero,
+  .contact-hero{
+    margin:16px 11px;
+    padding:34px 16px;
+  }
+
+  .hero h1,
+  .contact-hero h1{
+    font-size:2.25rem;
+    line-height:1.14;
+  }
+
+  .hero p,
+  .contact-hero p{
+    font-size:1rem;
+  }
+
+  .btn{
+    padding:15px;
+    font-size:.98rem;
+  }
+
+  .hero-portrait{
+    max-width:250px;
+  }
+}
+
+
+/* ==========================================
+   ≤360px (SMALL PHONES)
+   ========================================== */
+@media (max-width:360px){
+
+  .nav-inner{
+    padding:10px 12px;
+  }
+
+  .brand{
+    font-size:1.45rem;
+  }
+
+  .hero,
+  .contact-hero{
+    margin:15px 10px;
+    padding:32px 15px;
+  }
+
+  .hero h1,
+  .contact-hero h1{
+    font-size:2.1rem;
+    line-height:1.13;
+  }
+
+  .hero p,
+  .contact-hero p{
+    font-size:.97rem;
+  }
+
+  .btn{
+    padding:14px;
+    font-size:.96rem;
+  }
+
+  .hero-portrait{
+    max-width:240px;
+  }
+
+  .links a{
+    padding:15px;
+    font-size:.92rem;
+  }
+}
+
+
+/* ==========================================
+   ≤340px (COMPACT MODERN PHONES)
+   ========================================== */
+@media (max-width:340px){
+
+  .nav-inner{
+    padding:10px 12px;
+  }
+
+  .brand{
+    font-size:1.38rem;
+  }
+
+  .hero,
+  .contact-hero{
+    margin:15px 10px;
+    padding:30px 14px;
+  }
+
+  .hero h1,
+  .contact-hero h1{
+    font-size:2rem;
+    line-height:1.13;
+  }
+
+  .hero p,
+  .contact-hero p{
+    font-size:.96rem;
+  }
+
+  .btn{
+    padding:14px;
+    font-size:.95rem;
+  }
+
+  .hero-portrait{
+    max-width:235px;
+  }
+
+  .links a{
+    padding:15px;
+    font-size:.92rem;
+  }
+}
+
+
+/* ==========================================
+   ≤320px (VERY SMALL / OLDER PHONES)
+   ========================================== */
+@media (max-width:320px){
+
+  .nav-inner{
+    padding:10px 12px;
+  }
+
+  .brand{
+    font-size:1.34rem;
+  }
+
+  .hero,
+  .contact-hero{
+    margin:15px 10px;
+    padding:30px 14px;
+  }
+
+  .hero h1,
+  .contact-hero h1{
+    font-size:1.9rem;
+    line-height:1.14;
+  }
+
+  .hero p,
+  .contact-hero p{
+    font-size:.95rem;
+  }
+
+  .btn{
+    padding:14px;
+    font-size:.94rem;
+  }
+
+  .hero-portrait{
+    max-width:230px;
+  }
+
+  .links a{
+    padding:15px;
+    font-size:.9rem;
+  }
 }
