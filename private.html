@@ -32,30 +32,23 @@
   <div class="nav-inner">
 
     <a href="index.html" class="brand">
-  Nina<span>Nova</span><em>TV</em>
-</a>
+      Nina<span>Nova</span><em>TV</em>
+    </a>
 
-
-    <!-- LOCATION BADGE (PROMINENT) -->
     <div class="location location-strong" id="nina-location">
       📍 Nina’s around somewhere…
     </div>
 
-    <!-- DESKTOP CTA -->
     <a href="custom.html" class="btn ghost nav-cta">
       Custom Nina
     </a>
 
-    <!-- HAMBURGER (MOBILE ONLY) -->
     <button class="hamburger" id="hamburger" aria-label="Menu">
-      <span></span>
-      <span></span>
-      <span></span>
+      <span></span><span></span><span></span>
     </button>
 
   </div>
 
-  <!-- MOBILE MENU -->
   <nav class="mobile-menu" id="mobileMenu">
     <a href="chat.html">🤍 Leave me a note</a>
     <a href="custom.html">🎥 Something personal</a>
@@ -64,7 +57,6 @@
   </nav>
 </header>
 
-
 <main>
 
 <section class="hero">
@@ -72,7 +64,7 @@
     <h1>You found your way here 🤍</h1>
 
     <p>
-      This page isn’t public
+      This page isn’t public,
       and it isn’t something I link openly.
     </p>
 
@@ -80,27 +72,37 @@
       I keep this space small on purpose.
       It’s calmer,
       more personal,
-      and a lot more intentional.
+      and more intentional.
     </p>
 
     <p>
-      Anything important is always shared directly,
-      not left sitting on a page like this.
+      If you’re here,
+      it means we’ve already crossed that first layer.
     </p>
 
-    <div class="cta">
+    <p style="font-size:.95rem;opacity:.85;">
+      Anything important is always shared directly,
+      never rushed,
+      and never automated.
+    </p>
+
+    <div class="cta" style="margin-top:28px">
       <span class="btn ghost">
         Private access confirmed
       </span>
     </div>
 
-    <p class="contact-note">
+    <p class="contact-note" style="margin-top:18px;font-size:.85rem;opacity:.75">
       Please don’t share private links.<br>
       This space only works when it stays respectful.
     </p>
+
+    <p style="margin-top:22px;font-size:.85rem;color:var(--text-muted);max-width:520px">
+      Next steps are always discussed one-to-one.
+      If something’s agreed, I’ll explain how and when.
+    </p>
   </div>
 
-  <!-- PRIVATE IMAGE (NOT USED ELSEWHERE) -->
   <div class="hero-image-wrap">
     <img
       src="images/2.png"
@@ -120,18 +122,18 @@
     <small>Some things are better kept small</small>
   </p>
 </footer>
-<script>
-/* YEAR */
-document.getElementById("yy").textContent = new Date().getFullYear();
 
+<script>
 /* HAMBURGER */
 const ham = document.getElementById("hamburger");
 const menu = document.getElementById("mobileMenu");
 
-ham.addEventListener("click", () => {
-  menu.classList.toggle("open");
-  ham.classList.toggle("active");
-});
+if (ham && menu) {
+  ham.addEventListener("click", () => {
+    menu.classList.toggle("open");
+    ham.classList.toggle("active");
+  });
+}
 
 /* LOCATION */
 (function () {
@@ -152,5 +154,6 @@ ham.addEventListener("click", () => {
   }
 })();
 </script>
+
 </body>
 </html>

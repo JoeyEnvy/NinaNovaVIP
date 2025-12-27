@@ -6,12 +6,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
   <!-- SEO (soft, non-commercial) -->
-  <meta name="description" content="A quiet, friendly way to reach Nina. No pressure, no rush.">
+  <meta name="description" content="A quiet, friendly way to say hi. No pressure, no rush.">
   <link rel="canonical" href="https://ninanovatv.com/contact.html">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Say hi">
-  <meta property="og:description" content="A calm place to reach out. Nina reads messages when she can.">
+  <meta property="og:description" content="A calm place to reach out. Messages are read quietly, in time.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://ninanovatv.com/contact.html">
 
@@ -29,30 +29,23 @@
   <div class="nav-inner">
 
     <a href="index.html" class="brand">
-  Nina<span>Nova</span><em>TV</em>
-</a>
+      Nina<span>Nova</span><em>TV</em>
+    </a>
 
-
-    <!-- LOCATION BADGE (PROMINENT) -->
     <div class="location location-strong" id="nina-location">
       📍 Nina’s around somewhere…
     </div>
 
-    <!-- DESKTOP CTA -->
     <a href="custom.html" class="btn ghost nav-cta">
       Custom Nina
     </a>
 
-    <!-- HAMBURGER (MOBILE ONLY) -->
     <button class="hamburger" id="hamburger" aria-label="Menu">
-      <span></span>
-      <span></span>
-      <span></span>
+      <span></span><span></span><span></span>
     </button>
 
   </div>
 
-  <!-- MOBILE MENU -->
   <nav class="mobile-menu" id="mobileMenu">
     <a href="chat.html">🤍 Leave me a note</a>
     <a href="custom.html">🎥 Something personal</a>
@@ -61,11 +54,11 @@
   </nav>
 </header>
 
-
 <main>
 
 <section class="hero contact-hero">
   <div>
+
     <h1>Come say hi 🤍</h1>
 
     <p>
@@ -75,9 +68,9 @@
 
     <p>
       If you’re curious,
-      want to ask something,
+      want to say hello,
       or just feel like reaching out,
-      this is the right place.
+      this is a gentle place to do that.
     </p>
 
     <p>
@@ -86,8 +79,13 @@
       I read messages properly, when I can.
     </p>
 
-    <!-- PRIMARY CONTACT -->
-    <div class="cta">
+    <p style="margin-top:14px;font-size:.9rem;color:var(--text-muted);max-width:520px">
+      For anything more personal or specific,
+      it’s better to start through the site so things stay clear and private.
+    </p>
+
+    <!-- PRIMARY: CASUAL HELLO -->
+    <div class="cta" style="margin-top:32px">
       <a
         href="https://t.me/NinaNovaAdmin"
         target="_blank"
@@ -95,29 +93,29 @@
         class="btn"
         style="font-size:1.05rem;padding:16px 36px"
       >
-        💬 Message me on Telegram
+        💬 Say hi on Telegram
       </a>
     </div>
 
-    <!-- SECONDARY CONTACT (EMAIL) -->
-    <p style="margin-top:18px;font-size:.95rem;opacity:.85;">
+    <!-- SECONDARY: EMAIL -->
+    <p style="margin-top:18px;font-size:.9rem;opacity:.8;">
       If you’d rather email, that’s okay too:
       <br>
       <a
         href="mailto:nina@ninanovatv.com"
-        style="font-weight:700;text-decoration:underline;"
+        style="font-weight:600;text-decoration:underline;"
       >
         nina@ninanovatv.com
       </a>
     </p>
 
-    <p class="contact-note">
+    <p class="contact-note" style="margin-top:18px;font-size:.85rem;opacity:.75">
       Please be kind and patient.<br>
-      I read everything myself.
+      This space works best when it stays calm.
     </p>
+
   </div>
 
-  <!-- IMAGE -->
   <div class="hero-image-wrap">
     <img
       src="images/5.png"
@@ -137,18 +135,18 @@
     <small>No pressure • no expectations</small>
   </p>
 </footer>
-<script>
-/* YEAR */
-document.getElementById("yy").textContent = new Date().getFullYear();
 
+<script>
 /* HAMBURGER */
 const ham = document.getElementById("hamburger");
 const menu = document.getElementById("mobileMenu");
 
-ham.addEventListener("click", () => {
-  menu.classList.toggle("open");
-  ham.classList.toggle("active");
-});
+if (ham && menu) {
+  ham.addEventListener("click", () => {
+    menu.classList.toggle("open");
+    ham.classList.toggle("active");
+  });
+}
 
 /* LOCATION */
 (function () {
@@ -169,5 +167,6 @@ ham.addEventListener("click", () => {
   }
 })();
 </script>
+
 </body>
 </html>

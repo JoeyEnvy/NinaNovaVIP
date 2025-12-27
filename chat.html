@@ -6,12 +6,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
   <!-- SEO -->
-  <meta name="description" content="A quiet, private place to leave Nina a message. No pressure. No rush.">
+  <meta name="description" content="A quiet, private place to leave Nina a message. This is where she reads them.">
   <link rel="canonical" href="https://ninanovatv.com/chat.html">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Leave Nina a message">
-  <meta property="og:description" content="A quieter place to talk. Nina reads messages when she can.">
+  <meta property="og:description" content="A quieter place to talk. Nina reads messages here.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://ninanovatv.com/chat.html">
 
@@ -46,7 +46,7 @@
     <a href="chat.html" data-track="chat">🤍 Leave me a note</a>
     <a href="custom.html" data-track="custom">🎥 Something personal</a>
     <a href="https://www.fanvue.com/nina_nova" target="_blank" rel="noopener" data-track="fanvue">🌙 Fanvue</a>
-    <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram">☕ Telegram</a>
+    <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram">☕ Telegram (updates)</a>
   </nav>
 </header>
 
@@ -56,8 +56,15 @@
 
     <h1>Leave me a message 🤍</h1>
 
-    <p>I don’t really like loud inboxes or public comment sections. This is just a quieter place.</p>
-    <p>I can’t promise instant replies — but I do read everything here.</p>
+    <p>
+      I don’t really like loud inboxes or public comment sections.
+      This is just a quieter place I actually check.
+    </p>
+
+    <p>
+      I don’t promise instant replies —
+      but I do read everything left here.
+    </p>
 
     <div class="chat-box" style="margin-top:30px;">
       <div class="chat-header">
@@ -66,26 +73,41 @@
       </div>
 
       <div id="chat-messages">
-        <div class="msg nina">hey 🤍 you can leave me a message here</div>
+        <div class="msg nina">
+          hey 🤍 you can leave me a message here — i’ll see it
+        </div>
       </div>
 
       <div class="chat-input">
-        <input id="chat-input" type="text" placeholder="Write your message…" autocomplete="off" />
+        <input
+          id="chat-input"
+          type="text"
+          placeholder="Write something just for me…"
+          autocomplete="off"
+        />
         <button id="chat-send" data-track="send">Send</button>
       </div>
     </div>
 
-    <p style="margin-top:14px;font-size:.8rem;opacity:.6;font-style:italic;">
-      Replies aren’t instant. That’s kind of the point.
+    <p style="margin-top:14px;font-size:.8rem;opacity:.65;font-style:italic;">
+      Replies aren’t instant. That’s intentional.
+    </p>
+
+    <p style="margin-top:14px;font-size:.9rem;color:var(--text-muted);max-width:560px">
+      I don’t really reply to Instagram DMs.
+      Telegram is more for sharing things.
+      If you’re here, this is the right place.
     </p>
 
     <div class="links" style="margin-top:36px;">
       <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram">
-        ☕ Telegram <small>If you prefer quicker replies</small>
+        ☕ Telegram
+        <small>Unfiltered posts & random thoughts</small>
       </a>
 
       <a href="index.html" data-track="home">
-        ← Back to the quiet corner <small>Take your time</small>
+        ← Back to the quiet corner
+        <small>Take your time</small>
       </a>
     </div>
 
@@ -94,7 +116,10 @@
 </main>
 
 <footer class="footer">
-  <p>Thanks for being patient 🤍<br><small>Some things are nicer unhurried</small></p>
+  <p>
+    Thanks for being patient 🤍<br>
+    <small>Some things are nicer unhurried</small>
+  </p>
 </footer>
 
 <script>
@@ -151,10 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const input   = document.getElementById("chat-input");
   const sendBtn = document.getElementById("chat-send");
 
-  if (!chatBox || !input || !sendBtn) {
-    console.error("Chat elements missing");
-    return;
-  }
+  if (!chatBox || !input || !sendBtn) return;
 
   /* =========================
      SESSION
@@ -185,8 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function removeTyping() {
-    const t = document.getElementById("typing");
-    if (t) t.remove();
+    document.getElementById("typing")?.remove();
   }
 
   /* =========================
@@ -236,7 +257,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 </script>
-
 
 </body>
 </html>
