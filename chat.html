@@ -66,6 +66,13 @@
       but I do read everything left here.
     </p>
 
+    <!-- ✨ privacy note added -->
+    <p style="margin-top:14px;font-size:.9rem;color:var(--text-muted);max-width:560px">
+      This space is just between you and me.
+      Messages aren’t shared, forwarded, or kept hanging around —
+      once I’ve read them, they’re meant to fade quietly.
+    </p>
+
     <div class="chat-box" style="margin-top:30px;">
       <div class="chat-header">
         <span>Nina</span>
@@ -125,15 +132,9 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* =========================
-     CONFIG
-  ========================= */
   const TRACK_URL = "https://ninanovavip-backend.onrender.com/track";
   const API_URL   = "https://ninanovavip-backend.onrender.com/grok";
 
-  /* =========================
-     ANALYTICS (SAFE)
-  ========================= */
   function track(payload) {
     try {
       if (navigator.sendBeacon) {
@@ -157,9 +158,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  /* =========================
-     HAMBURGER
-  ========================= */
   const ham = document.getElementById("hamburger");
   const menu = document.getElementById("mobileMenu");
   if (ham && menu) {
@@ -169,27 +167,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* =========================
-     CHAT ELEMENTS
-  ========================= */
   const chatBox = document.getElementById("chat-messages");
   const input   = document.getElementById("chat-input");
   const sendBtn = document.getElementById("chat-send");
-
   if (!chatBox || !input || !sendBtn) return;
 
-  /* =========================
-     SESSION
-  ========================= */
   let sessionId = localStorage.getItem("nina_session");
   if (!sessionId) {
     sessionId = crypto.randomUUID();
     localStorage.setItem("nina_session", sessionId);
   }
 
-  /* =========================
-     UI HELPERS
-  ========================= */
   function addMessage(text, who) {
     const div = document.createElement("div");
     div.className = `msg ${who}`;
@@ -210,9 +198,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("typing")?.remove();
   }
 
-  /* =========================
-     SEND MESSAGE
-  ========================= */
   async function sendMessage() {
     const text = input.value.trim();
     if (!text) return;
@@ -243,11 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /* =========================
-     EVENTS
-  ========================= */
   sendBtn.addEventListener("click", sendMessage);
-
   input.addEventListener("keydown", e => {
     if (e.key === "Enter") {
       e.preventDefault();
