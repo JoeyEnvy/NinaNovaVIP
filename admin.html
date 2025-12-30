@@ -5,11 +5,9 @@
   <title>Nina Nova TV — Admin</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <!-- Favicon -->
   <link rel="icon" href="images/download.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="images/download.svg">
 
-  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter+Tight:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
@@ -27,30 +25,35 @@
       height:54px;
       display:flex;
       align-items:center;
+      justify-content:space-between;
       padding:0 18px;
       background:rgba(10,10,16,.85);
       border-bottom:1px solid rgba(255,255,255,.08);
       backdrop-filter:blur(12px);
       position:fixed;
-      top:0;
-      left:0;
-      right:0;
+      top:0;left:0;right:0;
       z-index:10;
     }
 
     header .brand{
       font-family:'Anton',sans-serif;
       font-size:1.4rem;
-      letter-spacing:.5px;
     }
 
-    header .brand span{color:#ff4fa0}
-    header .brand em{
-      font-style:normal;
-      color:#ff8c32;
-      font-size:.9em;
-      margin-left:2px;
+    header span{color:#ff4fa0}
+    header em{font-style:normal;color:#ff8c32}
+
+    header nav button{
+      background:none;
+      border:none;
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+      opacity:.7;
+      margin-left:14px;
     }
+
+    header nav button.active{opacity:1}
 
     #wrapper{
       display:flex;
@@ -58,147 +61,140 @@
       padding-top:54px;
     }
 
-    /* LEFT: SESSION LIST */
     #sessions{
-      width:340px;
+      width:320px;
       background:#0f0f18;
       border-right:1px solid rgba(255,255,255,.08);
       overflow-y:auto;
     }
 
     .session{
-      padding:16px 18px;
+      padding:14px 16px;
       border-bottom:1px solid rgba(255,255,255,.06);
       cursor:pointer;
-      transition:.2s ease;
     }
 
-    .session:hover{
-      background:#161622;
-    }
+    .session:hover{background:#161622}
 
-    .session strong{
-      display:block;
-      font-size:.9rem;
-      font-weight:700;
-    }
-
-    .session small{
-      display:block;
-      margin-top:4px;
-      font-size:.75rem;
-      opacity:.6;
-    }
-
-    /* RIGHT: CHAT */
-    #chat{
+    #main{
       flex:1;
       padding:24px;
       overflow-y:auto;
-      background:
-        radial-gradient(420px 320px at 20% 20%, rgba(255,79,160,.08), transparent 60%),
-        radial-gradient(420px 320px at 80% 20%, rgba(161,43,255,.08), transparent 60%);
     }
 
     .msg{
-      margin-bottom:16px;
-      max-width:70%;
-      padding:12px 16px;
+      margin-bottom:12px;
+      padding:10px 14px;
       border-radius:14px;
-      line-height:1.45;
-      font-size:.95rem;
-      animation:fadeIn .2s ease both;
+      max-width:70%;
     }
 
-    .user{
-      margin-left:auto;
-      background:#2b2b3f;
+    .user{margin-left:auto;background:#2b2b3f}
+    .assistant{background:#412060}
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:20px;
     }
 
-    .assistant{
-      background:#412060;
+    th,td{
+      text-align:left;
+      padding:10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      font-size:.9rem;
     }
 
-    .time{
-      display:block;
-      font-size:.65rem;
-      opacity:.5;
-      margin-top:6px;
-    }
-
-    @keyframes fadeIn{
-      from{opacity:0}
-      to{opacity:1}
-    }
-
-    /* SCROLLBARS */
-    #sessions::-webkit-scrollbar,
-    #chat::-webkit-scrollbar{
-      width:6px;
-    }
-
-    #sessions::-webkit-scrollbar-thumb,
-    #chat::-webkit-scrollbar-thumb{
-      background:rgba(255,79,160,.35);
-      border-radius:6px;
-    }
+    th{opacity:.7}
   </style>
 </head>
 
 <body>
 
 <header>
-  <div class="brand">
-    Nina<span>Nova</span><em>TV</em> — Admin
-  </div>
+  <div class="brand">Nina<span>Nova</span><em>TV</em> — Admin</div>
+  <nav>
+    <button id="tabChat" class="active">Chats</button>
+    <button id="tabAnalytics">Analytics</button>
+  </nav>
 </header>
 
 <div id="wrapper">
   <div id="sessions"></div>
-  <div id="chat">Select a conversation</div>
+  <div id="main">Loading…</div>
 </div>
 
 <script>
 const params = new URLSearchParams(location.search);
-const ADMIN_KEY = params.get("key");
+const KEY = params.get("key");
 
-if (!ADMIN_KEY) {
+if (!KEY) {
   document.body.innerHTML = "<h2 style='padding:40px'>Missing admin key</h2>";
   throw new Error("No key");
 }
 
-fetch(`https://ninanovavip-backend.onrender.com/admin/conversations?key=${ADMIN_KEY}`)
-  .then(res => {
-    if (!res.ok) throw new Error("unauthorised");
-    return res.json();
-  })
-  .then(data => {
-    const sessionsEl = document.getElementById("sessions");
-    const chatEl = document.getElementById("chat");
+const sessionsEl = document.getElementById("sessions");
+const mainEl = document.getElementById("main");
 
-    Object.entries(data).forEach(([id, messages]) => {
-      const div = document.createElement("div");
-      div.className = "session";
-      div.innerHTML = `
-        <strong>${id}</strong>
-        <small>${messages.length} messages</small>
-      `;
+const tabChat = document.getElementById("tabChat");
+const tabAnalytics = document.getElementById("tabAnalytics");
 
-      div.onclick = () => {
-        chatEl.innerHTML = messages.map(m => `
-          <div class="msg ${m.role}">
-            ${m.content}
-            <span class="time">${new Date(m.time).toLocaleString()}</span>
-          </div>
-        `).join("");
-      };
+tabChat.onclick = () => loadChats();
+tabAnalytics.onclick = () => loadAnalytics();
 
-      sessionsEl.appendChild(div);
+function setTab(active){
+  tabChat.classList.toggle("active", active==="chat");
+  tabAnalytics.classList.toggle("active", active==="analytics");
+}
+
+function loadChats(){
+  setTab("chat");
+  fetch(`https://ninanovavip-backend.onrender.com/admin/conversations?key=${KEY}`)
+    .then(r => r.json())
+    .then(data => {
+      sessionsEl.innerHTML = "";
+      mainEl.innerHTML = "Select a conversation";
+      Object.entries(data).forEach(([id, msgs]) => {
+        const div = document.createElement("div");
+        div.className = "session";
+        div.textContent = `${id} (${msgs.length})`;
+        div.onclick = () => {
+          mainEl.innerHTML = msgs.map(m =>
+            `<div class="msg ${m.role}">${m.content}</div>`
+          ).join("");
+        };
+        sessionsEl.appendChild(div);
+      });
     });
-  })
-  .catch(() => {
-    document.body.innerHTML = "<h2 style='padding:40px'>Access denied</h2>";
-  });
+}
+
+function loadAnalytics(){
+  setTab("analytics");
+  sessionsEl.innerHTML = "";
+  mainEl.innerHTML = "Loading analytics…";
+
+  fetch(`https://ninanovavip-backend.onrender.com/admin/analytics?key=${KEY}`)
+    .then(r => r.json())
+    .then(events => {
+      const counts = {};
+      events.forEach(e => {
+        const k = `${e.page} → ${e.target || e.type}`;
+        counts[k] = (counts[k] || 0) + 1;
+      });
+
+      mainEl.innerHTML = `
+        <h2>Analytics</h2>
+        <table>
+          <tr><th>Event</th><th>Count</th></tr>
+          ${Object.entries(counts)
+            .map(([k,v]) => `<tr><td>${k}</td><td>${v}</td></tr>`)
+            .join("")}
+        </table>
+      `;
+    });
+}
+
+loadChats();
 </script>
 
 </body>
