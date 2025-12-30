@@ -69,6 +69,22 @@
       once I’ve read them, they’re meant to fade quietly.
     </p>
 
+    <!-- INSTAGRAM IN-APP BROWSER NOTICE -->
+    <p style="
+      margin-top:18px;
+      font-size:.85rem;
+      color:var(--text-muted);
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:12px;
+      padding:12px 14px;
+      max-width:560px;
+    ">
+      If the <strong>Send</strong> button doesn’t respond when opening this from Instagram,
+      tap the <strong>⋮ menu</strong> and choose
+      <strong>“Open in browser”</strong> (Chrome or Safari).
+    </p>
+
     <div class="chat-box" style="margin-top:30px;">
       <div class="chat-header">
         <span>Nina</span>
@@ -203,7 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
     track({ type: "message", page: "chat" });
 
     try {
-      await new Promise(r => setTimeout(r, 0)); // 🔒 Instagram WebView fix
+      await new Promise(r => setTimeout(r, 0));
 
       const res = await fetch(API_URL, {
         method: "POST",
