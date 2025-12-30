@@ -62,7 +62,7 @@
       position:fixed;
       inset:18px;
       border-radius:32px;
-      border:1px solid var(--border);
+      border:1px solid rgba(255,255,255,.18);
       pointer-events:none;
       z-index:1;
       box-shadow:
@@ -83,7 +83,6 @@
       to{opacity:1;transform:none}
     }
 
-    /* BRAND LOGO */
     .brand{
       font-family:'Anton',system-ui,sans-serif;
       font-size:2.2rem;
@@ -114,7 +113,6 @@
       margin-bottom:46px;
     }
 
-    /* BUTTON STACK */
     .choice{
       display:flex;
       flex-direction:column;
@@ -137,57 +135,29 @@
       letter-spacing:.3px;
       text-decoration:none;
       transition:var(--transition);
-      position:relative;
     }
 
     .btn.primary{
       background:linear-gradient(135deg,var(--pink),var(--purple));
       color:#fff;
       box-shadow:var(--glow);
-      animation:pulse 3.5s ease-in-out infinite;
-    }
-
-    @keyframes pulse{
-      0%,100%{box-shadow:0 0 42px rgba(255,79,160,.45)}
-      50%{box-shadow:0 0 64px rgba(255,79,160,.75)}
-    }
-
-    .btn.primary:hover{
-      transform:translateY(-4px) scale(1.015);
-      box-shadow:0 0 78px rgba(255,79,160,.85);
     }
 
     .btn.secondary{
       background:rgba(255,255,255,.06);
       border:2px solid rgba(255,255,255,.35);
       color:#fff;
-      backdrop-filter:blur(6px);
-    }
-
-    .btn.secondary:hover{
-      transform:translateY(-3px);
-      background:rgba(255,255,255,.12);
-      border-color:var(--pink);
     }
 
     .hint{
       font-size:.9rem;
       color:var(--muted);
-      opacity:.9;
     }
 
     .note{
       font-size:.95rem;
       color:var(--muted);
       opacity:.85;
-    }
-
-    /* MOBILE */
-    @media (max-width:640px){
-      .wrap{padding:52px 26px}
-      .btn{font-size:1.15rem;padding:26px}
-      p{font-size:1.05rem}
-      .brand{font-size:1.95rem}
     }
   </style>
 </head>
@@ -208,24 +178,22 @@
         <a
           href="https://www.fanvue.com/nina_nova"
           class="btn primary"
+          data-track="fanvue_primary"
         >
           🔥 This is what you’re looking for
         </a>
-        <div class="hint">
-          Fanvue • photos • real moments
-        </div>
+        <div class="hint">Fanvue • photos • real moments</div>
       </div>
 
       <div class="btn-wrap">
         <a
           href="home.html"
           class="btn secondary"
+          data-track="slow_path"
         >
           🤍 Take it slower
         </a>
-        <div class="hint">
-          NinaNovaTV • chat • quieter space
-        </div>
+        <div class="hint">NinaNovaTV • chat • quieter space</div>
       </div>
 
     </div>
@@ -235,6 +203,41 @@
     </div>
 
   </div>
+
+<script>
+(() => {
+  const TRACK_URL = "https://ninanovavip-backend.onrender.com/track";
+
+  function send(payload) {
+    try {
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(TRACK_URL, JSON.stringify(payload));
+      } else {
+        fetch(TRACK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          keepalive: true
+        });
+      }
+    } catch {}
+  }
+
+  // page view
+  send({ type: "pageview", page: "gate" });
+
+  // click tracking
+  document.querySelectorAll("[data-track]").forEach(el => {
+    el.addEventListener("click", () => {
+      send({
+        type: "click",
+        page: "gate",
+        target: el.dataset.track
+      });
+    });
+  });
+})();
+</script>
+
 </body>
 </html>
-
