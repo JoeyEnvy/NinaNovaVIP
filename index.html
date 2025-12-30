@@ -2,11 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Nina Nova</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
 
+  <title>Nina Nova</title>
+
+  <!-- Viewport -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <!-- SEO (intentionally minimal, correct for a gate page) -->
   <meta name="description" content="You didn’t click by accident.">
   <meta name="robots" content="noindex,nofollow">
+
+  <!-- Favicon -->
+  <link rel="icon" href="images/download.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="images/download.svg">
+
+  <!-- Performance: hint background image -->
+  <link rel="preload" as="image" href="images/ComfyUI_00076_.png">
 
   <style>
     :root{
@@ -28,6 +39,8 @@
       min-height:100%;
       font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
       color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
     }
 
     body{
@@ -36,7 +49,7 @@
       justify-content:center;
       text-align:center;
       background:
-        url("images/ComfyUI_00076_.png") center / cover no-repeat fixed;
+        url("images/ComfyUI_00076_.png") center / cover no-repeat;
       position:relative;
       overflow:hidden;
     }
@@ -46,7 +59,7 @@
       content:"";
       position:fixed;
       inset:0;
-      backdrop-filter:blur(10px);
+      backdrop-filter:blur(9px);
       background:
         linear-gradient(
           to bottom,
@@ -75,19 +88,21 @@
       z-index:2;
       max-width:640px;
       padding:64px 40px;
-      animation:fadeUp .6s ease both;
+      animation:fadeUp .55s ease-out both;
     }
 
     @keyframes fadeUp{
-      from{opacity:0;transform:translateY(12px)}
+      from{opacity:0;transform:translateY(10px)}
       to{opacity:1;transform:none}
     }
 
+    /* BRAND */
     .brand{
       font-family:'Anton',system-ui,sans-serif;
       font-size:2.2rem;
       letter-spacing:.6px;
-      margin-bottom:28px;
+      margin-bottom:26px;
+      user-select:none;
     }
 
     .brand span{color:var(--pink)}
@@ -99,8 +114,8 @@
     }
 
     h1{
-      font-size:clamp(2.4rem,5vw,3.6rem);
-      margin-bottom:14px;
+      font-size:clamp(2.3rem,5vw,3.4rem);
+      margin-bottom:12px;
       font-weight:800;
       background:linear-gradient(90deg,var(--purple),var(--pink),var(--orange));
       -webkit-background-clip:text;
@@ -110,14 +125,14 @@
     p{
       font-size:1.15rem;
       color:var(--muted);
-      margin-bottom:46px;
+      margin-bottom:44px;
     }
 
     .choice{
       display:flex;
       flex-direction:column;
-      gap:28px;
-      margin-bottom:34px;
+      gap:26px;
+      margin-bottom:30px;
     }
 
     .btn-wrap{
@@ -128,13 +143,14 @@
 
     .btn{
       display:block;
-      padding:30px 42px;
+      padding:28px 40px;
       border-radius:999px;
-      font-size:1.35rem;
+      font-size:1.3rem;
       font-weight:900;
       letter-spacing:.3px;
       text-decoration:none;
       transition:var(--transition);
+      will-change:transform;
     }
 
     .btn.primary{
@@ -144,14 +160,15 @@
     }
 
     .btn.primary:hover{
-      transform:translateY(-3px) scale(1.01);
-      box-shadow:0 0 72px rgba(255,79,160,.8);
+      transform:translateY(-3px) scale(1.015);
+      box-shadow:0 0 78px rgba(255,79,160,.85);
     }
 
     .btn.secondary{
       background:rgba(255,255,255,.06);
       border:2px solid rgba(255,255,255,.35);
       color:#fff;
+      backdrop-filter:blur(6px);
     }
 
     .btn.secondary:hover{
@@ -169,6 +186,22 @@
       font-size:.95rem;
       color:var(--muted);
       opacity:.85;
+    }
+
+    /* REDUCED MOTION */
+    @media (prefers-reduced-motion: reduce){
+      *{
+        animation:none!important;
+        transition:none!important;
+      }
+    }
+
+    /* MOBILE */
+    @media (max-width:640px){
+      .wrap{padding:52px 26px}
+      .btn{font-size:1.15rem;padding:24px}
+      p{font-size:1.05rem}
+      .brand{font-size:1.95rem}
     }
   </style>
 </head>
@@ -238,10 +271,7 @@
   }
 
   // page view
-  send({
-    type: "pageview",
-    page: "gate"
-  });
+  send({ type: "pageview", page: "gate" });
 
   // click tracking
   document.querySelectorAll("[data-track]").forEach(el => {
