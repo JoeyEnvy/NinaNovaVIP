@@ -2,223 +2,239 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Nina Nova TV — a quieter place</title>
+  <title>Nina Nova</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <!-- SEO -->
-  <meta name="description" content="Nina Nova TV — a calm, quieter place to leave a message and take your time.">
-  <link rel="canonical" href="https://ninanovatv.com/">
+  <meta name="description" content="You didn’t click by accident.">
+  <meta name="robots" content="noindex,nofollow">
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="Nina Nova TV — a quieter place">
-  <meta property="og:description" content="A soft corner away from the noise. This is where Nina reads messages.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://ninanovatv.com/">
-  <meta property="og:image" content="https://ninanovatv.com/images/1.png">
+  <style>
+    :root{
+      --pink:#ff4fa0;
+      --purple:#a12bff;
+      --orange:#ff8c32;
+      --text:#f5f5fa;
+      --muted:#b8b6c9;
+      --border:rgba(255,255,255,.18);
+      --glow:0 0 42px rgba(255,79,160,.55);
+      --radius:26px;
+      --transition:.35s cubic-bezier(.4,0,.2,1);
+    }
 
-  <!-- Favicon -->
-  <link rel="icon" href="images/download.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="images/download.svg">
+    *{box-sizing:border-box}
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="styles.css">
+    html,body{
+      margin:0;
+      min-height:100%;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+    }
+
+    body{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      background:
+        url("images/ComfyUI_00076_.png") center / cover no-repeat fixed;
+      position:relative;
+      overflow:hidden;
+    }
+
+    /* BLUR + DARKEN OVERLAY */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      backdrop-filter:blur(10px);
+      background:
+        linear-gradient(
+          to bottom,
+          rgba(0,0,0,.45),
+          rgba(0,0,0,.75)
+        );
+      z-index:0;
+    }
+
+    /* SOFT EDGE BORDER / VIGNETTE */
+    body::after{
+      content:"";
+      position:fixed;
+      inset:18px;
+      border-radius:32px;
+      border:1px solid var(--border);
+      pointer-events:none;
+      z-index:1;
+      box-shadow:
+        inset 0 0 120px rgba(0,0,0,.65),
+        0 0 0 1px rgba(255,255,255,.04);
+    }
+
+    .wrap{
+      position:relative;
+      z-index:2;
+      max-width:640px;
+      padding:64px 40px;
+      animation:fadeUp .6s ease both;
+    }
+
+    @keyframes fadeUp{
+      from{opacity:0;transform:translateY(12px)}
+      to{opacity:1;transform:none}
+    }
+
+    /* BRAND LOGO */
+    .brand{
+      font-family:'Anton',system-ui,sans-serif;
+      font-size:2.2rem;
+      letter-spacing:.6px;
+      margin-bottom:28px;
+    }
+
+    .brand span{color:var(--pink)}
+    .brand em{
+      font-style:normal;
+      color:var(--orange);
+      font-size:.9em;
+      margin-left:2px;
+    }
+
+    h1{
+      font-size:clamp(2.4rem,5vw,3.6rem);
+      margin-bottom:14px;
+      font-weight:800;
+      background:linear-gradient(90deg,var(--purple),var(--pink),var(--orange));
+      -webkit-background-clip:text;
+      color:transparent;
+    }
+
+    p{
+      font-size:1.15rem;
+      color:var(--muted);
+      margin-bottom:46px;
+    }
+
+    /* BUTTON STACK */
+    .choice{
+      display:flex;
+      flex-direction:column;
+      gap:28px;
+      margin-bottom:34px;
+    }
+
+    .btn-wrap{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .btn{
+      display:block;
+      padding:30px 42px;
+      border-radius:999px;
+      font-size:1.35rem;
+      font-weight:900;
+      letter-spacing:.3px;
+      text-decoration:none;
+      transition:var(--transition);
+      position:relative;
+    }
+
+    .btn.primary{
+      background:linear-gradient(135deg,var(--pink),var(--purple));
+      color:#fff;
+      box-shadow:var(--glow);
+      animation:pulse 3.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse{
+      0%,100%{box-shadow:0 0 42px rgba(255,79,160,.45)}
+      50%{box-shadow:0 0 64px rgba(255,79,160,.75)}
+    }
+
+    .btn.primary:hover{
+      transform:translateY(-4px) scale(1.015);
+      box-shadow:0 0 78px rgba(255,79,160,.85);
+    }
+
+    .btn.secondary{
+      background:rgba(255,255,255,.06);
+      border:2px solid rgba(255,255,255,.35);
+      color:#fff;
+      backdrop-filter:blur(6px);
+    }
+
+    .btn.secondary:hover{
+      transform:translateY(-3px);
+      background:rgba(255,255,255,.12);
+      border-color:var(--pink);
+    }
+
+    .hint{
+      font-size:.9rem;
+      color:var(--muted);
+      opacity:.9;
+    }
+
+    .note{
+      font-size:.95rem;
+      color:var(--muted);
+      opacity:.85;
+    }
+
+    /* MOBILE */
+    @media (max-width:640px){
+      .wrap{padding:52px 26px}
+      .btn{font-size:1.15rem;padding:26px}
+      p{font-size:1.05rem}
+      .brand{font-size:1.95rem}
+    }
+  </style>
 </head>
 
-<body class="has-bg">
+<body>
+  <div class="wrap">
 
-<header class="nav">
-  <div class="nav-inner">
-
-    <a href="index.html" class="brand" data-track="brand_home">
+    <div class="brand">
       Nina<span>Nova</span><em>TV</em>
-    </a>
-
-    <div class="location location-strong" id="nina-location">
-      📍 Nina’s around somewhere…
     </div>
 
-    <a href="custom.html" class="btn ghost nav-cta" data-track="custom_nav">
-      Custom Nina
-    </a>
+    <h1>Hey… 🤍</h1>
+    <p>You didn’t click by accident.</p>
 
-    <button class="hamburger" id="hamburger" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
+    <div class="choice">
 
-  </div>
-
-  <nav class="mobile-menu" id="mobileMenu">
-    <a href="chat.html" data-track="chat_menu">🤍 Leave me a note</a>
-    <a href="custom.html" data-track="custom_menu">🎥 Something personal</a>
-    <a href="https://www.fanvue.com/nina_nova" target="_blank" rel="noopener" data-track="fanvue_menu">🌙 Fanvue</a>
-    <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram_menu">☕ Telegram (updates)</a>
-  </nav>
-</header>
-
-<main>
-
-<section class="hero">
-  <div>
-    <h1>Hey… I’m Nina 🤍</h1>
-
-    <p>This is my quieter corner. Less noise. More real.</p>
-
-    <p>
-      I like slow thoughts, private messages,
-      and not pretending to be “on” everywhere at once.
-    </p>
-
-    <p>If that sounds like you, you’ll probably feel comfy here.</p>
-
-    <div class="cta monetisation">
-      <a
-        href="https://www.fanvue.com/nina_nova"
-        target="_blank"
-        rel="noopener"
-        class="btn platform fanvue"
-        data-track="fanvue_primary"
-      >
-        🌙 Fanvue
-      </a>
-
-      <a
-        href="https://www.fanvue.com/nina_nova"
-        target="_blank"
-        rel="noopener"
-        class="btn platform onlyfans ghost"
-        data-track="onlyfans_primary"
-      >
-        🔥 OnlyFans
-      </a>
-    </div>
-
-    <p class="cta-subtle">
-      Little moments, no pressure 🤍
-    </p>
-
-    <a href="chat.html" class="chat-preview" aria-label="Leave Nina a message" data-track="chat_preview">
-      <div class="chat-preview-header">
-        <span>Nina</span>
-        <small>private notes</small>
+      <div class="btn-wrap">
+        <a
+          href="https://www.fanvue.com/nina_nova"
+          class="btn primary"
+        >
+          🔥 This is what you’re looking for
+        </a>
+        <div class="hint">
+          Fanvue • photos • real moments
+        </div>
       </div>
 
-      <div class="chat-preview-body">
-        <div class="msg nina">hey 🤍</div>
-        <div class="msg nina">you can leave me a message here</div>
+      <div class="btn-wrap">
+        <a
+          href="home.html"
+          class="btn secondary"
+        >
+          🤍 Take it slower
+        </a>
+        <div class="hint">
+          NinaNovaTV • chat • quieter space
+        </div>
       </div>
 
-      <div class="chat-preview-footer">
-        <span>Leave a message… <small>(I actually read these)</small></span>
-      </div>
-    </a>
-
-    <div class="cta">
-      <a href="chat.html" class="btn ghost" data-track="chat_button">
-        Leave me a note
-      </a>
     </div>
 
-    <p style="margin-top:16px;font-size:.95rem;color:var(--text-muted);max-width:520px">
-      I don’t really reply on Instagram — it gets loud and messy.
-      Telegram is more for sharing things.
-      If you actually want to talk to me, this site is where I read messages.
-    </p>
-
-    <div class="links" style="margin-top:28px">
-      <a href="https://www.fanvue.com/nina_nova" target="_blank" rel="noopener" class="primary-link" data-track="fanvue_footer">
-        🌙 My main space
-        <small>Photos, thoughts, little moments</small>
-      </a>
-
-      <a href="chat.html" data-track="chat_footer">
-        🤍 Leave me a note
-        <small>A quieter place to talk</small>
-      </a>
-
-      <a href="custom.html" data-track="custom_footer">
-        🎥 Something personal
-        <small>Only if it feels right</small>
-      </a>
-
-      <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram_footer">
-        ☕ Telegram
-        <small>Unfiltered posts & random thoughts</small>
-      </a>
+    <div class="note">
+      No pressure. Choose what feels right.
     </div>
 
-    <p style="margin-top:22px;font-size:.85rem;color:var(--text-muted);opacity:.85">
-      I don’t keep DMs open everywhere.
-      This space is intentionally quieter.
-    </p>
   </div>
-
-  <div class="hero-image-wrap">
-    <img src="images/6.png" alt="Nina Nova" class="hero-portrait" loading="eager">
-    <img src="images/1.png" alt="Nina Nova portrait" class="hero-portrait" loading="lazy">
-  </div>
-</section>
-
-</main>
-
-<footer class="footer">
-  <div style="max-width:1100px;margin:0 auto;">
-    <p>
-      Thanks for stopping by 🤍<br>
-      <small style="opacity:.85">No rush • No expectations • Just take your time</small>
-    </p>
-    <p style="margin-top:10px;font-size:.85rem;opacity:.75">
-      © <span id="yy"></span> Nina Nova TV • ninanovatv.com
-    </p>
-  </div>
-</footer>
-
-<script>
-/* YEAR */
-document.getElementById("yy").textContent = new Date().getFullYear();
-
-/* HAMBURGER */
-const ham = document.getElementById("hamburger");
-const menu = document.getElementById("mobileMenu");
-ham.addEventListener("click", () => {
-  menu.classList.toggle("open");
-  ham.classList.toggle("active");
-});
-
-/* LOCATION */
-(() => {
-  const el = document.getElementById("nina-location");
-  if (!el) return;
-  fetch("https://ipapi.co/json/")
-    .then(r => r.json())
-    .then(d => el.textContent = d?.city ? `📍 Nina’s around ${d.city}` : "📍 Nina’s nearby")
-    .catch(() => el.textContent = "📍 Nina’s nearby");
-})();
-
-/* ANALYTICS */
-const TRACK_URL = "https://ninanovavip-backend.onrender.com/track";
-
-// page view
-fetch(TRACK_URL, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ type: "pageview", page: "index" })
-}).catch(() => {});
-
-// click tracking
-document.querySelectorAll("[data-track]").forEach(el => {
-  el.addEventListener("click", () => {
-    fetch(TRACK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "click",
-        page: "index",
-        target: el.dataset.track
-      })
-    }).catch(() => {});
-  });
-});
-</script>
-
 </body>
 </html>
+

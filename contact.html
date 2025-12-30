@@ -28,7 +28,7 @@
 <header class="nav">
   <div class="nav-inner">
 
-    <a href="index.html" class="brand">
+    <a href="home.html" class="brand" data-track="brand_home">
       Nina<span>Nova</span><em>TV</em>
     </a>
 
@@ -36,7 +36,7 @@
       📍 Nina’s around somewhere…
     </div>
 
-    <a href="custom.html" class="btn ghost nav-cta">
+    <a href="custom.html" class="btn ghost nav-cta" data-track="custom_nav">
       Custom Nina
     </a>
 
@@ -47,10 +47,10 @@
   </div>
 
   <nav class="mobile-menu" id="mobileMenu">
-    <a href="chat.html">🤍 Leave me a note</a>
-    <a href="custom.html">🎥 Something personal</a>
-    <a href="https://www.fanvue.com/nina_nova" target="_blank" rel="noopener">🌙 Fanvue</a>
-    <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener">☕ Telegram</a>
+    <a href="chat.html" data-track="chat_menu">🤍 Leave me a note</a>
+    <a href="custom.html" data-track="custom_menu">🎥 Something personal</a>
+    <a href="https://www.fanvue.com/nina_nova" target="_blank" rel="noopener" data-track="fanvue_menu">🌙 Fanvue</a>
+    <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram_menu">☕ Telegram</a>
   </nav>
 </header>
 
@@ -92,6 +92,7 @@
         rel="noopener"
         class="btn"
         style="font-size:1.05rem;padding:16px 36px"
+        data-track="telegram_primary"
       >
         💬 Say hi on Telegram
       </a>
@@ -104,6 +105,7 @@
       <a
         href="mailto:nina@ninanovatv.com"
         style="font-weight:600;text-decoration:underline;"
+        data-track="email_link"
       >
         nina@ninanovatv.com
       </a>
@@ -137,6 +139,31 @@
 </footer>
 
 <script>
+/* ANALYTICS */
+const TRACK_URL = "https://ninanovavip-backend.onrender.com/track";
+
+// page view
+fetch(TRACK_URL, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ type: "pageview", page: "contact" })
+}).catch(() => {});
+
+// click tracking
+document.querySelectorAll("[data-track]").forEach(el => {
+  el.addEventListener("click", () => {
+    fetch(TRACK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "click",
+        page: "contact",
+        target: el.dataset.track
+      })
+    }).catch(() => {});
+  });
+});
+
 /* HAMBURGER */
 const ham = document.getElementById("hamburger");
 const menu = document.getElementById("mobileMenu");

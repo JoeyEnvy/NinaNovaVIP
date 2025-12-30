@@ -28,7 +28,7 @@
 <header class="nav">
   <div class="nav-inner">
 
-    <a href="index.html" class="brand" data-track="brand_home">
+    <a href="home.html" class="brand" data-track="brand_home">
       Nina<span>Nova</span><em>TV</em>
     </a>
 
@@ -90,7 +90,6 @@
       I’ll see it.
     </p>
 
-    <!-- IMPORTANT: This is the bridge to backend logic -->
     <p style="margin-top:18px;font-size:.85rem;color:var(--text-muted);max-width:520px">
       If it makes sense to continue,
       I’ll explain next steps privately and move things somewhere quieter.
@@ -137,6 +136,31 @@
 </footer>
 
 <script>
+/* ANALYTICS */
+const TRACK_URL = "https://ninanovavip-backend.onrender.com/track";
+
+// page view
+fetch(TRACK_URL, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ type: "pageview", page: "custom" })
+}).catch(() => {});
+
+// click tracking
+document.querySelectorAll("[data-track]").forEach(el => {
+  el.addEventListener("click", () => {
+    fetch(TRACK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "click",
+        page: "custom",
+        target: el.dataset.track
+      })
+    }).catch(() => {});
+  });
+});
+
 /* HAMBURGER */
 const ham = document.getElementById("hamburger");
 const menu = document.getElementById("mobileMenu");
