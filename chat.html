@@ -15,6 +15,18 @@
   <link rel="icon" href="images/download.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="images/download.svg">
   <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Critical fix for Instagram in-app browser (and other quirky WebViews) */
+    #chat-send {
+      cursor: pointer !important;
+      -webkit-tap-highlight-color: transparent; /* removes tap highlight on Android */
+      touch-action: manipulation; /* improves tap responsiveness */
+    }
+    .chat-input button:active {
+      opacity: 0.8;
+      transform: scale(0.96);
+    }
+  </style>
 </head>
 <body class="has-bg">
 <header class="nav">
@@ -199,11 +211,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // In-app browser safe send handling (Instagram, FB, TikTok, etc.)
+  // Ultimate in-app browser safe send handling (Instagram, FB, TikTok, etc.)
   let sending = false;
 
   function handleSend(e) {
-    if (e.cancelable && (e.type === "touchend" || e.type === "touchstart")) {
+    if (e.cancelable) {
       e.preventDefault();
     }
     e.stopPropagation();
@@ -216,7 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Multiple listeners for maximum compatibility
+  // Maximum compatibility: touchend (most reliable in IG), touchstart (passive), click fallback
   sendBtn.addEventListener("touchend", handleSend);
   sendBtn.addEventListener("touchstart", handleSend, { passive: true });
   sendBtn.addEventListener("click", handleSend);
