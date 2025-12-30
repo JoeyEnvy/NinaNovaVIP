@@ -130,10 +130,9 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-
   const TRACK_URL = "https://ninanovavip-backend.onrender.com/track";
-  const API_URL   = "https://ninanovavip-backend.onrender.com/grok";
-
+  const API_URL = "https://ninanovavip-backend.onrender.com/grok";
+  
   function track(payload) {
     try {
       if (navigator.sendBeacon) {
@@ -148,15 +147,15 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch {}
   }
-
+  
   track({ type: "pageview", page: "chat" });
-
+  
   document.querySelectorAll("[data-track]").forEach(el => {
     el.addEventListener("click", () => {
       track({ type: "click", page: "chat", target: el.dataset.track });
     });
   });
-
+  
   const ham = document.getElementById("hamburger");
   const menu = document.getElementById("mobileMenu");
   if (ham && menu) {
@@ -165,18 +164,19 @@ document.addEventListener("DOMContentLoaded", () => {
       ham.classList.toggle("active");
     });
   }
-
+  
   const chatBox = document.getElementById("chat-messages");
-  const input   = document.getElementById("chat-input");
+  const input = document.getElementById("chat-input");
   const sendBtn = document.getElementById("chat-send");
+  
   if (!chatBox || !input || !sendBtn) return;
-
+  
   let sessionId = localStorage.getItem("nina_session");
   if (!sessionId) {
     sessionId = crypto.randomUUID();
     localStorage.setItem("nina_session", sessionId);
   }
-
+  
   function addMessage(text, who) {
     const div = document.createElement("div");
     div.className = `msg ${who}`;
@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
     chatBox.appendChild(div);
     chatBox.scrollTop = chatBox.scrollHeight;
   }
-
+  
   function addTyping() {
     const div = document.createElement("div");
     div.className = "msg nina";
@@ -192,49 +192,50 @@ document.addEventListener("DOMContentLoaded", () => {
     div.textContent = "…";
     chatBox.appendChild(div);
   }
-
+  
   function removeTyping() {
     document.getElementById("typing")?.remove();
   }
-
+  
   async function sendMessage() {
     const text = input.value.trim();
     if (!text) return;
-
     addMessage(text, "user");
     input.value = "";
     addTyping();
-
     track({ type: "message", page: "chat" });
-
+    
     try {
       const res = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text, sessionId, source: "site" })
       });
-
       const data = await res.json();
-
       setTimeout(() => {
         removeTyping();
         addMessage(data.grok_reply || "i saw this 🤍", "nina");
       }, 1200 + Math.random() * 2200);
-
     } catch {
       removeTyping();
       addMessage("sorry — i missed that 🤍", "nina");
     }
   }
-
+  
+  // Fixed: click + touchend for instant mobile tap response
   sendBtn.addEventListener("click", sendMessage);
+  sendBtn.addEventListener("touchend", (e) => {
+    e.preventDefault(); // prevents double-tap zoom/delay
+    sendMessage();
+  });
+  
+  // Enter key on mobile keyboard
   input.addEventListener("keydown", e => {
     if (e.key === "Enter") {
       e.preventDefault();
       sendMessage();
     }
   });
-
 });
 </script>
 
