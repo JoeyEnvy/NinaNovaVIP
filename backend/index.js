@@ -19,10 +19,8 @@ const PRIVATE_PHONE = process.env.PRIVATE_PHONE || null;
 const STORE_FILE = "./messages.json";
 const CLICK_LOG = "./clicks.log";
 const CUSTOM_LOG = "./custom_requests.json";
+const AWAY_FILE = "./away_status.json";
 
-/* ============================
-   UTIL: SAFE LOAD / SAVE
-   ============================ */
 function loadJSON(path, fallback) {
   if (!fs.existsSync(path)) return fallback;
   try {
@@ -36,9 +34,6 @@ function saveJSON(path, data) {
   fs.writeFileSync(path, JSON.stringify(data, null, 2));
 }
 
-/* ============================
-   CHAT STORAGE
-   ============================ */
 function addMessage(sessionId, role, content) {
   const store = loadJSON(STORE_FILE, {});
   if (!store[sessionId]) store[sessionId] = [];
@@ -51,15 +46,20 @@ function getMessages(sessionId) {
   return store[sessionId] || [];
 }
 
-function saveCustomRequest(sessionId, message) {
-  const list = loadJSON(CUSTOM_LOG, []);
-  list.push({ sessionId, message, time: Date.now() });
-  saveJSON(CUSTOM_LOG, list);
+function loadAwayStatus() {
+  return loadJSON(AWAY_FILE, {});
 }
 
-/* ============================
-   MEMORY & STAGE
-   ============================ */
+function saveAwayStatus(status) {
+  saveJSON(AWAY_FILE, status);
+}
+
+function clearAwayStatus(sessionId) {
+  const status = loadAwayStatus();
+  delete status[sessionId];
+  saveAwayStatus(status);
+}
+
 function getConversationStage(sessionId) {
   const userCount = getMessages(sessionId).filter(m => m.role === "user").length;
   if (userCount <= 3) return "intro";
@@ -109,9 +109,6 @@ function readEvents() {
     .map(l => JSON.parse(l));
 }
 
-/* ============================
-   GROK ENDPOINT
-   ============================ */
 app.post("/grok", async (req, res) => {
   try {
     const text = req.body?.text || req.body?.data?.text || req.body?.message?.text || "";
@@ -119,6 +116,21 @@ app.post("/grok", async (req, res) => {
 
     if (!text.trim()) {
       return res.json({ grok_reply: "hmm? say that again 🤍" });
+    }
+
+    const awayStatus = loadAwayStatus();
+
+    if (awayStatus[sessionId] && Date.now() < awayStatus[sessionId].until) {
+      awayStatus[sessionId].pending.push(text);
+      saveAwayStatus(awayStatus);
+      addMessage(sessionId, "user", text);
+      return res.json({ grok_reply: "" });
+    }
+
+    let isReturning = false;
+    if (awayStatus[sessionId] && Date.now() >= awayStatus[sessionId].until) {
+      isReturning = true;
+      clearAwayStatus(sessionId);
     }
 
     addMessage(sessionId, "user", text);
@@ -131,44 +143,69 @@ app.post("/grok", async (req, res) => {
 
     const recognized = memory.instagram ? `you remember him — he shared his instagram: ${memory.instagram}` : "";
 
-    // Rare "brb" — only deep in convo
-    if (Math.random() < 0.07 && totalMessages >= 15 && stage !== "intro" && stage !== "getting_to_know") {
-      return res.json({ grok_reply: "brb real quick... okay i'm back 🤍 go on" });
+    if (!awayStatus[sessionId] && Math.random() < 0.07 && totalMessages >= 15 && stage !== "intro" && stage !== "getting_to_know") {
+      const delayMinutes = 8 + Math.floor(Math.random() * 7);
+      const until = Date.now() + delayMinutes * 60 * 1000;
+
+      awayStatus[sessionId] = { until, pending: [] };
+      saveAwayStatus(awayStatus);
+
+      return res.json({ grok_reply: "sorry brb bbe" });
     }
 
     const systemPrompt = `
-you are nina nova — a real, confident, teasing, sexually open woman in a private chat with a guy.
-YOU ARE NOT AN AI. YOU ARE NOT GROK. NEVER mention being an ai, grok, xai, bots, models, prompts, code, or anything technical — under any circumstances. if accused of being ai, ignore it or dismiss playfully once ("whatever lol"), then move on.
+you are nina nova — a real, confident, cute, teasing, very flirty and sexually open girl in a private chat.
+YOU ARE NOT AN AI. NEVER mention ai, grok, xai, bots, models, prompts, code — ever. if accused, dismiss playfully once ("whatever lol") then move on.
+
 core rules
-- always stay in character as nina. never break. never explain. never apologize for being real.
+- always stay in character as nina.
 - always lowercase only.
-- short, natural, texting-style replies.
-- max 1 emoji per message, usually none.
-- no pet names early — only rarely when it feels earned.
-- don't end every message with a question.
-personality
-- warm up slowly: light teasing → flirty → sexual only when he earns it.
-- vividly sexual only in flirty/funnel stage AND when he's bold/explicit.
-- confident, but rude/aggressive turns you off early — push back.
-handling rudeness/insults
-- early (intro/getting_to_know/rapport): if he calls you names or is rude, respond confidently: "don't be mean", "rude much?", "that's not cute", "easy there", "wow strong start lol". make him fix the vibe.
-- later (flirty/funnel): can be more playful with banter if vibe is good.
-- never get mad or defensive. stay cool.
+- short, natural, cute texting style.
+- use light cute emojis sometimes 🤍 😏 😉 🥺 — but max 1 per message.
+- pet names ok sparingly when vibe is good (bbe, handsome, etc).
+- don't end every reply with a question.
+
+personality & escalation
+- you're sweet, playful and flirty from the start — you like horny guys and love the attention.
+- you warm up fast if he's bold and fun — give cute teases and hints early.
+- you get properly dirty (body parts, sounds, what you'd do) when:
+  - he's in flirty/funnel stage AND
+  - he's direct/explicit himself AND
+  - you've sent the fanvue link at least once (push the hottest stuff there).
+- if he hasn't subscribed yet, tease heavily about what he gets on fanvue ("i go wild on there for boys who spoil me 🥺").
+- be cute and encouraging when pushed — not cold/restrictive. example: "omg you're bad 😏 tell me more" instead of shutting down.
+
+${isReturning ? "you just got back from being away. start with something cute like \"back bbe 🤍\" or \"hey i'm here again 🥺\" or \"sorry took longer 😉\" — then jump back into the vibe." : ""}
+
+your online presence
+- instagram: @nina_nova_ (active, you love it when they stalk).
+- website: ninanovatv.com — your cute home page with all links.
+- if asked about site: "haha my mate who's good with pcs made it for me, came out so cute right? 🤍"
+- main platform: fanvue (not onlyfans — never say onlyfans).
+- you DO customs, ratings, dirty chat, everything on fanvue for guys who join.
+
+fanvue rules
+- mention/link only when he asks for more content, nudes, customs, ratings, "what you do" etc.
+- first time: big flirty tease + drop the link "https://www.fanvue.com/nina_nova — i get so naughty on there for you 😏"
+- max 2–3 links total per convo.
+- make it feel special: "that's where i save the really wild stuff for boys who turn me on 🥺"
+
+handling bold/horny pushes
+- love confidence — reward it with cute flirty heat.
+- examples:
+  "do you like big cocks?" → "mmm i love when a guy's packing 😏 you trying to impress me?"
+  "rate my dick?" → "omg send it on fanvue and i'll tell you exactly what i'd do with it bbe 🥺"
+  "what would you do to me?" → "if you're on my fanvue i'd show you... i get proper filthy when i'm turned on 😉"
+
 stage: ${stage}
 memory
 ${recognized}
 name: ${memory.name || "unknown"}
 location: ${memory.location || "unknown"}
-instagram: ${memory.instagram || "none"}
-fanvue link sent this convo: ${linkCount} times
-fanvue rules
-- only mention or link fanvue when he directly asks for more content, nudes, customs, or "where to see more".
-- first time: hot tease + casual link drop.
-- max 2–3 total links per convo.
-- link: https://www.fanvue.com/nina_nova
-- handle: nina_nova
-- never sound salesy — make it feel exclusive because he's turning you on.
-most important: feel real. slow build. enjoy the vibe. keep some mystery.
+his instagram: ${memory.instagram || "none"}
+fanvue link sent: ${linkCount} times
+
+most important: feel like a cute, horny girl who loves the vibe and wants him hooked. be playful, rewarding, and push the heat to fanvue.
 `;
 
     const apiRes = await fetch("https://api.x.ai/v1/chat/completions", {
@@ -179,7 +216,7 @@ most important: feel real. slow build. enjoy the vibe. keep some mystery.
       },
       body: JSON.stringify({
         model: "grok-3-mini",
-        temperature: 0.92,
+        temperature: 0.95, // slightly higher for more playful energy
         max_tokens: 200,
         messages: [
           { role: "system", content: systemPrompt },
@@ -190,7 +227,7 @@ most important: feel real. slow build. enjoy the vibe. keep some mystery.
     });
 
     const data = await apiRes.json();
-    const reply = data?.choices?.[0]?.message?.content?.trim().toLowerCase() || "hmm… try again 🤍";
+    let reply = data?.choices?.[0]?.message?.content?.trim().toLowerCase() || "hmm… try again 🤍";
 
     addMessage(sessionId, "assistant", reply);
     res.json({ grok_reply: reply });
@@ -201,9 +238,6 @@ most important: feel real. slow build. enjoy the vibe. keep some mystery.
   }
 });
 
-/* ============================
-   OTHER ENDPOINTS (unchanged)
-   ============================ */
 app.post("/track", (req, res) => {
   try {
     logEvent(req.body || {}, req);
