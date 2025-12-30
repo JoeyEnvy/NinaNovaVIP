@@ -19,8 +19,8 @@
     /* Critical fix for Instagram in-app browser (and other quirky WebViews) */
     #chat-send {
       cursor: pointer !important;
-      -webkit-tap-highlight-color: transparent; /* removes tap highlight on Android */
-      touch-action: manipulation; /* improves tap responsiveness */
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
     .chat-input button:active {
       opacity: 0.8;
@@ -51,33 +51,36 @@
     <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram_menu">☕ Telegram (updates)</a>
   </nav>
 </header>
+
 <main>
 <section class="hero contact-hero">
   <div style="max-width:720px;margin:0 auto;">
     <h1>Leave me a message 🤍</h1>
-    <p>
-      I don’t really like loud inboxes or public comment sections.
-      This is just a quieter place I actually check.
-    </p>
-    <p>
-      I don’t promise instant replies —
-      but I do read everything left here.
-    </p>
+
+    <p>I don’t really like loud inboxes or public comment sections.
+    This is just a quieter place I actually check.</p>
+
+    <p>I don’t promise instant replies —
+    but I do read everything left here.</p>
+
     <p style="margin-top:14px;font-size:.9rem;color:var(--text-muted);max-width:560px">
       This space is just between you and me.
       Messages aren’t shared, forwarded, or kept hanging around —
       once I’ve read them, they’re meant to fade quietly.
     </p>
+
     <div class="chat-box" style="margin-top:30px;">
       <div class="chat-header">
         <span>Nina</span>
         <small>private messages</small>
       </div>
+
       <div id="chat-messages">
         <div class="msg nina">
           hey 🤍 you can leave me a message here — i’ll see it
         </div>
       </div>
+
       <div class="chat-input">
         <input
           id="chat-input"
@@ -88,14 +91,17 @@
         <button id="chat-send" type="button" data-track="send">Send</button>
       </div>
     </div>
+
     <p style="margin-top:14px;font-size:.8rem;opacity:.65;font-style:italic;">
       Replies aren’t instant. That’s intentional.
     </p>
+
     <p style="margin-top:14px;font-size:.9rem;color:var(--text-muted);max-width:560px">
       I don’t really reply to Instagram DMs.
       Telegram is more for sharing things.
       If you’re here, this is the right place.
     </p>
+
     <div class="links" style="margin-top:36px;">
       <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram_footer">
         ☕ Telegram
@@ -109,12 +115,14 @@
   </div>
 </section>
 </main>
+
 <footer class="footer">
   <p>
     Thanks for being patient 🤍<br>
     <small>Some things are nicer unhurried</small>
   </p>
 </footer>
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const TRACK_URL = "https://ninanovavip-backend.onrender.com/track";
@@ -190,16 +198,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     addMessage(text, "user");
     input.value = "";
-    input.blur(); // Critical for mobile & in-app browsers
+    input.blur();
     addTyping();
     track({ type: "message", page: "chat" });
 
     try {
+      await new Promise(r => setTimeout(r, 0)); // 🔒 Instagram WebView fix
+
       const res = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text, sessionId, source: "site" })
       });
+
       const data = await res.json();
       setTimeout(() => {
         removeTyping();
@@ -211,15 +222,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Ultimate in-app browser safe send handling (Instagram, FB, TikTok, etc.)
   let sending = false;
 
   function handleSend(e) {
-    if (e.cancelable) {
-      e.preventDefault();
-    }
+    if (e.cancelable) e.preventDefault();
     e.stopPropagation();
-
     if (sending) return;
     sending = true;
 
@@ -228,12 +235,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Maximum compatibility: touchend (most reliable in IG), touchstart (passive), click fallback
   sendBtn.addEventListener("touchend", handleSend);
   sendBtn.addEventListener("touchstart", handleSend, { passive: true });
   sendBtn.addEventListener("click", handleSend);
 
-  // Enter key support
   input.addEventListener("keydown", e => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
