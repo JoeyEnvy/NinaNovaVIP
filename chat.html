@@ -178,7 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     addMessage(text, "user");
     input.value = "";
-    input.blur(); // Critical for mobile: prevents keyboard/focus issues that kill events
+    input.blur(); // Critical for mobile & in-app browsers
     addTyping();
     track({ type: "message", page: "chat" });
 
@@ -199,12 +199,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Mobile-safe send handling with debounce
+  // In-app browser safe send handling (Instagram, FB, TikTok, etc.)
   let sending = false;
 
   function handleSend(e) {
-    if (e.type === "touchstart") {
-      e.preventDefault(); // Stops click delay, zoom, and scroll interference
+    if (e.cancelable && (e.type === "touchend" || e.type === "touchstart")) {
+      e.preventDefault();
     }
     e.stopPropagation();
 
@@ -212,15 +212,16 @@ document.addEventListener("DOMContentLoaded", () => {
     sending = true;
 
     sendMessage().finally(() => {
-      setTimeout(() => sending = false, 500);
+      setTimeout(() => sending = false, 600);
     });
   }
 
-  // Listen to both touchstart (fast on mobile) and click (desktop + fallback)
-  sendBtn.addEventListener("touchstart", handleSend, { passive: false });
+  // Multiple listeners for maximum compatibility
+  sendBtn.addEventListener("touchend", handleSend);
+  sendBtn.addEventListener("touchstart", handleSend, { passive: true });
   sendBtn.addEventListener("click", handleSend);
 
-  // Enter key support (works on desktop + mobile keyboards)
+  // Enter key support
   input.addEventListener("keydown", e => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
