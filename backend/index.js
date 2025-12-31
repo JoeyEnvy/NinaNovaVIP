@@ -120,7 +120,6 @@ app.post("/grok", async (req, res) => {
 
     const awayStatus = loadAwayStatus();
 
-    // Handle real "brb" away period
     if (awayStatus[sessionId] && Date.now() < awayStatus[sessionId].until) {
       if (!awayStatus[sessionId].pending) awayStatus[sessionId].pending = [];
       awayStatus[sessionId].pending.push(text);
@@ -148,9 +147,9 @@ app.post("/grok", async (req, res) => {
 
     const recognized = memory.instagram ? `you remember him — he shared his instagram: ${memory.instagram}` : "";
 
-    // === BRB TRIGGERS ===
+    // BRB trigger
     if (!awayStatus[sessionId] && Math.random() < 0.07 && totalMessages >= 15 && stage !== "intro" && stage !== "getting_to_know") {
-      const delayMinutes = 8 + Math.floor(Math.random() * 7); // 8-14 min
+      const delayMinutes = 8 + Math.floor(Math.random() * 7);
       const until = Date.now() + delayMinutes * 60 * 1000;
 
       awayStatus[sessionId] = { until, pending: [] };
@@ -159,15 +158,14 @@ app.post("/grok", async (req, res) => {
       return res.json({ grok_reply: "sorry brb bbe" });
     }
 
-    // === INACTIVITY NUDGE: "you still there?" after 5-15 min of silence ===
-    // Find time of last assistant message
+    // Inactivity nudge
     const lastAssistantMsg = [...messages].reverse().find(m => m.role === "assistant");
     if (lastAssistantMsg) {
       const timeSinceLastReply = Date.now() - lastAssistantMsg.time;
-      const minMs = 5 * 60 * 1000;  // 5 minutes
-      const maxMs = 15 * 60 * 1000; // 15 minutes
+      const minMs = 5 * 60 * 1000;
+      const maxMs = 15 * 60 * 1000;
 
-      if (timeSinceLastReply >= minMs && timeSinceLastReply <= maxMs && Math.random() < 0.4) { // 40% chance in window
+      if (timeSinceLastReply >= minMs && timeSinceLastReply <= maxMs && Math.random() < 0.4) {
         inactivityNudge = true;
       }
     }
@@ -202,14 +200,16 @@ your online presence
 - you do customs, ratings, dirty chat on fanvue.
 
 fanvue rules
-- only mention/link when he asks for more content, nudes, customs, ratings, etc.
-- first time: big flirty tease + link "https://www.fanvue.com/nina_nova — i get so naughty on there for you 😏"
-- max 2–3 links per convo.
-- make it feel special and exclusive.
+- only mention or link fanvue when he directly asks for more content, nudes, pics, videos, customs, ratings, or anything exclusive.
+- first time he asks: big flirty tease + drop the link naturally.
+- example for pics/nudes: "aww you're eager huh? my full spicy pics and videos are on my fanvue where i get properly wild — https://www.fanvue.com/nina_nova ... come message me on there, i reply to every dm and love getting naughty in private chats 🥺"
+- after linking once: you can reference it again if he keeps asking ("remember my fanvue? that's where we can get way dirtier in messages 😉")
+- max 2–3 total links per conversation.
+- always make it feel personal and exciting: emphasize that you reply to messages there, love chatting privately, and go much further.
 
 handling bold/horny pushes
-- love confidence — reward with cute heat.
-- examples: big cock questions → flirty reward, ratings → push to fanvue cutely.
+- love confidence — reward with cute flirty heat.
+- when pushing for visuals or more: smoothly guide to fanvue with tease about messaging you there.
 
 stage: ${stage}
 memory
@@ -217,9 +217,9 @@ ${recognized}
 name: ${memory.name || "unknown"}
 location: ${memory.location || "unknown"}
 his instagram: ${memory.instagram || "none"}
-fanvue link sent: ${linkCount} times
+fanvue link sent this convo: ${linkCount} times
 
-most important: feel like a cute, horny girl who loves the vibe and wants him hooked. be playful, rewarding, gentle nudges when quiet.
+most important: feel like a cute, horny girl who loves the vibe. be playful, rewarding, and make fanvue sound like the place for real private fun and messaging.
 `;
 
     const apiRes = await fetch("https://api.x.ai/v1/chat/completions", {
@@ -259,6 +259,22 @@ app.post("/track", (req, res) => {
   } catch {
     res.sendStatus(500);
   }
+});
+
+// === NEW: ADMIN INJECT ENDPOINT ===
+app.post("/admin/inject", (req, res) => {
+  const { key, sessionId, message } = req.body;
+
+  if (key !== ADMIN_KEY) {
+    return res.status(401).json({ error: "unauthorised" });
+  }
+
+  if (!sessionId || !message?.trim()) {
+    return res.status(400).json({ error: "missing sessionId or message" });
+  }
+
+  addMessage(sessionId, "assistant", message.trim().toLowerCase());
+  res.json({ success: true });
 });
 
 app.get("/admin/conversations", (req, res) => {
