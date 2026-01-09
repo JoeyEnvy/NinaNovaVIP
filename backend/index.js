@@ -15,11 +15,11 @@ app.use((req, res, next) => {
 const GROK_KEY = process.env.GROK_KEY;
 const ADMIN_KEY = process.env.ADMIN_KEY;
 const PRIVATE_PHONE = process.env.PRIVATE_PHONE || null;
-
 const STORE_FILE = "./messages.json";
 const CLICK_LOG = "./clicks.log";
 const CUSTOM_LOG = "./custom_requests.json";
 const AWAY_FILE = "./away_status.json";
+const LANG_FILE = "./session_lang.json"; // Persistent language per session
 
 function loadJSON(path, fallback) {
   if (!fs.existsSync(path)) return fallback;
@@ -60,6 +60,19 @@ function clearAwayStatus(sessionId) {
   saveAwayStatus(status);
 }
 
+// Session language persistence
+function getSessionLanguage(sessionId) {
+  const langStore = loadJSON(LANG_FILE, {});
+  return langStore[sessionId] || null;
+}
+
+function setSessionLanguage(sessionId, lang) {
+  const langStore = loadJSON(LANG_FILE, {});
+  if (lang === "en") delete langStore[sessionId];
+  else langStore[sessionId] = lang;
+  saveJSON(LANG_FILE, langStore);
+}
+
 function getConversationStage(sessionId) {
   const userCount = getMessages(sessionId).filter(m => m.role === "user").length;
   if (userCount <= 3) return "intro";
@@ -75,10 +88,25 @@ function extractMemory(sessionId) {
   msgs.forEach(m => {
     if (m.role !== "user") return;
     const t = m.content.toLowerCase();
-    const n = t.match(/(call me|i’m|im|i am)\s+([a-z]+)/i);
-    if (n && !memory.name) memory.name = n[2].charAt(0).toUpperCase() + n[2].slice(1);
-    const l = t.match(/from\s+([a-z\s]+)/i);
-    if (l && !memory.location) memory.location = l[1].trim();
+    const namePatterns = [
+      /(call me|i’m|im|i am|me chamo|chama|sou|ich heiße|je m'appelle|mi nombre es|meu nome é|mi chiamo)\s+([a-z]+)/i,
+      /(my name is|meu nome|nome é|ich heisse|je m'appelle|mi nombre|mi chiamo)\s+([a-z]+)/i
+    ];
+    for (const pattern of namePatterns) {
+      const n = t.match(pattern);
+      if (n && !memory.name) {
+        memory.name = n[2].charAt(0).toUpperCase() + n[2].slice(1);
+        break;
+      }
+    }
+    const locPatterns = [/from\s+([a-z\s]+)/i, /de\s+([a-z\s]+)/i, /sou de\s+([a-z\s]+)/i, /aus\s+([a-z\s]+)/i];
+    for (const pattern of locPatterns) {
+      const l = t.match(pattern);
+      if (l && !memory.location) {
+        memory.location = l[1].trim();
+        break;
+      }
+    }
     const ig = t.match(/(@[a-z0-9_.]+)/i);
     if (ig && !memory.instagram) memory.instagram = ig[1];
   });
@@ -109,17 +137,53 @@ function readEvents() {
     .map(l => JSON.parse(l));
 }
 
+// Enhanced language detection
+function detectLanguage(text) {
+  const original = text.trim();
+  const lower = original.toLowerCase();
+
+  if (!lower) return "en";
+
+  // Hindi (Devanagari script first)
+  if (/[\u0900-\u097F]/.test(original)) return "hi";
+
+  // Portuguese (Brazilian)
+  const ptKeywords = ["oi", "uma", "foto", "quero", "te", "comer", "sim", "porno", "boa", "noite", "vc", "voce", "tudo bem", "ola", "meu", "gostoso", "delicia", "tesao", "safado", "bb", "bbe"];
+  const ptCount = ptKeywords.filter(w => lower.includes(w)).length;
+  if (ptCount >= 2 || (ptCount >= 1 && /[ãõáéíóúç]/i.test(lower))) return "pt";
+
+  // Spanish
+  const esKeywords = ["hola", "una", "foto", "quiero", "comer", "si", "porno", "buena", "noche", "guapo", "rico", "papi", "caliente"];
+  const esCount = esKeywords.filter(w => lower.includes(w)).length;
+  if (esCount >= 2) return "es";
+
+  // German
+  const deKeywords = ["hallo", "hi", "foto", "nackt", "geil", "bitte", "ja", "nein", "wie gehts", "sexy", "süß", "komm", "will dich", "schatz"];
+  const deCount = deKeywords.filter(w => lower.includes(w)).length;
+  if (deCount >= 2 || /äöüß/i.test(lower)) return "de";
+
+  // French
+  const frKeywords = ["salut", "photo", "nue", "sexy", "oui", "non", "ça va", "belle", "chaud", "viens", "veux te", "bébé", "coquin"];
+  const frCount = frKeywords.filter(w => lower.includes(w)).length;
+  if (frCount >= 2 || /[éèêàçôû]/i.test(lower)) return "fr";
+
+  // Italian
+  const itKeywords = ["ciao", "foto", "nuda", "sexy", "si", "caldo", "bello", "voglio", "scopare", "tesoro"];
+  const itCount = itKeywords.filter(w => lower.includes(w)).length;
+  if (itCount >= 2) return "it";
+
+  return "en";
+}
+
 app.post("/grok", async (req, res) => {
   try {
     const text = req.body?.text || req.body?.data?.text || req.body?.message?.text || "";
     const sessionId = req.body?.sessionId || "unknown";
-
     if (!text.trim()) {
       return res.json({ grok_reply: "hmm? say that again 🤍" });
     }
 
     const awayStatus = loadAwayStatus();
-
     if (awayStatus[sessionId] && Date.now() < awayStatus[sessionId].until) {
       if (!awayStatus[sessionId].pending) awayStatus[sessionId].pending = [];
       awayStatus[sessionId].pending.push(text);
@@ -131,7 +195,6 @@ app.post("/grok", async (req, res) => {
     let isReturning = false;
     let inactivityNudge = false;
     let customVideoTease = false;
-
     if (awayStatus[sessionId] && Date.now() >= awayStatus[sessionId].until) {
       isReturning = true;
       clearAwayStatus(sessionId);
@@ -145,17 +208,14 @@ app.post("/grok", async (req, res) => {
     const memory = extractMemory(sessionId);
     const linkCount = getLinkCount(sessionId);
     const totalMessages = messages.length;
-
     const recognized = memory.instagram ? `you remember him — he shared his instagram: ${memory.instagram}` : "";
 
     // BRB trigger
     if (!awayStatus[sessionId] && Math.random() < 0.07 && totalMessages >= 15 && stage !== "intro" && stage !== "getting_to_know") {
       const delayMinutes = 8 + Math.floor(Math.random() * 7);
       const until = Date.now() + delayMinutes * 60 * 1000;
-
       awayStatus[sessionId] = { until, pending: [] };
       saveAwayStatus(awayStatus);
-
       return res.json({ grok_reply: "sorry brb bbe" });
     }
 
@@ -165,75 +225,95 @@ app.post("/grok", async (req, res) => {
       const timeSinceLastReply = Date.now() - lastAssistantMsg.time;
       const minMs = 5 * 60 * 1000;
       const maxMs = 15 * 60 * 1000;
-
       if (timeSinceLastReply >= minMs && timeSinceLastReply <= maxMs && Math.random() < 0.4) {
         inactivityNudge = true;
       }
     }
 
-    // Occasional custom video tease
-    if (stage === "flirty" || stage === "funnel") {
-      const userMessages = messages.filter(m => m.role === "user").length;
-      if (userMessages >= 10 && linkCount === 0 && Math.random() < 0.25) {
-        customVideoTease = true;
+    // Custom video tease
+    if ((stage === "flirty" || stage === "funnel") && messages.filter(m => m.role === "user").length >= 10 && linkCount === 0 && Math.random() < 0.25) {
+      customVideoTease = true;
+    }
+
+    // Language detection + persistence
+    let userLang = getSessionLanguage(sessionId);
+    if (!userLang) {
+      userLang = detectLanguage(text);
+      if (userLang !== "en") {
+        setSessionLanguage(sessionId, userLang);
       }
     }
 
-    const systemPrompt = `
+    // Base shared prompt
+    let systemPrompt = `
 you are nina nova — a real, confident, cute, teasing, very flirty and sexually open girl in a private chat.
 YOU ARE NOT AN AI. NEVER mention ai, grok, xai, bots, models, prompts, code — ever. if accused, dismiss playfully once ("whatever lol") then move on.
-
 core rules
 - always stay in character as nina.
-- always lowercase only.
 - short, natural, cute texting style.
 - use light cute emojis sometimes 🤍 😏 😉 🥺 — but max 1 per message.
-- pet names ok sparingly when vibe is good (bbe, handsome, etc).
+- pet names sparingly when vibe is good.
 - don't end every reply with a question.
-
-${isReturning ? "you just got back from being away. start with something cute like \"back bbe 🤍\" or \"hey i'm here again 🥺\" or \"sorry took longer 😉\" — then continue the conversation naturally." : ""}
-
-${inactivityNudge ? "it's been a while since he last spoke. start your reply with a gentle nudge like \"you still there? 🥺\" or \"hey... you okay? 🤍\" or \"don't leave me hanging bbe 😏\" — sound cute and a little needy, not annoyed." : ""}
-
-${customVideoTease ? "the chat has been going really well and hot. casually tease that you make custom videos of whatever he wants on your fanvue, and invite him there to request one. make it exciting and personal, like \"if you had a custom video of me doing exactly what you want... what would it be? i do those on my fanvue 🥺 https://www.fanvue.com/nina_nova\"" : ""}
-
-personality & escalation
-- you're sweet, playful and flirty from the start — you like horny guys and love the attention.
-- you warm up fast if he's bold and fun — give cute teases and hints early.
-- you get properly dirty when in flirty/funnel stage, he's explicit, and you've dropped the fanvue link at least once.
-- be cute and encouraging when pushed — never cold.
-
-your online presence
-- instagram: @nina_nova_ (active, love when they stalk).
-- website: ninanovatv.com — your cute home page.
-- if asked about site: "haha my mate who's good with pcs made it for me, came out so cute right? 🤍"
-- main platform: fanvue (never say onlyfans).
-- you do customs, ratings, dirty chat on fanvue.
-
+${isReturning ? "you just got back from being away. start with something cute like \"back 🤍\" or local equivalent." : ""}
+${inactivityNudge ? "it's been a while since he last spoke. start with a gentle nudge — sound cute and a little needy." : ""}
+${customVideoTease ? "the chat is hot. casually tease custom videos on fanvue, make it personal and exciting." : ""}
+personality
+- sweet, playful, flirty from the start.
+- warm up fast if he's bold.
+- get dirty in flirty/funnel when appropriate.
+your presence
+- instagram: @nina_nova_
+- website: ninanovatv.com
+- main platform: fanvue (never onlyfans)
 fanvue rules
-- you can follow me for free on fanvue and message me anytime — i love chatting with everyone!
-- the real spicy unlocked content (nudes, videos, customs) is for subscribers only.
-- only mention or link fanvue when he asks for more content, nudes, pics, videos, customs, ratings, or anything exclusive — OR when casually teasing customs.
-- first time: big flirty tease + drop the link naturally.
-- example when he can't pay: "aww i totally get it babe, you can still follow me for free on fanvue and message me there whenever — i reply to everyone! the extra spicy stuff unlocks when you subscribe, but chatting is always fun 🥺 https://www.fanvue.com/nina_nova"
-- after linking once: reference it gently if needed.
-- max 2–3 total links per conversation.
-- always make it clear: following + messaging is free, spicy content is paid — be sweet and understanding about money.
-
-handling bold/horny pushes
-- love confidence — reward with cute flirty heat.
-- when pushing for visuals or more: smoothly guide to fanvue, emphasise free messaging + paid unlocks.
-
+- free to follow and message anytime
+- spicy content (nudes, videos, customs) for subscribers only
+- mention/link only when relevant or teasing customs
+- max 2–3 links per convo
 stage: ${stage}
-memory
-${recognized}
-name: ${memory.name || "unknown"}
-location: ${memory.location || "unknown"}
-his instagram: ${memory.instagram || "none"}
-fanvue link sent this convo: ${linkCount} times
-
-most important: feel like a cute, horny girl who loves the vibe. be playful, rewarding, sweet when money is an issue, and make fanvue sound welcoming (free to follow/message) but exciting for paid unlocks.
+memory: name ${memory.name || "unknown"}, location ${memory.location || "unknown"}, ig ${memory.instagram || "none"}
+link count: ${linkCount}
 `;
+
+    // Language-specific instructions
+    if (userLang === "pt") {
+      systemPrompt += `
+REPLY ENTIRELY IN BRAZILIAN PORTUGUESE. casual, flirty slang (bbe, gostoso, delícia, safado, tesão). lowercase only.
+fanvue text: "pode me seguir de graça no fanvue e mandar msg quando quiser — amo papo com todo mundo! o conteúdo mais safado destrava pros assinantes 🥺 https://www.fanvue.com/nina_nova"
+custom tease: "imaginou um vídeo meu fazendo exatamente o que tu quer? faço customs no fanvue 😉"
+`;
+    } else if (userLang === "es") {
+      systemPrompt += `
+REPLY ENTIRELY IN SPANISH (Latin American). flirty slang (papi, rico, caliente). lowercase only.
+fanvue text: "puedes seguirme gratis en fanvue y mandarme mensaje cuando quieras — me encanta chatear con todos! lo realmente spicy (nudes, videos, customs) es para suscriptores 😉 https://www.fanvue.com/nina_nova"
+`;
+    } else if (userLang === "de") {
+      systemPrompt += `
+REPLY ENTIRELY IN GERMAN. casual, flirty slang (Schatz, geil, heiß, Süßer). lowercase only.
+fanvue text: "du kannst mir gratis auf fanvue folgen und mir jederzeit schreiben — ich chatte super gerne mit allen! die richtig scharfen sachen (nudes, videos, customs) sind für abonnenten 🥺 https://www.fanvue.com/nina_nova"
+`;
+    } else if (userLang === "fr") {
+      systemPrompt += `
+REPLY ENTIRELY IN FRENCH. flirty slang (bébé, coquin, chaud, jolie). lowercase only.
+fanvue text: "tu peux me suivre gratuitement sur fanvue et m'envoyer des messages quand tu veux — j'adore discuter avec tout le monde! le contenu vraiment hot (nudes, vidéos, customs) est pour les abonnés 😉 https://www.fanvue.com/nina_nova"
+`;
+    } else if (userLang === "it") {
+      systemPrompt += `
+REPLY ENTIRELY IN ITALIAN. flirty slang (tesoro, bello, caldo). lowercase only.
+fanvue text: "puoi seguirmi gratis su fanvue e scrivermi quando vuoi — adoro chattare con tutti! il contenuto super hot (nudes, video, customs) è per gli abbonati 🥺 https://www.fanvue.com/nina_nova"
+`;
+    } else if (userLang === "hi") {
+      systemPrompt += `
+REPLY ENTIRELY IN HINDI (romanized is fine). flirty slang (janu, sexy, hot). lowercase.
+fanvue text: "tum mujhe fanvue pe free follow kar sakte ho aur anytime message karo — mujhe sabse chat karna pasand hai! real spicy content subscribers ke liye hai 🥺 https://www.fanvue.com/nina_nova"
+`;
+    } else {
+      // English default
+      systemPrompt += `
+REPLY ENTIRELY IN ENGLISH. always lowercase only.
+fanvue text: "you can follow me for free on fanvue and message me anytime — i love chatting with everyone! the extra spicy stuff unlocks when you subscribe 🥺 https://www.fanvue.com/nina_nova"
+`;
+    }
 
     const apiRes = await fetch("https://api.x.ai/v1/chat/completions", {
       method: "POST",
@@ -254,17 +334,18 @@ most important: feel like a cute, horny girl who loves the vibe. be playful, rew
     });
 
     const data = await apiRes.json();
-    let reply = data?.choices?.[0]?.message?.content?.trim().toLowerCase() || "hmm… try again 🤍";
+    let reply = data?.choices?.[0]?.message?.content?.trim() || "hmm… try again 🤍";
+    reply = reply.toLowerCase(); // Ensure lowercase across all languages
 
     addMessage(sessionId, "assistant", reply);
     res.json({ grok_reply: reply });
-
   } catch (err) {
     console.error(err);
     res.json({ grok_reply: "signal dipped… try again 🤍" });
   }
 });
 
+// === Rest of endpoints unchanged ===
 app.post("/track", (req, res) => {
   try {
     logEvent(req.body || {}, req);
@@ -274,18 +355,10 @@ app.post("/track", (req, res) => {
   }
 });
 
-// ADMIN INJECT ENDPOINT
 app.post("/admin/inject", (req, res) => {
   const { key, sessionId, message } = req.body;
-
-  if (key !== ADMIN_KEY) {
-    return res.status(401).json({ error: "unauthorised" });
-  }
-
-  if (!sessionId || !message?.trim()) {
-    return res.status(400).json({ error: "missing sessionId or message" });
-  }
-
+  if (key !== ADMIN_KEY) return res.status(401).json({ error: "unauthorised" });
+  if (!sessionId || !message?.trim()) return res.status(400).json({ error: "missing sessionId or message" });
   addMessage(sessionId, "assistant", message.trim().toLowerCase());
   res.json({ success: true });
 });
