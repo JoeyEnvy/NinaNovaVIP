@@ -8,7 +8,7 @@
   <!-- Viewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-  <!-- SEO (intentionally minimal, correct for a gate page) -->
+  <!-- SEO (gate page) -->
   <meta name="description" content="You didn’t click by accident.">
   <meta name="robots" content="noindex,nofollow">
 
@@ -16,7 +16,7 @@
   <link rel="icon" href="images/download.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="images/download.svg">
 
-  <!-- Performance: hint background image -->
+  <!-- Background preload -->
   <link rel="preload" as="image" href="images/ComfyUI_00076_.png">
 
   <style>
@@ -48,28 +48,26 @@
       align-items:center;
       justify-content:center;
       text-align:center;
-      background:
-        url("images/ComfyUI_00076_.png") center / cover no-repeat;
+      background:url("images/ComfyUI_00076_.png") center / cover no-repeat;
       position:relative;
       overflow:hidden;
+      animation:bgDrift 22s linear infinite alternate;
     }
 
-    /* BLUR + DARKEN OVERLAY */
+    @keyframes bgDrift{
+      from{background-position:50% 50%}
+      to{background-position:53% 47%}
+    }
+
     body::before{
       content:"";
       position:fixed;
       inset:0;
       backdrop-filter:blur(9px);
-      background:
-        linear-gradient(
-          to bottom,
-          rgba(0,0,0,.45),
-          rgba(0,0,0,.75)
-        );
+      background:linear-gradient(to bottom,rgba(0,0,0,.45),rgba(0,0,0,.75));
       z-index:0;
     }
 
-    /* SOFT EDGE BORDER / VIGNETTE */
     body::after{
       content:"";
       position:fixed;
@@ -96,12 +94,11 @@
       to{opacity:1;transform:none}
     }
 
-    /* BRAND */
     .brand{
       font-family:'Anton',system-ui,sans-serif;
       font-size:2.2rem;
       letter-spacing:.6px;
-      margin-bottom:26px;
+      margin-bottom:18px;
       user-select:none;
     }
 
@@ -125,14 +122,14 @@
     p{
       font-size:1.15rem;
       color:var(--muted);
-      margin-bottom:44px;
+      margin-bottom:38px;
     }
 
     .choice{
       display:flex;
       flex-direction:column;
       gap:26px;
-      margin-bottom:30px;
+      margin-bottom:26px;
     }
 
     .btn-wrap{
@@ -151,6 +148,7 @@
       text-decoration:none;
       transition:var(--transition);
       will-change:transform;
+      position:relative;
     }
 
     .btn.primary{
@@ -177,26 +175,75 @@
       transform:translateY(-2px);
     }
 
+    .btn.tease{
+      overflow:hidden;
+    }
+
+    .btn.tease .reveal{
+      display:block;
+      font-size:.75rem;
+      letter-spacing:.4px;
+      margin-top:6px;
+      opacity:0;
+      transform:translateY(6px);
+      transition:.25s ease;
+    }
+
+    .btn.tease:hover .reveal{
+      opacity:.85;
+      transform:none;
+    }
+
     .hint{
       font-size:.9rem;
       color:var(--muted);
     }
 
+    .presence{
+      margin-top:16px;
+      font-size:.95rem;
+      color:#cfcde0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+
+    .presence .dot{
+      width:9px;
+      height:9px;
+      background:#4cff7a;
+      border-radius:50%;
+      box-shadow:0 0 12px rgba(76,255,122,.8);
+      animation:pulse 1.6s infinite;
+    }
+
+    @keyframes pulse{
+      0%,100%{opacity:1}
+      50%{opacity:.35}
+    }
+
+    .location{
+      font-size:.9rem;
+      color:#aeb0c7;
+      margin-top:6px;
+    }
+
     .note{
       font-size:.95rem;
       color:var(--muted);
+      opacity:.9;
+      margin-top:24px;
+    }
+
+    .social-proof{
+      margin-top:22px;
+      font-size:.9rem;
+      color:#9f9db6;
+      font-style:italic;
       opacity:.85;
     }
 
-    /* REDUCED MOTION */
-    @media (prefers-reduced-motion: reduce){
-      *{
-        animation:none!important;
-        transition:none!important;
-      }
-    }
-
-    /* MOBILE */
     @media (max-width:640px){
       .wrap{padding:52px 26px}
       .btn{font-size:1.15rem;padding:24px}
@@ -221,10 +268,11 @@
       <div class="btn-wrap">
         <a
           href="https://www.fanvue.com/nina_nova"
-          class="btn primary"
+          class="btn primary tease"
           data-track="fanvue"
         >
-          🔥 This is what you’re looking for
+          🔥 Fanvue
+          <span class="reveal">uncensored · real · private</span>
         </a>
         <div class="hint">Fanvue • photos • real moments</div>
       </div>
@@ -235,15 +283,27 @@
           class="btn secondary"
           data-track="slow_path"
         >
-          🤍 Take it slower
+          🤍 Chat to me
         </a>
-        <div class="hint">NinaNovaTV • chat • quieter space</div>
+        <div class="hint">Chat • private • direct</div>
       </div>
 
     </div>
 
+    <div class="presence">
+      <span class="dot"></span> Nina is online now
+    </div>
+
+    <div class="location" id="location">
+      Near you
+    </div>
+
     <div class="note">
-      No pressure. Choose what feels right.
+      Nothing auto-charges. Leave whenever you want.
+    </div>
+
+    <div class="social-proof">
+      “Most people don’t make it past this screen.”
     </div>
 
   </div>
@@ -270,10 +330,8 @@
     } catch {}
   }
 
-  // page view
   send({ type: "pageview", page: "gate" });
 
-  // click tracking
   document.querySelectorAll("[data-track]").forEach(el => {
     el.addEventListener("click", () => {
       send({
@@ -281,8 +339,20 @@
         page: "gate",
         target: el.dataset.track
       });
+      if (navigator.vibrate) navigator.vibrate(18);
     });
   });
+
+  // Location hint (city-level, safe)
+  fetch("https://ipapi.co/json/")
+    .then(r => r.json())
+    .then(d => {
+      if (d && d.city) {
+        document.getElementById("location").textContent =
+          `Near ${d.city}`;
+      }
+    })
+    .catch(()=>{});
 })();
 </script>
 
