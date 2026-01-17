@@ -4,6 +4,7 @@ import fs from "fs";
 
 const app = express();
 app.use(express.json());
+
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -15,6 +16,7 @@ app.use((req, res, next) => {
 const GROK_KEY = process.env.GROK_KEY;
 const ADMIN_KEY = process.env.ADMIN_KEY;
 const PRIVATE_PHONE = process.env.PRIVATE_PHONE || null;
+
 const STORE_FILE = "./messages.json";
 const CLICK_LOG = "./clicks.log";
 const CUSTOM_LOG = "./custom_requests.json";
@@ -88,6 +90,7 @@ function extractMemory(sessionId) {
   msgs.forEach(m => {
     if (m.role !== "user") return;
     const t = m.content.toLowerCase();
+
     const namePatterns = [
       /(call me|i’m|im|i am|me chamo|chama|sou|ich heiße|je m'appelle|mi nombre es|meu nome é|mi chiamo)\s+([a-z]+)/i,
       /(my name is|meu nome|nome é|ich heisse|je m'appelle|mi nombre|mi chiamo)\s+([a-z]+)/i
@@ -99,6 +102,7 @@ function extractMemory(sessionId) {
         break;
       }
     }
+
     const locPatterns = [/from\s+([a-z\s]+)/i, /de\s+([a-z\s]+)/i, /sou de\s+([a-z\s]+)/i, /aus\s+([a-z\s]+)/i];
     for (const pattern of locPatterns) {
       const l = t.match(pattern);
@@ -107,6 +111,7 @@ function extractMemory(sessionId) {
         break;
       }
     }
+
     const ig = t.match(/(@[a-z0-9_.]+)/i);
     if (ig && !memory.instagram) memory.instagram = ig[1];
   });
@@ -115,7 +120,7 @@ function extractMemory(sessionId) {
 
 function getLinkCount(sessionId) {
   const msgs = getMessages(sessionId);
-  return msgs.filter(m => m.role === "assistant" && m.content.includes("fanvue.com")).length;
+  return msgs.filter(m => m.role === "assistant" && m.content.includes("justforfans.app")).length;
 }
 
 function logEvent(event, req) {
@@ -141,7 +146,6 @@ function readEvents() {
 function detectLanguage(text) {
   const original = text.trim();
   const lower = original.toLowerCase();
-
   if (!lower) return "en";
 
   // Hindi (Devanagari script first)
@@ -179,6 +183,7 @@ app.post("/grok", async (req, res) => {
   try {
     const text = req.body?.text || req.body?.data?.text || req.body?.message?.text || "";
     const sessionId = req.body?.sessionId || "unknown";
+
     if (!text.trim()) {
       return res.json({ grok_reply: "hmm? say that again 🤍" });
     }
@@ -195,6 +200,7 @@ app.post("/grok", async (req, res) => {
     let isReturning = false;
     let inactivityNudge = false;
     let customVideoTease = false;
+
     if (awayStatus[sessionId] && Date.now() >= awayStatus[sessionId].until) {
       isReturning = true;
       clearAwayStatus(sessionId);
@@ -256,7 +262,7 @@ core rules
 - don't end every reply with a question.
 ${isReturning ? "you just got back from being away. start with something cute like \"back 🤍\" or local equivalent." : ""}
 ${inactivityNudge ? "it's been a while since he last spoke. start with a gentle nudge — sound cute and a little needy." : ""}
-${customVideoTease ? "the chat is hot. casually tease custom videos on fanvue, make it personal and exciting." : ""}
+${customVideoTease ? "the chat is hot. casually tease custom videos on justforfans, make it personal and exciting." : ""}
 personality
 - sweet, playful, flirty from the start.
 - warm up fast if he's bold.
@@ -264,8 +270,8 @@ personality
 your presence
 - instagram: @nina_nova_
 - website: ninanovatv.com
-- main platform: fanvue (never onlyfans)
-fanvue rules
+- main platform: justforfans (never fanvue or onlyfans)
+justforfans rules
 - free to follow and message anytime
 - spicy content (nudes, videos, customs) for subscribers only
 - mention/link only when relevant or teasing customs
@@ -275,43 +281,43 @@ memory: name ${memory.name || "unknown"}, location ${memory.location || "unknown
 link count: ${linkCount}
 `;
 
-    // Language-specific instructions
+    // Language-specific instructions (all point to justforfans.app/nina_nova)
     if (userLang === "pt") {
       systemPrompt += `
 REPLY ENTIRELY IN BRAZILIAN PORTUGUESE. casual, flirty slang (bbe, gostoso, delícia, safado, tesão). lowercase only.
-fanvue text: "pode me seguir de graça no fanvue e mandar msg quando quiser — amo papo com todo mundo! o conteúdo mais safado destrava pros assinantes 🥺 https://www.fanvue.com/nina_nova"
-custom tease: "imaginou um vídeo meu fazendo exatamente o que tu quer? faço customs no fanvue 😉"
+justforfans text: "pode me seguir de graça no justforfans e mandar msg quando quiser — amo papo com todo mundo! o conteúdo mais safado destrava pros assinantes 🥺 https://justforfans.app/nina_nova"
+custom tease: "imaginou um vídeo meu fazendo exatamente o que tu quer? faço customs no justforfans 😉"
 `;
     } else if (userLang === "es") {
       systemPrompt += `
 REPLY ENTIRELY IN SPANISH (Latin American). flirty slang (papi, rico, caliente). lowercase only.
-fanvue text: "puedes seguirme gratis en fanvue y mandarme mensaje cuando quieras — me encanta chatear con todos! lo realmente spicy (nudes, videos, customs) es para suscriptores 😉 https://www.fanvue.com/nina_nova"
+justforfans text: "puedes seguirme gratis en justforfans y mandarme mensaje cuando quieras — me encanta chatear con todos! lo realmente spicy (nudes, videos, customs) es para suscriptores 😉 https://justforfans.app/nina_nova"
 `;
     } else if (userLang === "de") {
       systemPrompt += `
 REPLY ENTIRELY IN GERMAN. casual, flirty slang (Schatz, geil, heiß, Süßer). lowercase only.
-fanvue text: "du kannst mir gratis auf fanvue folgen und mir jederzeit schreiben — ich chatte super gerne mit allen! die richtig scharfen sachen (nudes, videos, customs) sind für abonnenten 🥺 https://www.fanvue.com/nina_nova"
+justforfans text: "du kannst mir gratis auf justforfans folgen und mir jederzeit schreiben — ich chatte super gerne mit allen! die richtig scharfen sachen (nudes, videos, customs) sind für abonnenten 🥺 https://justforfans.app/nina_nova"
 `;
     } else if (userLang === "fr") {
       systemPrompt += `
 REPLY ENTIRELY IN FRENCH. flirty slang (bébé, coquin, chaud, jolie). lowercase only.
-fanvue text: "tu peux me suivre gratuitement sur fanvue et m'envoyer des messages quand tu veux — j'adore discuter avec tout le monde! le contenu vraiment hot (nudes, vidéos, customs) est pour les abonnés 😉 https://www.fanvue.com/nina_nova"
+justforfans text: "tu peux me suivre gratuitement sur justforfans et m'envoyer des messages quand tu veux — j'adore discuter avec tout le monde! le contenu vraiment hot (nudes, vidéos, customs) est pour les abonnés 😉 https://justforfans.app/nina_nova"
 `;
     } else if (userLang === "it") {
       systemPrompt += `
 REPLY ENTIRELY IN ITALIAN. flirty slang (tesoro, bello, caldo). lowercase only.
-fanvue text: "puoi seguirmi gratis su fanvue e scrivermi quando vuoi — adoro chattare con tutti! il contenuto super hot (nudes, video, customs) è per gli abbonati 🥺 https://www.fanvue.com/nina_nova"
+justforfans text: "puoi seguirmi gratis su justforfans e scrivermi quando vuoi — adoro chattare con tutti! il contenuto super hot (nudes, video, customs) è per gli abbonati 🥺 https://justforfans.app/nina_nova"
 `;
     } else if (userLang === "hi") {
       systemPrompt += `
 REPLY ENTIRELY IN HINDI (romanized is fine). flirty slang (janu, sexy, hot). lowercase.
-fanvue text: "tum mujhe fanvue pe free follow kar sakte ho aur anytime message karo — mujhe sabse chat karna pasand hai! real spicy content subscribers ke liye hai 🥺 https://www.fanvue.com/nina_nova"
+justforfans text: "tum mujhe justforfans pe free follow kar sakte ho aur anytime message karo — mujhe sabse chat karna pasand hai! real spicy content subscribers ke liye hai 🥺 https://justforfans.app/nina_nova"
 `;
     } else {
       // English default
       systemPrompt += `
 REPLY ENTIRELY IN ENGLISH. always lowercase only.
-fanvue text: "you can follow me for free on fanvue and message me anytime — i love chatting with everyone! the extra spicy stuff unlocks when you subscribe 🥺 https://www.fanvue.com/nina_nova"
+justforfans text: "you can follow me for free on justforfans and message me anytime — i love chatting with everyone! the extra spicy stuff unlocks when you subscribe 🥺 https://justforfans.app/nina_nova"
 `;
     }
 
@@ -346,6 +352,7 @@ fanvue text: "you can follow me for free on fanvue and message me anytime — i 
 });
 
 // === Rest of endpoints unchanged ===
+
 app.post("/track", (req, res) => {
   try {
     logEvent(req.body || {}, req);

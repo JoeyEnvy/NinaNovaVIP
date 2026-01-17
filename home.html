@@ -50,7 +50,7 @@
   <nav class="mobile-menu" id="mobileMenu">
     <a href="chat.html" data-track="chat_menu">🤍 Leave me a note</a>
     <a href="custom.html" data-track="custom_menu">🎥 Something personal</a>
-    <a href="https://www.fanvue.com/nina_nova" target="_blank" rel="noopener" data-track="fanvue_menu">🌙 Fanvue</a>
+    <a href="https://www.forfans.app/ninanova" target="_blank" rel="noopener" data-track="forfans_menu">🔥 ForFans</a>
     <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram_menu">☕ Telegram (updates)</a>
   </nav>
 </header>
@@ -72,23 +72,23 @@
 
     <div class="cta monetisation">
       <a
-        href="https://www.fanvue.com/nina_nova"
+        href="https://www.forfans.app/ninanova"
         target="_blank"
         rel="noopener"
-        class="btn platform fanvue"
-        data-track="fanvue_primary"
+        class="btn platform forfans"
+        data-track="forfans_primary"
       >
-        🌙 Fanvue
+        🔥 ForFans
       </a>
 
       <a
-        href="https://www.fanvue.com/nina_nova"
+        href="https://onlyfans.com/ninanova"
         target="_blank"
         rel="noopener"
         class="btn platform onlyfans ghost"
         data-track="onlyfans_primary"
       >
-        🔥 OnlyFans
+        🌙 OnlyFans
       </a>
     </div>
 
@@ -125,8 +125,8 @@
     </p>
 
     <div class="links" style="margin-top:28px">
-      <a href="https://www.fanvue.com/nina_nova" target="_blank" rel="noopener" class="primary-link" data-track="fanvue_footer">
-        🌙 My main space
+      <a href="https://www.forfans.app/ninanova" target="_blank" rel="noopener" class="primary-link" data-track="forfans_footer">
+        🔥 My main space
         <small>Photos, thoughts, little moments</small>
       </a>
 
@@ -173,10 +173,8 @@
 </footer>
 
 <script>
-/* YEAR */
 document.getElementById("yy").textContent = new Date().getFullYear();
 
-/* HAMBURGER */
 const ham = document.getElementById("hamburger");
 const menu = document.getElementById("mobileMenu");
 ham.addEventListener("click", () => {
@@ -184,7 +182,6 @@ ham.addEventListener("click", () => {
   ham.classList.toggle("active");
 });
 
-/* LOCATION */
 (() => {
   const el = document.getElementById("nina-location");
   if (!el) return;
@@ -194,17 +191,14 @@ ham.addEventListener("click", () => {
     .catch(() => el.textContent = "📍 Nina’s nearby");
 })();
 
-/* ANALYTICS */
 const TRACK_URL = "https://ninanovavip-backend.onrender.com/track";
 
-// page view
 fetch(TRACK_URL, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ type: "pageview", page: "home" })
 }).catch(() => {});
 
-// click tracking
 document.querySelectorAll("[data-track]").forEach(el => {
   el.addEventListener("click", () => {
     fetch(TRACK_URL, {

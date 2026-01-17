@@ -52,7 +52,7 @@
   <nav class="mobile-menu" id="mobileMenu">
     <a href="chat.html" data-track="chat_menu">🤍 Leave me a note</a>
     <a href="custom.html" data-track="custom_menu">🎥 Something personal</a>
-    <a href="https://www.fanvue.com/nina_nova" target="_blank" rel="noopener" data-track="fanvue_menu">🌙 Fanvue</a>
+    <a href="https://www.forfans.app/ninanova" target="_blank" rel="noopener" data-track="forfans_menu">🔥 ForFans</a>
     <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram_menu">☕ Telegram</a>
   </nav>
 </header>
@@ -124,17 +124,14 @@
 </footer>
 
 <script>
-/* ANALYTICS */
 const TRACK_URL = "https://ninanovavip-backend.onrender.com/track";
 
-// page view
 fetch(TRACK_URL, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ type: "pageview", page: "private" })
 }).catch(() => {});
 
-// click tracking
 document.querySelectorAll("[data-track]").forEach(el => {
   el.addEventListener("click", () => {
     fetch(TRACK_URL, {
@@ -149,7 +146,6 @@ document.querySelectorAll("[data-track]").forEach(el => {
   });
 });
 
-/* HAMBURGER */
 const ham = document.getElementById("hamburger");
 const menu = document.getElementById("mobileMenu");
 
@@ -160,7 +156,6 @@ if (ham && menu) {
   });
 }
 
-/* LOCATION */
 (function () {
   const el = document.getElementById("nina-location");
   if (!el) return;
