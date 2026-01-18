@@ -94,6 +94,38 @@
       to{opacity:1;transform:none}
     }
 
+    /* PRESENCE & LOCATION TOP */
+    .presence{
+      font-size:1.25rem;
+      color:#cfcde0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      font-weight:600;
+      margin-bottom:12px;
+    }
+    .presence .dot{
+      width:12px;
+      height:12px;
+      background:#4cff7a;
+      border-radius:50%;
+      box-shadow:0 0 16px rgba(76,255,122,.8);
+      animation:pulse 1.6s infinite;
+    }
+    @keyframes pulse{
+      0%,100%{opacity:1}
+      50%{opacity:.35}
+    }
+
+    .location{
+      font-size:1.1rem;
+      color:#e5e5ff;
+      margin-bottom:28px;
+      font-weight:600;
+    }
+
+    /* BRAND & HEADLINE */
     .brand{
       font-family:'Anton',system-ui,sans-serif;
       font-size:2.2rem;
@@ -101,14 +133,8 @@
       margin-bottom:18px;
       user-select:none;
     }
-
     .brand span{color:var(--pink)}
-    .brand em{
-      font-style:normal;
-      color:var(--orange);
-      font-size:.9em;
-      margin-left:2px;
-    }
+    .brand em{font-style:normal;color:var(--orange);font-size:.9em;margin-left:2px}
 
     h1{
       font-size:clamp(2.3rem,5vw,3.4rem);
@@ -140,9 +166,9 @@
 
     .btn{
       display:block;
-      padding:28px 40px;
+      padding:32px 44px;
       border-radius:999px;
-      font-size:1.3rem;
+      font-size:1.45rem;
       font-weight:900;
       letter-spacing:.3px;
       text-decoration:none;
@@ -154,12 +180,12 @@
     .btn.primary{
       background:linear-gradient(135deg,var(--pink),var(--purple));
       color:#fff;
-      box-shadow:var(--glow);
+      box-shadow:0 0 52px rgba(255,79,160,.65);
     }
 
     .btn.primary:hover{
-      transform:translateY(-3px) scale(1.015);
-      box-shadow:0 0 78px rgba(255,79,160,.85);
+      transform:translateY(-3px) scale(1.02);
+      box-shadow:0 0 88px rgba(255,79,160,.85);
     }
 
     .btn.secondary{
@@ -175,13 +201,9 @@
       transform:translateY(-2px);
     }
 
-    .btn.tease{
-      overflow:hidden;
-    }
-
     .btn.tease .reveal{
       display:block;
-      font-size:.75rem;
+      font-size:.8rem;
       letter-spacing:.4px;
       margin-top:6px;
       opacity:0;
@@ -190,43 +212,13 @@
     }
 
     .btn.tease:hover .reveal{
-      opacity:.85;
+      opacity:.9;
       transform:none;
     }
 
     .hint{
-      font-size:.9rem;
+      font-size:1rem;
       color:var(--muted);
-    }
-
-    .presence{
-      margin-top:16px;
-      font-size:.95rem;
-      color:#cfcde0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-    }
-
-    .presence .dot{
-      width:9px;
-      height:9px;
-      background:#4cff7a;
-      border-radius:50%;
-      box-shadow:0 0 12px rgba(76,255,122,.8);
-      animation:pulse 1.6s infinite;
-    }
-
-    @keyframes pulse{
-      0%,100%{opacity:1}
-      50%{opacity:.35}
-    }
-
-    .location{
-      font-size:.9rem;
-      color:#aeb0c7;
-      margin-top:6px;
     }
 
     .note{
@@ -246,15 +238,29 @@
 
     @media (max-width:640px){
       .wrap{padding:52px 26px}
-      .btn{font-size:1.15rem;padding:24px}
+      .btn{font-size:1.25rem;padding:28px 36px}
       p{font-size:1.05rem}
       .brand{font-size:1.95rem}
+      .presence{font-size:1.1rem}
+      .location{font-size:1rem}
+    }
+
+    @media (max-width:480px){
+      .wrap{padding:42px 20px}
+      .btn{font-size:1.15rem;padding:24px 32px}
+      .brand{font-size:1.85rem}
+      .presence{font-size:1rem}
+      .location{font-size:.95rem}
     }
   </style>
 </head>
 
 <body>
   <div class="wrap">
+
+    <!-- ONLINE & LOCATION TOP -->
+    <div class="presence"><span class="dot"></span> Nina is online now</div>
+    <div class="location" id="location">Near you</div>
 
     <div class="brand">
       Nina<span>Nova</span><em>TV</em>
@@ -266,11 +272,7 @@
     <div class="choice">
 
       <div class="btn-wrap">
-        <a
-          href="https://justforfans.app/nina_nova"
-          class="btn primary tease"
-          data-track="justforfans"
-        >
+        <a href="https://justforfans.app/nina_nova" class="btn primary tease" data-track="justforfans">
           🔥 JustForFans
           <span class="reveal">uncensored · real · private</span>
         </a>
@@ -278,24 +280,10 @@
       </div>
 
       <div class="btn-wrap">
-        <a
-          href="home.html"
-          class="btn secondary"
-          data-track="slow_path"
-        >
-          🤍 Chat to me
-        </a>
+        <a href="home.html" class="btn secondary" data-track="slow_path">🤍 Chat to me</a>
         <div class="hint">Chat • private • direct</div>
       </div>
 
-    </div>
-
-    <div class="presence">
-      <span class="dot"></span> Nina is online now
-    </div>
-
-    <div class="location" id="location">
-      Near you
     </div>
 
     <div class="note">
@@ -315,10 +303,7 @@
   function send(payload) {
     try {
       if (navigator.sendBeacon) {
-        navigator.sendBeacon(
-          TRACK_URL,
-          new Blob([JSON.stringify(payload)], { type: "application/json" })
-        );
+        navigator.sendBeacon(TRACK_URL, new Blob([JSON.stringify(payload)], { type: "application/json" }));
       } else {
         fetch(TRACK_URL, {
           method: "POST",
@@ -334,24 +319,14 @@
 
   document.querySelectorAll("[data-track]").forEach(el => {
     el.addEventListener("click", () => {
-      send({
-        type: "click",
-        page: "gate",
-        target: el.dataset.track
-      });
+      send({ type: "click", page: "gate", target: el.dataset.track });
       if (navigator.vibrate) navigator.vibrate(18);
     });
   });
 
-  // Location hint (city-level, safe)
   fetch("https://ipapi.co/json/")
     .then(r => r.json())
-    .then(d => {
-      if (d && d.city) {
-        document.getElementById("location").textContent =
-          `Near ${d.city}`;
-      }
-    })
+    .then(d => { if (d && d.city) document.getElementById("location").textContent = `Near ${d.city}` })
     .catch(()=>{});
 })();
 </script>
