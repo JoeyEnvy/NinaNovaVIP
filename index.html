@@ -2,23 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-
   <title>Nina Nova</title>
-
   <!-- Viewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
   <!-- SEO (gate page) -->
   <meta name="description" content="You didn’t click by accident.">
   <meta name="robots" content="noindex,nofollow">
-
   <!-- Favicon -->
   <link rel="icon" href="images/download.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="images/download.svg">
-
   <!-- Background preload -->
   <link rel="preload" as="image" href="images/ComfyUI_00076_.png">
-
   <style>
     :root{
       --pink:#ff4fa0;
@@ -31,9 +25,7 @@
       --radius:26px;
       --transition:.35s cubic-bezier(.4,0,.2,1);
     }
-
     *{box-sizing:border-box}
-
     html,body{
       margin:0;
       min-height:100%;
@@ -42,7 +34,6 @@
       -webkit-font-smoothing:antialiased;
       text-rendering:optimizeLegibility;
     }
-
     body{
       display:flex;
       align-items:center;
@@ -53,12 +44,10 @@
       overflow:hidden;
       animation:bgDrift 22s linear infinite alternate;
     }
-
     @keyframes bgDrift{
       from{background-position:50% 50%}
       to{background-position:53% 47%}
     }
-
     body::before{
       content:"";
       position:fixed;
@@ -67,7 +56,6 @@
       background:linear-gradient(to bottom,rgba(0,0,0,.45),rgba(0,0,0,.75));
       z-index:0;
     }
-
     body::after{
       content:"";
       position:fixed;
@@ -80,7 +68,6 @@
         inset 0 0 120px rgba(0,0,0,.65),
         0 0 0 1px rgba(255,255,255,.04);
     }
-
     .wrap{
       position:relative;
       z-index:2;
@@ -88,12 +75,10 @@
       padding:64px 40px;
       animation:fadeUp .55s ease-out both;
     }
-
     @keyframes fadeUp{
       from{opacity:0;transform:translateY(10px)}
       to{opacity:1;transform:none}
     }
-
     /* PRESENCE & LOCATION TOP */
     .presence{
       font-size:1.25rem;
@@ -117,14 +102,12 @@
       0%,100%{opacity:1}
       50%{opacity:.35}
     }
-
     .location{
       font-size:1.1rem;
       color:#e5e5ff;
       margin-bottom:28px;
       font-weight:600;
     }
-
     /* BRAND & HEADLINE */
     .brand{
       font-family:'Anton',system-ui,sans-serif;
@@ -135,7 +118,6 @@
     }
     .brand span{color:var(--pink)}
     .brand em{font-style:normal;color:var(--orange);font-size:.9em;margin-left:2px}
-
     h1{
       font-size:clamp(2.3rem,5vw,3.4rem);
       margin-bottom:12px;
@@ -144,26 +126,22 @@
       -webkit-background-clip:text;
       color:transparent;
     }
-
     p{
       font-size:1.15rem;
       color:var(--muted);
       margin-bottom:38px;
     }
-
     .choice{
       display:flex;
       flex-direction:column;
       gap:26px;
       margin-bottom:26px;
     }
-
     .btn-wrap{
       display:flex;
       flex-direction:column;
       gap:8px;
     }
-
     .btn{
       display:block;
       padding:32px 44px;
@@ -176,31 +154,26 @@
       will-change:transform;
       position:relative;
     }
-
     .btn.primary{
       background:linear-gradient(135deg,var(--pink),var(--purple));
       color:#fff;
       box-shadow:0 0 52px rgba(255,79,160,.65);
     }
-
     .btn.primary:hover{
       transform:translateY(-3px) scale(1.02);
       box-shadow:0 0 88px rgba(255,79,160,.85);
     }
-
     .btn.secondary{
       background:rgba(255,255,255,.06);
       border:2px solid rgba(255,255,255,.35);
       color:#fff;
       backdrop-filter:blur(6px);
     }
-
     .btn.secondary:hover{
       background:rgba(255,255,255,.12);
       border-color:var(--pink);
       transform:translateY(-2px);
     }
-
     .btn.tease .reveal{
       display:block;
       font-size:.8rem;
@@ -210,24 +183,20 @@
       transform:translateY(6px);
       transition:.25s ease;
     }
-
     .btn.tease:hover .reveal{
       opacity:.9;
       transform:none;
     }
-
     .hint{
       font-size:1rem;
       color:var(--muted);
     }
-
     .note{
       font-size:.95rem;
       color:var(--muted);
       opacity:.9;
       margin-top:24px;
     }
-
     .social-proof{
       margin-top:22px;
       font-size:.9rem;
@@ -235,7 +204,6 @@
       font-style:italic;
       opacity:.85;
     }
-
     @media (max-width:640px){
       .wrap{padding:52px 26px}
       .btn{font-size:1.25rem;padding:28px 36px}
@@ -244,7 +212,6 @@
       .presence{font-size:1.1rem}
       .location{font-size:1rem}
     }
-
     @media (max-width:480px){
       .wrap{padding:42px 20px}
       .btn{font-size:1.15rem;padding:24px 32px}
@@ -254,23 +221,17 @@
     }
   </style>
 </head>
-
 <body>
   <div class="wrap">
-
     <!-- ONLINE & LOCATION TOP -->
     <div class="presence"><span class="dot"></span> Nina is online now</div>
     <div class="location" id="location">Near you</div>
-
     <div class="brand">
       Nina<span>Nova</span><em>TV</em>
     </div>
-
     <h1>Hey… 🤍</h1>
     <p>You didn’t click by accident.</p>
-
     <div class="choice">
-
       <div class="btn-wrap">
         <a href="https://justforfans.app/nina_nova" class="btn primary tease" data-track="justforfans">
           🔥 JustForFans
@@ -278,28 +239,21 @@
         </a>
         <div class="hint">JustForFans • photos • real moments</div>
       </div>
-
       <div class="btn-wrap">
         <a href="home.html" class="btn secondary" data-track="slow_path">🤍 Chat to me</a>
         <div class="hint">Chat • private • direct</div>
       </div>
-
     </div>
-
     <div class="note">
       Nothing auto-charges. Leave whenever you want.
     </div>
-
     <div class="social-proof">
       “Most people don’t make it past this screen.”
     </div>
-
   </div>
-
 <script>
 (() => {
   const TRACK_URL = "https://ninanovavip-backend.onrender.com/track";
-
   function send(payload) {
     try {
       if (navigator.sendBeacon) {
@@ -314,22 +268,18 @@
       }
     } catch {}
   }
-
   send({ type: "pageview", page: "gate" });
-
   document.querySelectorAll("[data-track]").forEach(el => {
     el.addEventListener("click", () => {
       send({ type: "click", page: "gate", target: el.dataset.track });
       if (navigator.vibrate) navigator.vibrate(18);
     });
   });
-
   fetch("https://ipapi.co/json/")
     .then(r => r.json())
     .then(d => { if (d && d.city) document.getElementById("location").textContent = `Near ${d.city}` })
     .catch(()=>{});
 })();
 </script>
-
 </body>
 </html>
