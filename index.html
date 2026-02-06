@@ -3,283 +3,296 @@
 <head>
   <meta charset="utf-8">
   <title>Nina Nova</title>
-  <!-- Viewport -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <!-- SEO (gate page) -->
-  <meta name="description" content="You didn’t click by accident.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <!-- Favicon -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <link rel="icon" href="images/download.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="images/download.svg">
-  <!-- Background preload -->
-  <link rel="preload" as="image" href="images/ComfyUI_00076_.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --pink:#ff4fa0;
-      --purple:#a12bff;
-      --orange:#ff8c32;
-      --text:#f5f5fa;
-      --muted:#b8b6c9;
-      --border:rgba(255,255,255,.18);
-      --glow:0 0 42px rgba(255,79,160,.55);
-      --radius:26px;
-      --transition:.35s cubic-bezier(.4,0,.2,1);
+    :root {
+      --bg: #000;
+      --text: #fff;
+      --muted: #bbb;
+      --blue: #0095f6;
+      --pink: #ff4fa0;
+      --purple: #c300ff;
+      --radius: 18px;
+      --glow: 0 0 32px rgba(255, 79, 160, 0.5);
+      --transition: 0.4s ease;
     }
-    *{box-sizing:border-box}
-    html,body{
-      margin:0;
-      min-height:100%;
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      color:var(--text);
-      -webkit-font-smoothing:antialiased;
-      text-rendering:optimizeLegibility;
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: url("images/new layout/Nina Nova Fanlace Cover.jpg") center/cover no-repeat fixed !important;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 24px 16px;
+      text-align: center;
+      line-height: 1.45;
+      position: relative;
+      animation: fadeIn 0.8s ease both;
     }
-    body{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      background:url("images/ComfyUI_00076_.png") center / cover no-repeat;
-      position:relative;
-      overflow:hidden;
-      animation:bgDrift 22s linear infinite alternate;
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    body::before {
+      content: "" !important;
+      position: fixed !important;
+      inset: 0 !important;
+      backdrop-filter: blur(40px) saturate(1.3) !important;
+      -webkit-backdrop-filter: blur(40px) saturate(1.3) !important;
+      background: rgba(0,0,0,0.70) !important;
+      z-index: -1 !important;
     }
-    @keyframes bgDrift{
-      from{background-position:50% 50%}
-      to{background-position:53% 47%}
+    .container {
+      max-width: 440px;
+      margin: 0 auto;
+      animation: liftIn 0.6s ease both 0.3s;
     }
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      backdrop-filter:blur(9px);
-      background:linear-gradient(to bottom,rgba(0,0,0,.45),rgba(0,0,0,.75));
-      z-index:0;
+    @keyframes liftIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+    .profile-pic {
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--blue);
+      margin: 32px auto 14px;
+      display: block;
+      box-shadow: 0 0 28px rgba(0,149,246,0.6);
+      transition: var(--transition);
     }
-    body::after{
-      content:"";
-      position:fixed;
-      inset:18px;
-      border-radius:32px;
-      border:1px solid var(--border);
-      pointer-events:none;
-      z-index:1;
-      box-shadow:
-        inset 0 0 120px rgba(0,0,0,.65),
-        0 0 0 1px rgba(255,255,255,.04);
+    .profile-pic:hover {
+      transform: scale(1.08) rotate(3deg);
+      box-shadow: 0 0 40px rgba(0,149,246,0.8);
     }
-    .wrap{
-      position:relative;
-      z-index:2;
-      max-width:640px;
-      padding:64px 40px;
-      animation:fadeUp .55s ease-out both;
+    .username {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 8px;
     }
-    @keyframes fadeUp{
-      from{opacity:0;transform:translateY(10px)}
-      to{opacity:1;transform:none}
+    .verified {
+      color: var(--blue);
+      font-size: 1.45rem;
+      vertical-align: middle;
+      margin-left: 6px;
     }
-    /* PRESENCE & LOCATION TOP */
-    .presence{
-      font-size:1.25rem;
-      color:#cfcde0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      font-weight:600;
-      margin-bottom:12px;
+    .info {
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin: 12px 0 28px;
     }
-    .presence .dot{
-      width:12px;
-      height:12px;
-      background:#4cff7a;
-      border-radius:50%;
-      box-shadow:0 0 16px rgba(76,255,122,.8);
-      animation:pulse 1.6s infinite;
+    .info strong { color: var(--text); font-weight: 600; }
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 22px;
+      margin: 28px 0 40px;
     }
-    @keyframes pulse{
-      0%,100%{opacity:1}
-      50%{opacity:.35}
+    .social-icons a {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.7rem;
+      color: #fff;
+      text-decoration: none;
+      transition: var(--transition);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     }
-    .location{
-      font-size:1.1rem;
-      color:#e5e5ff;
-      margin-bottom:28px;
-      font-weight:600;
+    .social-icons a:hover {
+      transform: translateY(-6px) scale(1.15);
+      box-shadow: var(--glow);
     }
-    /* BRAND & HEADLINE */
-    .brand{
-      font-family:'Anton',system-ui,sans-serif;
-      font-size:2.2rem;
-      letter-spacing:.6px;
-      margin-bottom:18px;
-      user-select:none;
+    .ig { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+    .fb { background: #1877f2; }
+    .tg { background: #0088cc; }
+
+    .main-teaser {
+      width: 100%;
+      height: 480px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      margin-bottom: 32px;
+      box-shadow: 0 14px 56px rgba(0,0,0,0.8);
+      transition: var(--transition);
     }
-    .brand span{color:var(--pink)}
-    .brand em{font-style:normal;color:var(--orange);font-size:.9em;margin-left:2px}
-    h1{
-      font-size:clamp(2.3rem,5vw,3.4rem);
-      margin-bottom:12px;
-      font-weight:800;
-      background:linear-gradient(90deg,var(--purple),var(--pink),var(--orange));
-      -webkit-background-clip:text;
-      color:transparent;
+    .main-teaser:hover {
+      transform: scale(1.02);
+      box-shadow: 0 20px 72px rgba(0,0,0,0.95);
     }
-    p{
-      font-size:1.15rem;
-      color:var(--muted);
-      margin-bottom:38px;
+    .cta-btn {
+      display: block;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 700;
+      padding: 24px;
+      border-radius: 999px;
+      margin: 0 auto 44px;
+      text-decoration: none;
+      box-shadow: var(--glow);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
     }
-    .choice{
-      display:flex;
-      flex-direction:column;
-      gap:26px;
-      margin-bottom:26px;
+    .cta-btn::before {
+      content: "EXCLUSIVE • UNCENSORED • PRIVATE";
+      display: block;
+      font-size: 0.98rem;
+      font-weight: 500;
+      margin-top: 8px;
+      opacity: 0.94;
     }
-    .btn-wrap{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
+    .cta-btn:hover {
+      transform: translateY(-6px) scale(1.03);
+      box-shadow: 0 0 64px rgba(255,79,160,0.85);
     }
-    .btn{
-      display:block;
-      padding:32px 44px;
-      border-radius:999px;
-      font-size:1.45rem;
-      font-weight:900;
-      letter-spacing:.3px;
-      text-decoration:none;
-      transition:var(--transition);
-      will-change:transform;
-      position:relative;
+    .previews {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+      margin-bottom: 60px;
     }
-    .btn.primary{
-      background:linear-gradient(135deg,var(--pink),var(--purple));
-      color:#fff;
-      box-shadow:0 0 52px rgba(255,79,160,.65);
+    .preview-item {
+      text-align: center;
+      animation: fadeUp 0.5s ease both;
     }
-    .btn.primary:hover{
-      transform:translateY(-3px) scale(1.02);
-      box-shadow:0 0 88px rgba(255,79,160,.85);
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    .preview-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
     }
-    .btn.secondary{
-      background:rgba(255,255,255,.06);
-      border:2px solid rgba(255,255,255,.35);
-      color:#fff;
-      backdrop-filter:blur(6px);
+    .preview-img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      border-radius: var(--radius);
+      border: 1px solid #222;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.7);
+      transition: var(--transition);
     }
-    .btn.secondary:hover{
-      background:rgba(255,255,255,.12);
-      border-color:var(--pink);
-      transform:translateY(-2px);
+    .preview-link:hover .preview-img {
+      transform: scale(1.08);
+      box-shadow: 0 16px 48px rgba(255,79,160,0.55);
     }
-    .btn.tease .reveal{
-      display:block;
-      font-size:.8rem;
-      letter-spacing:.4px;
-      margin-top:6px;
-      opacity:0;
-      transform:translateY(6px);
-      transition:.25s ease;
+    .preview-label {
+      font-size: 1.08rem;
+      color: var(--muted);
+      margin-top: 14px;
+      font-weight: 600;
+      letter-spacing: 0.6px;
     }
-    .btn.tease:hover .reveal{
-      opacity:.9;
-      transform:none;
+    .preview-icon {
+      font-size: 2.4rem;
+      margin-bottom: 6px;
+      display: block;
+      line-height: 1;
     }
-    .hint{
-      font-size:1rem;
-      color:var(--muted);
+    .note {
+      font-size: 1.02rem;
+      color: #999;
+      margin-top: 60px;
+      opacity: 0.95;
     }
-    .note{
-      font-size:.95rem;
-      color:var(--muted);
-      opacity:.9;
-      margin-top:24px;
+
+    /* Mobile Responsiveness */
+    @media (max-width: 1024px) {
+      .container { max-width: 75%; }
+      .main-teaser { height: 420px; }
     }
-    .social-proof{
-      margin-top:22px;
-      font-size:.9rem;
-      color:#9f9db6;
-      font-style:italic;
-      opacity:.85;
+    @media (max-width: 768px) {
+      body { padding: 20px 14px; }
+      .profile-pic { width: 96px; height: 96px; }
+      .username { font-size: 1.6rem; }
+      .cta-btn { font-size: 1.35rem; padding: 20px; }
+      .main-teaser { height: 380px; }
+      .previews { gap: 18px; }
     }
-    @media (max-width:640px){
-      .wrap{padding:52px 26px}
-      .btn{font-size:1.25rem;padding:28px 36px}
-      p{font-size:1.05rem}
-      .brand{font-size:1.95rem}
-      .presence{font-size:1.1rem}
-      .location{font-size:1rem}
+    @media (max-width: 480px) {
+      .container { max-width: 100%; }
+      .social-icons { gap: 16px; }
+      .social-icons a { width: 44px; height: 44px; font-size: 1.5rem; }
+      .main-teaser { height: 340px; }
+      .previews { gap: 16px; }
+      .preview-label { font-size: 1rem; }
     }
-    @media (max-width:480px){
-      .wrap{padding:42px 20px}
-      .btn{font-size:1.15rem;padding:24px 32px}
-      .brand{font-size:1.85rem}
-      .presence{font-size:1rem}
-      .location{font-size:.95rem}
+    @media (max-width: 340px) {
+      body { padding: 16px 12px; }
+      .profile-pic { width: 88px; height: 88px; }
+      .username { font-size: 1.45rem; }
+      .info { font-size: 0.95rem; }
+      .cta-btn { font-size: 1.25rem; padding: 18px; }
+      .previews { grid-template-columns: 1fr; gap: 18px; }
+      .main-teaser { height: 300px; }
+      .preview-icon { font-size: 2.2rem; }
+      .preview-label { font-size: 0.95rem; }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <!-- ONLINE & LOCATION TOP -->
-    <div class="presence"><span class="dot"></span> Nina is online now</div>
-    <div class="location" id="location">Near you</div>
-    <div class="brand">
-      Nina<span>Nova</span><em>TV</em>
+  <div class="container">
+    <img src="images/new layout/1 (12).png" alt="Nina Nova" class="profile-pic">
+
+    <div class="username">Nina Nova <span class="verified">•</span></div>
+
+    <div class="info">
+      <strong id="location">Near you • 22+</strong>
     </div>
-    <h1>Hey… 🤍</h1>
-    <p>You didn’t click by accident.</p>
-    <div class="choice">
-      <div class="btn-wrap">
-        <a href="https://justforfans.app/nina_nova" class="btn primary tease" data-track="justforfans">
-          🔥 JustForFans
-          <span class="reveal">uncensored · real · private</span>
-        </a>
-        <div class="hint">JustForFans • photos • real moments</div>
-      </div>
-      <div class="btn-wrap">
-        <a href="home.html" class="btn secondary" data-track="slow_path">🤍 Chat to me</a>
-        <div class="hint">Chat • private • direct</div>
-      </div>
+
+    <div class="social-icons">
+      <a href="https://instagram.com/nina_nova_" class="ig">IG</a>
+      <a href="https://instagram.com/ninanovaginge" class="ig">IG</a>
+      <a href="https://facebook.com/NinaNova932" class="fb">FB</a>
+      <a href="https://t.me/NinaUnfilteredNova" class="tg">TG</a>
     </div>
-    <div class="note">
-      Nothing auto-charges. Leave whenever you want.
-    </div>
-    <div class="social-proof">
-      “Most people don’t make it past this screen.”
-    </div>
+
+    <img src="images/new layout/1 (13).png" alt="Teaser" class="main-teaser">
+
+    <a href="https://dfans.co/ninanova" class="cta-btn">DFans – Unlock Now</a>
+
+    <div class="previews" id="previewsGrid"></div>
+
+    <div class="note">Exclusive uncensored content • Real moments only • 18+ • No auto-charges • Leave anytime</div>
   </div>
-<script>
-(() => {
-  const TRACK_URL = "https://ninanovavip-backend.onrender.com/track";
-  function send(payload) {
-    try {
-      if (navigator.sendBeacon) {
-        navigator.sendBeacon(TRACK_URL, new Blob([JSON.stringify(payload)], { type: "application/json" }));
-      } else {
-        fetch(TRACK_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-          keepalive: true
-        });
-      }
-    } catch {}
-  }
-  send({ type: "pageview", page: "gate" });
-  document.querySelectorAll("[data-track]").forEach(el => {
-    el.addEventListener("click", () => {
-      send({ type: "click", page: "gate", target: el.dataset.track });
-      if (navigator.vibrate) navigator.vibrate(18);
-    });
-  });
+
+  <script>
+  // Dynamic location
   fetch("https://ipapi.co/json/")
     .then(r => r.json())
-    .then(d => { if (d && d.city) document.getElementById("location").textContent = `Near ${d.city}` })
-    .catch(()=>{});
-})();
-</script>
+    .then(d => {
+      if (d && d.city) {
+        document.getElementById("location").textContent = `Near ${d.city} • 22+`;
+      }
+    })
+    .catch(() => {});
+
+  // Fixed preview images (no randomization)
+  const previews = document.getElementById("previewsGrid");
+  const socialData = [
+    { label: "@nina_nova_",   icon: "IG", link: "https://instagram.com/nina_nova_",    color: "#e1306c", img: "1 (10).png" },
+    { label: "@ninanovaginge",icon: "IG", link: "https://instagram.com/ninanovaginge",  color: "#e1306c", img: "1 (8).png" },
+    { label: "NinaNova932",   icon: "FB", link: "https://facebook.com/NinaNova932",     color: "#1877f2", img: "1 (1).png" },
+    { label: "@NinaUnfilteredNova", icon: "TG", link: "https://t.me/NinaUnfilteredNova", color: "#0088cc", img: "1 (2).png" }
+  ];
+
+  socialData.forEach(data => {
+    const div = document.createElement("div");
+    div.className = "preview-item";
+    div.innerHTML = `
+      <a href="${data.link}" class="preview-link">
+        <img src="images/new layout/${data.img}" alt="${data.label}" class="preview-img">
+        <div class="preview-label">
+          <span class="preview-icon" style="color: ${data.color};">${data.icon}</span>
+          ${data.label}
+        </div>
+      </a>
+    `;
+    previews.appendChild(div);
+  });
+  </script>
 </body>
 </html>

@@ -4,196 +4,449 @@
   <meta charset="utf-8">
   <title>Nina Nova TV — say hi</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-
-  <!-- SEO (soft, non-commercial) -->
   <meta name="description" content="A quiet, friendly way to say hi. No pressure, no rush.">
   <link rel="canonical" href="https://ninanovatv.com/contact.html">
-
   <!-- Open Graph -->
   <meta property="og:title" content="Say hi">
   <meta property="og:description" content="A calm place to reach out. Messages are read quietly, in time.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://ninanovatv.com/contact.html">
-
   <!-- Favicon -->
   <link rel="icon" href="images/download.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="images/download.svg">
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #000;
+      --text: #fff;
+      --muted: #bbb;
+      --blue: #0095f6;
+      --pink: #ff4fa0;
+      --purple: #b74eff;
+      --radius: 20px;
+      --glow: 0 0 36px rgba(255, 79, 160, 0.55);
+      --transition: 0.4s cubic-bezier(0.22,1,0.36,1);
+      --border: rgba(255,255,255,0.09);
+      --glass: rgba(35,35,55,0.32);
+      --panel: rgba(22,22,38,0.72);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: url("images/new layout/Nina Nova Fanlace Cover.jpg") center/cover no-repeat fixed !important;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 0;
+      text-align: center;
+      line-height: 1.5;
+      position: relative;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      backdrop-filter: blur(32px) saturate(1.25);
+      -webkit-backdrop-filter: blur(32px) saturate(1.25);
+      background: rgba(0,0,0,0.58);
+      z-index: -1;
+    }
+    /* Navbar */
+    header.nav {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      backdrop-filter: blur(24px);
+      background: rgba(10,10,24,0.88);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 5%;
+    }
+    .nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .brand {
+      font-size: 2.1rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(90deg, var(--pink), var(--purple), var(--blue));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-decoration: none;
+    }
+    .brand em { font-style: normal; color: #ffab70; font-size: 0.9em; }
+    .location {
+      font-size: 1.05rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .location-strong { font-weight: 600; color: var(--text); }
+    .nav-desktop-links {
+      display: none;
+      gap: 32px;
+      align-items: center;
+    }
+    .nav-desktop-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.05rem;
+      transition: var(--transition);
+      position: relative;
+    }
+    .nav-desktop-links a:hover { color: var(--pink); }
+    .nav-desktop-links a::after {
+      content: "";
+      position: absolute;
+      bottom: -6px; left: 0;
+      width: 0; height: 2px;
+      background: var(--pink);
+      transition: width 0.4s;
+    }
+    .nav-desktop-links a:hover::after { width: 100%; }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    .hamburger span {
+      width: 32px; height: 3px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(8px,8px); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(8px,-8px); }
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      gap: 24px;
+      padding: 32px 5%;
+      background: rgba(10,10,24,0.95);
+      border-top: 1px solid var(--border);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 1.3rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    .mobile-menu a:hover { color: var(--pink); transform: translateX(8px); }
+    @media (min-width: 769px) {
+      .nav-desktop-links { display: flex; }
+      .hamburger { display: none; }
+      .mobile-menu { display: none !important; }
+    }
+    @media (max-width: 768px) {
+      .nav-desktop-links { display: none; }
+      .hamburger { display: flex; }
+    }
+    /* Main content */
+    main {
+      padding: 60px 5% 100px;
+    }
+    .hero {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 60px;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero > div {
+      flex: 1;
+      min-width: 320px;
+      text-align: center;
+    }
+    h1 {
+      font-size: clamp(3rem, 8vw, 5rem);
+      font-weight: 800;
+      margin-bottom: 24px;
+      background: linear-gradient(90deg, var(--pink), var(--purple), var(--blue));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    p {
+      font-size: 1.2rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin: 20px auto;
+      max-width: 580px;
+    }
+    .cta {
+      margin: 48px auto;
+    }
+    .btn {
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      color: white;
+      font-size: 1.35rem;
+      font-weight: 700;
+      padding: 18px 48px;
+      border-radius: 999px;
+      text-decoration: none;
+      box-shadow: var(--glow);
+      transition: var(--transition);
+      display: inline-block;
+    }
+    .btn:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 0 80px rgba(255,79,160,0.85);
+    }
+    .contact-note {
+      font-size: 1rem;
+      color: var(--muted);
+      opacity: 0.9;
+      margin-top: 24px;
+    }
+    .hero-image-wrap {
+      flex: 1;
+      min-width: 320px;
+      position: relative;
+    }
+    .hero-portrait {
+      width: 100%;
+      border-radius: var(--radius);
+      box-shadow: 0 20px 80px rgba(0,0,0,0.7);
+      object-fit: cover;
+      transition: var(--transition);
+    }
+    .hero-portrait:hover {
+      transform: scale(1.03);
+      box-shadow: 0 30px 100px rgba(255,79,160,0.5);
+    }
+    .info {
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin: 12px 0 32px;
+    }
+    /* Footer */
+    .footer {
+      padding: 60px 5% 40px;
+      background: linear-gradient(to top, rgba(10,10,24,0.9), transparent);
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 48px;
+    }
+    .footer-social {
+      display: flex;
+      gap: 28px;
+    }
+    .footer-social a {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      color: white;
+      background: #111;
+      transition: var(--transition);
+    }
+    .footer-social a:hover { transform: translateY(-6px); box-shadow: var(--glow); }
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .footer-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 1.05rem;
+      transition: var(--transition);
+    }
+    .footer-links a:hover { color: var(--pink); }
+    .copyright {
+      width: 100%;
+      text-align: center;
+      margin-top: 40px;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    @media (max-width: 1024px) {
+      .hero { gap: 40px; }
+    }
+    @media (max-width: 768px) {
+      main { padding: 40px 5% 80px; }
+      .hero { flex-direction: column; }
+      .btn { width: 100%; max-width: 400px; }
+    }
+    @media (max-width: 480px) {
+      h1 { font-size: clamp(2.6rem, 10vw, 4rem); }
+      p { font-size: 1.05rem; }
+    }
+  </style>
 </head>
+<body>
 
-<body class="has-bg">
+  <header class="nav">
+    <div class="nav-inner">
+      <a href="home.html" class="brand">Nina<span>Nova</span><em>TV</em></a>
+      
+      <div class="nav-desktop-links">
+        <a href="chat.html">🤍 Leave a note</a>
+        <a href="custom.html">🎥 Custom</a>
+        <a href="https://dfans.co/ninanova" target="_blank" rel="noopener">🔥 DFans</a>
+        <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener">☕ Telegram</a>
+      </div>
 
-<header class="nav">
-  <div class="nav-inner">
-
-    <a href="home.html" class="brand" data-track="brand_home">
-      Nina<span>Nova</span><em>TV</em>
-    </a>
-
-    <div class="location location-strong" id="nina-location">
-      📍 Nina’s around somewhere…
+      <div class="location location-strong" id="nina-location">📍 Nina’s around somewhere…</div>
+      
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
 
-    <a href="custom.html" class="btn ghost nav-cta" data-track="custom_nav">
-      Custom Nina
-    </a>
+    <nav class="mobile-menu" id="mobileMenu">
+      <a href="chat.html">🤍 Leave me a note</a>
+      <a href="custom.html">🎥 Something personal</a>
+      <a href="https://dfans.co/ninanova" target="_blank" rel="noopener">🔥 DFans</a>
+      <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener">☕ Telegram (updates)</a>
+    </nav>
+  </header>
 
-    <button class="hamburger" id="hamburger" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
+  <main>
+    <section class="hero">
+      <div>
+        <h1>Come say hi 🤍</h1>
+        <div class="info">
+          <strong id="location">Near you • 22+</strong>
+        </div>
+        <p>
+          I wanted a space that feels calm and respectful —<br>
+          somewhere conversations don’t get buried or rushed.
+        </p>
+        <p>
+          If you’re curious,<br>
+          want to say hello,<br>
+          or just feel like reaching out,<br>
+          this is a gentle place to do that.
+        </p>
+        <p>
+          I don’t rush replies<br>
+          and I don’t copy-paste answers.<br>
+          I read messages properly, when I can.
+        </p>
+        <p style="margin-top:14px;font-size:.9rem;color:var(--muted);max-width:520px">
+          For anything more personal or specific,<br>
+          it’s better to start through the site so things stay clear and private.
+        </p>
+        <div class="cta" style="margin-top:32px">
+          <a
+            href="https://t.me/NinaNovaAdmin"
+            target="_blank"
+            rel="noopener"
+            class="btn"
+            style="font-size:1.05rem;padding:16px 36px"
+          >
+            💬 Say hi on Telegram
+          </a>
+        </div>
+        <p style="margin-top:18px;font-size:.9rem;opacity:.8;">
+          If you’d rather email, that’s okay too:<br>
+          <a
+            href="mailto:nina@ninanovatv.com"
+            style="font-weight:600;text-decoration:underline;"
+          >
+            nina@ninanovatv.com
+          </a>
+        </p>
+        <p class="contact-note" style="margin-top:18px;font-size:.85rem;opacity:.75">
+          Please be kind and patient.<br>
+          This space works best when it stays calm.
+        </p>
+      </div>
+      <div class="hero-image-wrap">
+        <img src="images/5.png" alt="Nina Nova" class="hero-portrait" loading="lazy">
+      </div>
+    </section>
+  </main>
 
-  </div>
-
-  <nav class="mobile-menu" id="mobileMenu">
-    <a href="chat.html" data-track="chat_menu">🤍 Leave me a note</a>
-    <a href="custom.html" data-track="custom_menu">🎥 Something personal</a>
-    <a href="https://justforfans.app/nina_nova" target="_blank" rel="noopener" data-track="justforfans_menu">🌙 JustForFans</a>
-    <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram_menu">☕ Telegram</a>
-  </nav>
-</header>
-
-<main>
-
-<section class="hero contact-hero">
-  <div>
-
-    <h1>Come say hi 🤍</h1>
-
-    <p>
-      I wanted a space that feels calm and respectful —
-      somewhere conversations don’t get buried or rushed.
-    </p>
-
-    <p>
-      If you’re curious,
-      want to say hello,
-      or just feel like reaching out,
-      this is a gentle place to do that.
-    </p>
-
-    <p>
-      I don’t rush replies
-      and I don’t copy-paste answers.
-      I read messages properly, when I can.
-    </p>
-
-    <p style="margin-top:14px;font-size:.9rem;color:var(--text-muted);max-width:520px">
-      For anything more personal or specific,
-      it’s better to start through the site so things stay clear and private.
-    </p>
-
-    <!-- PRIMARY: CASUAL HELLO -->
-    <div class="cta" style="margin-top:32px">
-      <a
-        href="https://t.me/NinaNovaAdmin"
-        target="_blank"
-        rel="noopener"
-        class="btn"
-        style="font-size:1.05rem;padding:16px 36px"
-        data-track="telegram_primary"
-      >
-        💬 Say hi on Telegram
-      </a>
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-social">
+        <a href="https://instagram.com/nina_nova_" class="ig">IG</a>
+        <a href="https://instagram.com/ninanovaginge" class="ig">IG</a>
+        <a href="https://facebook.com/NinaNova932" class="fb">FB</a>
+        <a href="https://t.me/NinaUnfilteredNova" class="tg">TG</a>
+      </div>
+      <div class="footer-links">
+        <a href="chat.html">🤍 Leave me a note</a>
+        <a href="custom.html">🎥 Something personal</a>
+        <a href="https://dfans.co/ninanova" target="_blank" rel="noopener">🔥 DFans</a>
+        <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener">☕ Telegram</a>
+      </div>
     </div>
+    <div class="copyright">
+      Friendly vibes only 🤍<br>
+      <small>No pressure • no expectations</small><br><br>
+      © <span id="yy"></span> Nina Nova TV • All Rights Reserved
+    </div>
+  </footer>
 
-    <!-- SECONDARY: EMAIL -->
-    <p style="margin-top:18px;font-size:.9rem;opacity:.8;">
-      If you’d rather email, that’s okay too:
-      <br>
-      <a
-        href="mailto:nina@ninanovatv.com"
-        style="font-weight:600;text-decoration:underline;"
-        data-track="email_link"
-      >
-        nina@ninanovatv.com
-      </a>
-    </p>
+  <script>
+    // Hamburger menu
+    const ham = document.getElementById("hamburger");
+    const menu = document.getElementById("mobileMenu");
+    ham.addEventListener("click", () => {
+      menu.classList.toggle("open");
+      ham.classList.toggle("active");
+    });
 
-    <p class="contact-note" style="margin-top:18px;font-size:.85rem;opacity:.75">
-      Please be kind and patient.<br>
-      This space works best when it stays calm.
-    </p>
+    // Dynamic location – navbar + page info
+    fetch("https://ipapi.co/json/")
+      .then(r => r.json())
+      .then(d => {
+        if (d && d.city) {
+          document.getElementById("nina-location").textContent = `📍 Nina’s around ${d.city}`;
+          const locEl = document.getElementById("location");
+          if (locEl) locEl.textContent = `Near ${d.city} • 22+`;
+        }
+      })
+      .catch(() => {
+        document.getElementById("nina-location").textContent = "📍 Nina’s nearby";
+      });
 
-  </div>
+    // Footer year
+    document.getElementById("yy").textContent = new Date().getFullYear();
 
-  <div class="hero-image-wrap">
-    <img
-      src="images/5.png"
-      alt="Nina Nova"
-      class="hero-portrait"
-      loading="lazy"
-    >
-  </div>
-</section>
-
-</main>
-
-<footer class="footer">
-  <p>
-    Friendly vibes only 🤍
-    <br>
-    <small>No pressure • no expectations</small>
-  </p>
-</footer>
-
-<script>
-/* ANALYTICS */
-const TRACK_URL = "https://ninanovavip-backend.onrender.com/track";
-
-// page view
-fetch(TRACK_URL, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ type: "pageview", page: "contact" })
-}).catch(() => {});
-
-// click tracking
-document.querySelectorAll("[data-track]").forEach(el => {
-  el.addEventListener("click", () => {
+    // Tracking
+    const TRACK_URL = "https://ninanovavip-backend.onrender.com/track";
     fetch(TRACK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "click",
-        page: "contact",
-        target: el.dataset.track
-      })
+      body: JSON.stringify({ type: "pageview", page: "contact" })
     }).catch(() => {});
-  });
-});
-
-/* HAMBURGER */
-const ham = document.getElementById("hamburger");
-const menu = document.getElementById("mobileMenu");
-
-if (ham && menu) {
-  ham.addEventListener("click", () => {
-    menu.classList.toggle("open");
-    ham.classList.toggle("active");
-  });
-}
-
-/* LOCATION */
-(function () {
-  const el = document.getElementById("nina-location");
-  if (!el) return;
-
-  fetch("https://ipapi.co/json/")
-    .then(res => res.json())
-    .then(data => {
-      if (data && data.city) {
-        el.textContent = `📍 Nina’s around ${data.city}`;
-      } else fallback();
-    })
-    .catch(fallback);
-
-  function fallback() {
-    el.textContent = "📍 Nina’s nearby";
-  }
-})();
-</script>
-
+    document.querySelectorAll("[data-track]").forEach(el => {
+      el.addEventListener("click", () => {
+        fetch(TRACK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "click",
+            page: "contact",
+            target: el.dataset.track
+          })
+        }).catch(() => {});
+      });
+    });
+  </script>
 </body>
 </html>

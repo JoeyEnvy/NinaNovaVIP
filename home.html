@@ -4,215 +4,557 @@
   <meta charset="utf-8">
   <title>Nina Nova TV — a quieter place</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-
-  <!-- SEO -->
   <meta name="description" content="Nina Nova TV — a calm, quieter place to leave a message and take your time.">
   <link rel="canonical" href="https://ninanovatv.com/home.html">
-
   <!-- Open Graph -->
   <meta property="og:title" content="Nina Nova TV — a quieter place">
   <meta property="og:description" content="A soft corner away from the noise. This is where Nina reads messages.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://ninanovatv.com/home.html">
   <meta property="og:image" content="https://ninanovatv.com/images/1.png">
-
   <!-- Favicon -->
   <link rel="icon" href="images/download.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="images/download.svg">
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #000;
+      --text: #fff;
+      --muted: #bbb;
+      --blue: #0095f6;
+      --pink: #ff4fa0;
+      --purple: #b74eff;
+      --radius: 20px;
+      --glow: 0 0 36px rgba(255, 79, 160, 0.55);
+      --transition: 0.4s cubic-bezier(0.22,1,0.36,1);
+      --border: rgba(255,255,255,0.09);
+      --glass: rgba(35,35,55,0.32);
+      --panel: rgba(22,22,38,0.72);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: url("images/new layout/Nina Nova Fanlace Cover.jpg") center/cover no-repeat fixed !important;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 0;
+      text-align: center;
+      line-height: 1.5;
+      position: relative;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      backdrop-filter: blur(32px) saturate(1.25);
+      -webkit-backdrop-filter: blur(32px) saturate(1.25);
+      background: rgba(0,0,0,0.58);
+      z-index: -1;
+    }
+    /* Navbar */
+    header.nav {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      backdrop-filter: blur(24px);
+      background: rgba(10,10,24,0.88);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 5%;
+    }
+    .nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .brand {
+      font-size: 2.1rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(90deg, var(--pink), var(--purple), var(--blue));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-decoration: none;
+    }
+    .brand em { font-style: normal; color: #ffab70; font-size: 0.9em; }
+    .location {
+      font-size: 1.05rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .location-strong { font-weight: 600; color: var(--text); }
+    .nav-desktop-links {
+      display: none;
+      gap: 32px;
+      align-items: center;
+    }
+    .nav-desktop-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.05rem;
+      transition: var(--transition);
+      position: relative;
+    }
+    .nav-desktop-links a:hover { color: var(--pink); }
+    .nav-desktop-links a::after {
+      content: "";
+      position: absolute;
+      bottom: -6px; left: 0;
+      width: 0; height: 2px;
+      background: var(--pink);
+      transition: width 0.4s;
+    }
+    .nav-desktop-links a:hover::after { width: 100%; }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    .hamburger span {
+      width: 32px; height: 3px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(8px,8px); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(8px,-8px); }
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      gap: 24px;
+      padding: 32px 5%;
+      background: rgba(10,10,24,0.95);
+      border-top: 1px solid var(--border);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 1.3rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    .mobile-menu a:hover { color: var(--pink); transform: translateX(8px); }
+    @media (min-width: 769px) {
+      .nav-desktop-links { display: flex; }
+      .hamburger { display: none; }
+      .mobile-menu { display: none !important; }
+    }
+    @media (max-width: 768px) {
+      .nav-desktop-links { display: none; }
+      .hamburger { display: flex; }
+    }
+    /* Hero / Main */
+    main {
+      padding: 60px 5% 100px;
+    }
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 60px;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero > div {
+      flex: 1;
+      min-width: 320px;
+      text-align: center;
+    }
+    h1 {
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      font-weight: 800;
+      margin-bottom: 24px;
+      background: linear-gradient(90deg, var(--pink), var(--purple), var(--blue));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    p {
+      font-size: 1.2rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin: 20px auto;
+      max-width: 580px;
+    }
+    .cta.monetisation {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin: 48px 0;
+      flex-wrap: wrap;
+    }
+    .btn {
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      color: white;
+      font-size: 1.4rem;
+      font-weight: 700;
+      padding: 18px 48px;
+      border-radius: 999px;
+      text-decoration: none;
+      box-shadow: var(--glow);
+      transition: var(--transition);
+    }
+    .btn:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 0 80px rgba(255,79,160,0.85);
+    }
+    .btn.platform.justforfans { background: linear-gradient(135deg, #ff4fa0, #ff79c2); }
+    .btn.platform.onlyfans { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+    .btn.ghost {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      color: var(--pink);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .btn.ghost:hover {
+      background: rgba(255,79,160,0.12);
+      border-color: var(--purple);
+    }
+    .cta-subtle {
+      font-size: 1rem;
+      color: var(--muted);
+      opacity: 0.9;
+    }
+    .chat-preview {
+      display: block;
+      max-width: 420px;
+      margin: 48px auto;
+      background: var(--panel);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 20px 70px rgba(0,0,0,0.6);
+      text-decoration: none;
+      color: inherit;
+      transition: var(--transition);
+    }
+    .chat-preview:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 30px 90px rgba(255,79,160,0.4);
+    }
+    .chat-preview-header {
+      padding: 16px 24px;
+      background: rgba(0,0,0,0.35);
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .chat-preview-body {
+      padding: 20px;
+      text-align: left;
+    }
+    .msg.nina {
+      background: var(--pink);
+      color: white;
+      padding: 12px 18px;
+      border-radius: 18px;
+      margin: 12px 0;
+      max-width: 80%;
+      display: inline-block;
+    }
+    .chat-preview-footer {
+      padding: 16px 24px;
+      background: rgba(0,0,0,0.3);
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+    .links {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 580px;
+      margin: 40px auto;
+    }
+    .primary-link {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      padding: 20px 28px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 600;
+      transition: var(--transition);
+    }
+    .primary-link:hover {
+      background: rgba(255,79,160,0.12);
+      transform: translateY(-4px);
+      box-shadow: var(--glow);
+    }
+    .primary-link small {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+    .hero-image-wrap {
+      flex: 1;
+      min-width: 320px;
+      position: relative;
+    }
+    .hero-portrait {
+      width: 100%;
+      border-radius: var(--radius);
+      box-shadow: 0 20px 80px rgba(0,0,0,0.7);
+      object-fit: cover;
+      transition: var(--transition);
+    }
+    .hero-portrait:hover {
+      transform: scale(1.03);
+      box-shadow: 0 30px 100px rgba(255,79,160,0.5);
+    }
+    /* Footer */
+    .footer {
+      padding: 60px 5% 40px;
+      background: linear-gradient(to top, rgba(10,10,24,0.9), transparent);
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 48px;
+    }
+    .footer-social {
+      display: flex;
+      gap: 28px;
+    }
+    .footer-social a {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      color: white;
+      background: #111;
+      transition: var(--transition);
+    }
+    .footer-social a:hover { transform: translateY(-6px); box-shadow: var(--glow); }
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .footer-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 1.05rem;
+      transition: var(--transition);
+    }
+    .footer-links a:hover { color: var(--pink); }
+    .copyright {
+      width: 100%;
+      text-align: center;
+      margin-top: 40px;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    @media (max-width: 1024px) {
+      .hero { gap: 40px; }
+    }
+    @media (max-width: 768px) {
+      main { padding: 40px 5% 80px; }
+      .hero { flex-direction: column; }
+      .cta.monetisation { flex-direction: column; gap: 16px; }
+      .btn { width: 100%; max-width: 400px; }
+    }
+    @media (max-width: 480px) {
+      h1 { font-size: clamp(2.6rem, 10vw, 4rem); }
+      p { font-size: 1.05rem; }
+    }
+  </style>
 </head>
+<body>
 
-<body class="has-bg">
-
-<header class="nav">
-  <div class="nav-inner">
-
-    <a href="home.html" class="brand" data-track="brand_home">
-      Nina<span>Nova</span><em>TV</em>
-    </a>
-
-    <div class="location location-strong" id="nina-location">
-      📍 Nina’s around somewhere…
-    </div>
-
-    <a href="custom.html" class="btn ghost nav-cta" data-track="custom_nav">
-      Custom Nina
-    </a>
-
-    <button class="hamburger" id="hamburger" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-
-  </div>
-
-  <nav class="mobile-menu" id="mobileMenu">
-    <a href="chat.html" data-track="chat_menu">🤍 Leave me a note</a>
-    <a href="custom.html" data-track="custom_menu">🎥 Something personal</a>
-    <a href="https://justforfans.app/nina_nova" target="_blank" rel="noopener" data-track="justforfans_menu">🔥 JustForFans</a>
-    <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram_menu">☕ Telegram (updates)</a>
-  </nav>
-</header>
-
-<main>
-
-<section class="hero">
-  <div>
-    <h1>Hey… I’m Nina 🤍</h1>
-
-    <p>This is my quieter corner. Less noise. More real.</p>
-
-    <p>
-      I like slow thoughts, private messages,
-      and not pretending to be “on” everywhere at once.
-    </p>
-
-    <p>If that sounds like you, you’ll probably feel comfy here.</p>
-
-    <div class="cta monetisation">
-      <a
-        href="https://justforfans.app/nina_nova"
-        target="_blank"
-        rel="noopener"
-        class="btn platform justforfans"
-        data-track="justforfans_primary"
-      >
-        🔥 JustForFans
-      </a>
-
-      <a
-        href="https://onlyfans.com/ninanova"
-        target="_blank"
-        rel="noopener"
-        class="btn platform onlyfans ghost"
-        data-track="onlyfans_primary"
-      >
-        🌙 OnlyFans
-      </a>
-    </div>
-
-    <p class="cta-subtle">
-      Little moments, no pressure 🤍
-    </p>
-
-    <a href="chat.html" class="chat-preview" aria-label="Leave Nina a message" data-track="chat_preview">
-      <div class="chat-preview-header">
-        <span>Nina</span>
-        <small>private notes</small>
+  <header class="nav">
+    <div class="nav-inner">
+      <a href="home.html" class="brand">Nina<span>Nova</span><em>TV</em></a>
+      
+      <div class="nav-desktop-links">
+        <a href="chat.html">🤍 Leave a note</a>
+        <a href="custom.html">🎥 Custom</a>
+        <a href="https://dfans.co/ninanova" target="_blank" rel="noopener">🔥 DFans</a>
+        <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener">☕ Telegram</a>
       </div>
 
-      <div class="chat-preview-body">
-        <div class="msg nina">hey 🤍</div>
-        <div class="msg nina">you can leave me a message here</div>
-      </div>
-
-      <div class="chat-preview-footer">
-        <span>Leave a message… <small>(I actually read these)</small></span>
-      </div>
-    </a>
-
-    <div class="cta">
-      <a href="chat.html" class="btn ghost" data-track="chat_button">
-        Leave me a note
-      </a>
+      <div class="location location-strong" id="nina-location">📍 Nina’s around somewhere…</div>
+      
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
 
-    <p style="margin-top:16px;font-size:.95rem;color:var(--text-muted);max-width:520px">
-      I don’t really reply on Instagram — it gets loud and messy.
-      Telegram is more for sharing things.
-      If you actually want to talk to me, this site is where I read messages.
-    </p>
+    <nav class="mobile-menu" id="mobileMenu">
+      <a href="chat.html">🤍 Leave me a note</a>
+      <a href="custom.html">🎥 Something personal</a>
+      <a href="https://dfans.co/ninanova" target="_blank" rel="noopener">🔥 DFans</a>
+      <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener">☕ Telegram (updates)</a>
+    </nav>
+  </header>
 
-    <div class="links" style="margin-top:28px">
-      <a href="https://justforfans.app/nina_nova" target="_blank" rel="noopener" class="primary-link" data-track="justforfans_footer">
-        🔥 My main space
-        <small>JustForFans • photos, thoughts, little moments</small>
-      </a>
+  <main>
+    <section class="hero">
+      <div>
+        <h1>Hey… I’m Nina 🤍</h1>
+        <div class="info">
+          <strong id="location">Near you • 22+</strong>
+        </div>
+        <p>This is my quieter corner. Less noise. More real.</p>
+        <p>
+          I like slow thoughts, private messages,<br>
+          and not pretending to be “on” everywhere at once.
+        </p>
+        <p>If that sounds like you, you’ll probably feel comfy here.</p>
+        <div class="cta monetisation">
+          <a href="https://dfans.co/ninanova" target="_blank" rel="noopener" class="btn platform justforfans">
+            🔥 DFans
+          </a>
+          <a href="https://onlyfans.com/ninanova" target="_blank" rel="noopener" class="btn platform onlyfans ghost">
+            🌙 OnlyFans
+          </a>
+        </div>
+        <p class="cta-subtle">
+          Little moments, no pressure 🤍
+        </p>
+        <a href="chat.html" class="chat-preview" aria-label="Leave Nina a message">
+          <div class="chat-preview-header">
+            <span>Nina</span>
+            <small>private notes</small>
+          </div>
+          <div class="chat-preview-body">
+            <div class="msg nina">hey 🤍</div>
+            <div class="msg nina">you can leave me a message here</div>
+          </div>
+          <div class="chat-preview-footer">
+            <span>Leave a message… <small>(I actually read these)</small></span>
+          </div>
+        </a>
+        <div class="cta">
+          <a href="chat.html" class="btn ghost">
+            Leave me a note
+          </a>
+        </div>
+        <p style="margin-top:16px;font-size:.95rem;color:var(--muted);max-width:520px">
+          I don’t really reply on Instagram — it gets loud and messy.<br>
+          Telegram is more for sharing things.<br>
+          If you actually want to talk to me, this site is where I read messages.
+        </p>
+        <div class="links" style="margin-top:28px">
+          <a href="https://dfans.co/ninanova" target="_blank" rel="noopener" class="primary-link">
+            🔥 My main space
+            <small>DFans • photos, thoughts, little moments</small>
+          </a>
+          <a href="chat.html" class="primary-link">
+            🤍 Leave me a note
+            <small>A quieter place to talk</small>
+          </a>
+          <a href="custom.html" class="primary-link">
+            🎥 Something personal
+            <small>OnlyFans • Only if it feels right</small>
+          </a>
+          <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" class="primary-link">
+            ☕ Telegram
+            <small>Unfiltered posts & random thoughts</small>
+          </a>
+        </div>
+        <p style="margin-top:22px;font-size:.85rem;color:var(--muted);opacity:.85">
+          I don’t keep DMs open everywhere.<br>
+          This space is intentionally quieter.
+        </p>
+      </div>
+      <div class="hero-image-wrap">
+        <img src="images/6.png" alt="Nina Nova" class="hero-portrait" loading="eager">
+        <img src="images/1.png" alt="Nina Nova portrait" class="hero-portrait" loading="lazy">
+      </div>
+    </section>
+  </main>
 
-      <a href="chat.html" data-track="chat_footer">
-        🤍 Leave me a note
-        <small>A quieter place to talk</small>
-      </a>
-
-      <a href="custom.html" data-track="custom_footer">
-        🎥 Something personal
-        <small>OnlyFans • Only if it feels right</small>
-      </a>
-
-      <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener" data-track="telegram_footer">
-        ☕ Telegram
-        <small>Unfiltered posts & random thoughts</small>
-      </a>
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-social">
+        <a href="https://instagram.com/nina_nova_" class="ig">IG</a>
+        <a href="https://instagram.com/ninanovaginge" class="ig">IG</a>
+        <a href="https://facebook.com/NinaNova932" class="fb">FB</a>
+        <a href="https://t.me/NinaUnfilteredNova" class="tg">TG</a>
+      </div>
+      <div class="footer-links">
+        <a href="chat.html">🤍 Leave me a note</a>
+        <a href="custom.html">🎥 Something personal</a>
+        <a href="https://dfans.co/ninanova" target="_blank" rel="noopener">🔥 DFans</a>
+        <a href="https://t.me/NinaUnfilteredNova" target="_blank" rel="noopener">☕ Telegram</a>
+      </div>
     </div>
-
-    <p style="margin-top:22px;font-size:.85rem;color:var(--text-muted);opacity:.85">
-      I don’t keep DMs open everywhere.
-      This space is intentionally quieter.
-    </p>
-  </div>
-
-  <div class="hero-image-wrap">
-    <img src="images/6.png" alt="Nina Nova" class="hero-portrait" loading="eager">
-    <img src="images/1.png" alt="Nina Nova portrait" class="hero-portrait" loading="lazy">
-  </div>
-</section>
-
-</main>
-
-<footer class="footer">
-  <div style="max-width:1100px;margin:0 auto;">
-    <p>
+    <div class="copyright">
       Thanks for stopping by 🤍<br>
-      <small style="opacity:.85">No rush • No expectations • Just take your time</small>
-    </p>
-    <p style="margin-top:10px;font-size:.85rem;opacity:.75">
-      © <span id="yy"></span> Nina Nova TV • ninanovatv.com
-    </p>
-  </div>
-</footer>
+      <small>No rush • No expectations • Just take your time</small><br><br>
+      © <span id="yy"></span> Nina Nova TV • All Rights Reserved
+    </div>
+  </footer>
 
-<script>
-document.getElementById("yy").textContent = new Date().getFullYear();
+  <script>
+    // Hamburger menu
+    const ham = document.getElementById("hamburger");
+    const menu = document.getElementById("mobileMenu");
+    ham.addEventListener("click", () => {
+      menu.classList.toggle("open");
+      ham.classList.toggle("active");
+    });
 
-const ham = document.getElementById("hamburger");
-const menu = document.getElementById("mobileMenu");
-ham.addEventListener("click", () => {
-  menu.classList.toggle("open");
-  ham.classList.toggle("active");
-});
+    // Dynamic location – navbar + hero info
+    fetch("https://ipapi.co/json/")
+      .then(r => r.json())
+      .then(d => {
+        if (d && d.city) {
+          document.getElementById("nina-location").textContent = `📍 Nina’s around ${d.city}`;
+          const locEl = document.getElementById("location");
+          if (locEl) locEl.textContent = `Near ${d.city} • 22+`;
+        }
+      })
+      .catch(() => {
+        document.getElementById("nina-location").textContent = "📍 Nina’s nearby";
+      });
 
-(() => {
-  const el = document.getElementById("nina-location");
-  if (!el) return;
-  fetch("https://ipapi.co/json/")
-    .then(r => r.json())
-    .then(d => el.textContent = d?.city ? `📍 Nina’s around ${d.city}` : "📍 Nina’s nearby")
-    .catch(() => el.textContent = "📍 Nina’s nearby");
-})();
+    // Footer year
+    document.getElementById("yy").textContent = new Date().getFullYear();
 
-const TRACK_URL = "https://ninanovavip-backend.onrender.com/track";
-
-fetch(TRACK_URL, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ type: "pageview", page: "home" })
-}).catch(() => {});
-
-document.querySelectorAll("[data-track]").forEach(el => {
-  el.addEventListener("click", () => {
+    // Tracking
+    const TRACK_URL = "https://ninanovavip-backend.onrender.com/track";
     fetch(TRACK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "click",
-        page: "home",
-        target: el.dataset.track
-      })
+      body: JSON.stringify({ type: "pageview", page: "home" })
     }).catch(() => {});
-  });
-});
-</script>
-
+    document.querySelectorAll("[data-track]").forEach(el => {
+      el.addEventListener("click", () => {
+        fetch(TRACK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "click",
+            page: "home",
+            target: el.dataset.track
+          })
+        }).catch(() => {});
+      });
+    });
+  </script>
 </body>
 </html>

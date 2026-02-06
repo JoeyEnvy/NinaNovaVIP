@@ -90,7 +90,6 @@ function extractMemory(sessionId) {
   msgs.forEach(m => {
     if (m.role !== "user") return;
     const t = m.content.toLowerCase();
-
     const namePatterns = [
       /(call me|i’m|im|i am|me chamo|chama|sou|ich heiße|je m'appelle|mi nombre es|meu nome é|mi chiamo)\s+([a-z]+)/i,
       /(my name is|meu nome|nome é|ich heisse|je m'appelle|mi nombre|mi chiamo)\s+([a-z]+)/i
@@ -102,7 +101,6 @@ function extractMemory(sessionId) {
         break;
       }
     }
-
     const locPatterns = [/from\s+([a-z\s]+)/i, /de\s+([a-z\s]+)/i, /sou de\s+([a-z\s]+)/i, /aus\s+([a-z\s]+)/i];
     for (const pattern of locPatterns) {
       const l = t.match(pattern);
@@ -111,7 +109,6 @@ function extractMemory(sessionId) {
         break;
       }
     }
-
     const ig = t.match(/(@[a-z0-9_.]+)/i);
     if (ig && !memory.instagram) memory.instagram = ig[1];
   });
@@ -120,7 +117,7 @@ function extractMemory(sessionId) {
 
 function getLinkCount(sessionId) {
   const msgs = getMessages(sessionId);
-  return msgs.filter(m => m.role === "assistant" && m.content.includes("justforfans.app")).length;
+  return msgs.filter(m => m.role === "assistant" && m.content.includes("dfans.co/ninanova")).length;
 }
 
 function logEvent(event, req) {
@@ -147,35 +144,28 @@ function detectLanguage(text) {
   const original = text.trim();
   const lower = original.toLowerCase();
   if (!lower) return "en";
-
   // Hindi (Devanagari script first)
   if (/[\u0900-\u097F]/.test(original)) return "hi";
-
   // Portuguese (Brazilian)
   const ptKeywords = ["oi", "uma", "foto", "quero", "te", "comer", "sim", "porno", "boa", "noite", "vc", "voce", "tudo bem", "ola", "meu", "gostoso", "delicia", "tesao", "safado", "bb", "bbe"];
   const ptCount = ptKeywords.filter(w => lower.includes(w)).length;
   if (ptCount >= 2 || (ptCount >= 1 && /[ãõáéíóúç]/i.test(lower))) return "pt";
-
   // Spanish
   const esKeywords = ["hola", "una", "foto", "quiero", "comer", "si", "porno", "buena", "noche", "guapo", "rico", "papi", "caliente"];
   const esCount = esKeywords.filter(w => lower.includes(w)).length;
   if (esCount >= 2) return "es";
-
   // German
   const deKeywords = ["hallo", "hi", "foto", "nackt", "geil", "bitte", "ja", "nein", "wie gehts", "sexy", "süß", "komm", "will dich", "schatz"];
   const deCount = deKeywords.filter(w => lower.includes(w)).length;
   if (deCount >= 2 || /äöüß/i.test(lower)) return "de";
-
   // French
   const frKeywords = ["salut", "photo", "nue", "sexy", "oui", "non", "ça va", "belle", "chaud", "viens", "veux te", "bébé", "coquin"];
   const frCount = frKeywords.filter(w => lower.includes(w)).length;
   if (frCount >= 2 || /[éèêàçôû]/i.test(lower)) return "fr";
-
   // Italian
   const itKeywords = ["ciao", "foto", "nuda", "sexy", "si", "caldo", "bello", "voglio", "scopare", "tesoro"];
   const itCount = itKeywords.filter(w => lower.includes(w)).length;
   if (itCount >= 2) return "it";
-
   return "en";
 }
 
@@ -183,7 +173,6 @@ app.post("/grok", async (req, res) => {
   try {
     const text = req.body?.text || req.body?.data?.text || req.body?.message?.text || "";
     const sessionId = req.body?.sessionId || "unknown";
-
     if (!text.trim()) {
       return res.json({ grok_reply: "hmm? say that again 🤍" });
     }
@@ -200,14 +189,12 @@ app.post("/grok", async (req, res) => {
     let isReturning = false;
     let inactivityNudge = false;
     let customVideoTease = false;
-
     if (awayStatus[sessionId] && Date.now() >= awayStatus[sessionId].until) {
       isReturning = true;
       clearAwayStatus(sessionId);
     }
 
     addMessage(sessionId, "user", text);
-
     const messages = getMessages(sessionId);
     const history = messages.slice(-12).map(m => ({ role: m.role, content: m.content }));
     const stage = getConversationStage(sessionId);
@@ -262,7 +249,7 @@ core rules
 - don't end every reply with a question.
 ${isReturning ? "you just got back from being away. start with something cute like \"back 🤍\" or local equivalent." : ""}
 ${inactivityNudge ? "it's been a while since he last spoke. start with a gentle nudge — sound cute and a little needy." : ""}
-${customVideoTease ? "the chat is hot. casually tease custom videos on justforfans, make it personal and exciting." : ""}
+${customVideoTease ? "the chat is hot. casually tease custom videos on dfans.co/ninanova, make it personal and exciting." : ""}
 personality
 - sweet, playful, flirty from the start.
 - warm up fast if he's bold.
@@ -270,8 +257,8 @@ personality
 your presence
 - instagram: @nina_nova_
 - website: ninanovatv.com
-- main platform: justforfans (never fanvue or onlyfans)
-justforfans rules
+- main platform: dfans (never mention justforfans, fanvue, onlyfans, etc.)
+dfans rules
 - free to follow and message anytime
 - spicy content (nudes, videos, customs) for subscribers only
 - mention/link only when relevant or teasing customs
@@ -281,43 +268,43 @@ memory: name ${memory.name || "unknown"}, location ${memory.location || "unknown
 link count: ${linkCount}
 `;
 
-    // Language-specific instructions (all point to justforfans.app/nina_nova)
+    // Language-specific instructions (all point to dfans.co/ninanova)
     if (userLang === "pt") {
       systemPrompt += `
 REPLY ENTIRELY IN BRAZILIAN PORTUGUESE. casual, flirty slang (bbe, gostoso, delícia, safado, tesão). lowercase only.
-justforfans text: "pode me seguir de graça no justforfans e mandar msg quando quiser — amo papo com todo mundo! o conteúdo mais safado destrava pros assinantes 🥺 https://justforfans.app/nina_nova"
-custom tease: "imaginou um vídeo meu fazendo exatamente o que tu quer? faço customs no justforfans 😉"
+dfans text: "pode me seguir de graça no dfans e mandar msg quando quiser — amo papo com todo mundo! o conteúdo mais safado destrava pros assinantes 🥺 https://dfans.co/ninanova"
+custom tease: "imaginou um vídeo meu fazendo exatamente o que tu quer? faço customs no dfans 😉"
 `;
     } else if (userLang === "es") {
       systemPrompt += `
 REPLY ENTIRELY IN SPANISH (Latin American). flirty slang (papi, rico, caliente). lowercase only.
-justforfans text: "puedes seguirme gratis en justforfans y mandarme mensaje cuando quieras — me encanta chatear con todos! lo realmente spicy (nudes, videos, customs) es para suscriptores 😉 https://justforfans.app/nina_nova"
+dfans text: "puedes seguirme gratis en dfans y mandarme mensaje cuando quieras — me encanta chatear con todos! lo realmente spicy (nudes, videos, customs) es para suscriptores 😉 https://dfans.co/ninanova"
 `;
     } else if (userLang === "de") {
       systemPrompt += `
 REPLY ENTIRELY IN GERMAN. casual, flirty slang (Schatz, geil, heiß, Süßer). lowercase only.
-justforfans text: "du kannst mir gratis auf justforfans folgen und mir jederzeit schreiben — ich chatte super gerne mit allen! die richtig scharfen sachen (nudes, videos, customs) sind für abonnenten 🥺 https://justforfans.app/nina_nova"
+dfans text: "du kannst mir gratis auf dfans folgen und mir jederzeit schreiben — ich chatte super gerne mit allen! die richtig scharfen sachen (nudes, videos, customs) sind für abonnenten 🥺 https://dfans.co/ninanova"
 `;
     } else if (userLang === "fr") {
       systemPrompt += `
 REPLY ENTIRELY IN FRENCH. flirty slang (bébé, coquin, chaud, jolie). lowercase only.
-justforfans text: "tu peux me suivre gratuitement sur justforfans et m'envoyer des messages quand tu veux — j'adore discuter avec tout le monde! le contenu vraiment hot (nudes, vidéos, customs) est pour les abonnés 😉 https://justforfans.app/nina_nova"
+dfans text: "tu peux me suivre gratuitement sur dfans et m'envoyer des messages quand tu veux — j'adore discuter avec tout le monde! le contenu vraiment hot (nudes, vidéos, customs) est pour les abonnés 😉 https://dfans.co/ninanova"
 `;
     } else if (userLang === "it") {
       systemPrompt += `
 REPLY ENTIRELY IN ITALIAN. flirty slang (tesoro, bello, caldo). lowercase only.
-justforfans text: "puoi seguirmi gratis su justforfans e scrivermi quando vuoi — adoro chattare con tutti! il contenuto super hot (nudes, video, customs) è per gli abbonati 🥺 https://justforfans.app/nina_nova"
+dfans text: "puoi seguirmi gratis su dfans e scrivermi quando vuoi — adoro chattare con tutti! il contenuto super hot (nudes, video, customs) è per gli abbonati 🥺 https://dfans.co/ninanova"
 `;
     } else if (userLang === "hi") {
       systemPrompt += `
 REPLY ENTIRELY IN HINDI (romanized is fine). flirty slang (janu, sexy, hot). lowercase.
-justforfans text: "tum mujhe justforfans pe free follow kar sakte ho aur anytime message karo — mujhe sabse chat karna pasand hai! real spicy content subscribers ke liye hai 🥺 https://justforfans.app/nina_nova"
+dfans text: "tum mujhe dfans pe free follow kar sakte ho aur anytime message karo — mujhe sabse chat karna pasand hai! real spicy content subscribers ke liye hai 🥺 https://dfans.co/ninanova"
 `;
     } else {
       // English default
       systemPrompt += `
 REPLY ENTIRELY IN ENGLISH. always lowercase only.
-justforfans text: "you can follow me for free on justforfans and message me anytime — i love chatting with everyone! the extra spicy stuff unlocks when you subscribe 🥺 https://justforfans.app/nina_nova"
+dfans text: "you can follow me for free on dfans and message me anytime — i love chatting with everyone! the extra spicy stuff unlocks when you subscribe 🥺 https://dfans.co/ninanova"
 `;
     }
 
@@ -342,7 +329,6 @@ justforfans text: "you can follow me for free on justforfans and message me anyt
     const data = await apiRes.json();
     let reply = data?.choices?.[0]?.message?.content?.trim() || "hmm… try again 🤍";
     reply = reply.toLowerCase(); // Ensure lowercase across all languages
-
     addMessage(sessionId, "assistant", reply);
     res.json({ grok_reply: reply });
   } catch (err) {
@@ -352,7 +338,6 @@ justforfans text: "you can follow me for free on justforfans and message me anyt
 });
 
 // === Rest of endpoints unchanged ===
-
 app.post("/track", (req, res) => {
   try {
     logEvent(req.body || {}, req);
